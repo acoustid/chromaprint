@@ -116,6 +116,12 @@ namespace Chromaprint
         //return x & 0x80000000 ? x & 0x7FFFFFFF - 0x80000000 : x;
     }
 
+	template<class T>
+	inline bool IsNaN(T value)
+	{
+		return value != value;
+	}
+
 };
 
 #endif

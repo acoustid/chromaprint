@@ -84,3 +84,8 @@ TEST(Utils, UnsignedToSigned) {
     EXPECT_EQ(numeric_limits<int32_t>::min(), UnsignedToSigned(0x80000000U));
     EXPECT_EQ(numeric_limits<int32_t>::min() + 1, UnsignedToSigned(0x80000001U));
 }
+
+TEST(Utils, IsNaN) {
+    EXPECT_FALSE(IsNaN(0.0));
+    EXPECT_TRUE(IsNaN(sqrt(-1.0)));
+}

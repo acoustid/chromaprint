@@ -35,10 +35,7 @@ namespace Chromaprint
 	inline double SubtractLog(double a, double b)
 	{
 		double r = log(1.0 + a) - log(1.0 + b);
-		if (r != r) {
-			char *aaa = 0;
-			*aaa = 1;
-		}
+		assert(!IsNaN(r));
 		return r;
 	}
 
