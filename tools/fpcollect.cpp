@@ -82,7 +82,7 @@ bool ProcessFile(Chromaprint::Fingerprinter *fingerprinter, const string &filena
 		return false;
 	if (!ReadTags(filename))
 		return false;
-	cout << "FILENAME=" << filename << "\n";
+//	cout << "FILENAME=" << filename << "\n";
 	cout << "FORMAT=" << ExtractExtension(filename) << "\n";
 	fingerprinter->Init(decoder.SampleRate(), decoder.Channels());
 	decoder.Decode(fingerprinter, 60);
