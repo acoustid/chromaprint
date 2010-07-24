@@ -1,0 +1,8 @@
+CMakeFiles
+CMakeCache.txt
+Makefile
+cmake_install.cmake
+./config.h
+./tests/all_tests
+./tools/fpgen
+./tools/fpcollect
