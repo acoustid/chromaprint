@@ -24,6 +24,7 @@
 extern "C" {
 #include "avresample/avcodec.h"
 }
+#include "debug.h"
 #include "audio_processor.h"
 
 using namespace std;
@@ -127,9 +128,12 @@ void AudioProcessor::Resample()
 bool AudioProcessor::Reset(int sample_rate, int num_channels)
 {
 	if (num_channels <= 0) {
+		DEBUG() << "Chromaprint::AudioProcessor::Reset() -- No audio channels.\n";
 		return false;
 	}
 	if (sample_rate <= kMinSampleRate) {
+		DEBUG() << "Chromaprint::AudioProcessor::Reset() -- Sample rate less "
+				<< "than " << kMinSampleRate << " (" << sample_rate << ").\n";
 		return false;
 	}
 	m_buffer_offset = 0;
