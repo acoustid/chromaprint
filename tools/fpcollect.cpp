@@ -52,7 +52,6 @@ bool ReadTags(const string &filename)
 	TagLib::AudioProperties *props = file.audioProperties();
 	if (!tags || !props)
 		return false;
-	cerr << filename << "\n";
 	cout << "ARTIST=" << tags->artist().to8Bit(true) << "\n";
 	cout << "TITLE=" << tags->title().to8Bit(true) << "\n";
 	cout << "ALBUM=" << tags->album().to8Bit(true) << "\n";
@@ -78,13 +77,14 @@ string EncodeFingerprint(const vector<uint32_t> &fp)
 
 bool ProcessFile(Chromaprint::Fingerprinter *fingerprinter, const string &filename)
 {
+	if (!ReadTags(filename))
+		return false;
 	Decoder decoder(filename);
 	if (!decoder.Open())
 		return false;
-	if (!ReadTags(filename))
-		return false;
 	if (!fingerprinter->Init(decoder.SampleRate(), decoder.Channels()))
 		return false;
+	cerr << filename << "\n";
 //	cout << "FILENAME=" << filename << "\n";
 	cout << "FORMAT=" << ExtractExtension(filename) << "\n";
 	decoder.Decode(fingerprinter, 60);
