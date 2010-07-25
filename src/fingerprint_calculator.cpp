@@ -20,6 +20,7 @@
 
 #include "fingerprint_calculator.h"
 #include "classifier.h"
+#include "debug.h"
 #include "utils.h"
 
 using namespace std;
@@ -35,13 +36,17 @@ FingerprintCalculator::FingerprintCalculator(const Classifier *classifiers, int 
 	assert(m_max_filter_width > 0);
 }
 
+
 vector<int32_t> FingerprintCalculator::Calculate(Image *image)
 {
-	if (image->NumRows() <= 0) {
+	int length = image->NumRows() - m_max_filter_width + 1;
+	if (length <= 0) {
+		DEBUG() << "Chromaprint::FingerprintCalculator::Calculate() -- Not "
+				<< "enough data. Image has " << image->NumRows() << " rows, "
+				<< "needs at least " << m_max_filter_width << " rows.\n";
 		return vector<int32_t>();
 	}
 	IntegralImage integral_image(image);
-	int length = image->NumRows() - m_max_filter_width + 1;
 	vector<int32_t> fingerprint(length);
 	for (int i = 0; i < length; i++) {
 		fingerprint[i] = CalculateSubfingerprint(&integral_image, i);
