@@ -6,3 +6,6 @@ cmake_install.cmake
 ./tests/all_tests
 ./tools/fpgen
 ./tools/fpcollect
+*.exe
+*.dll
+
