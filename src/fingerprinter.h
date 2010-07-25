@@ -46,7 +46,7 @@ namespace Chromaprint
 		/**
 		 * Initialize the fingerprinting process.
 		 */
-		void Init(int sample_rate, int num_channels);
+		bool Init(int sample_rate, int num_channels);
 
 		/**
 		 * Process a block of raw audio data. Call this method as many times

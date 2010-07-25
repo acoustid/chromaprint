@@ -56,7 +56,7 @@ namespace Chromaprint
 		}
 
 		//! Prepare for a new audio stream
-		void Reset(int sample_rate, int num_channels);
+		bool Reset(int sample_rate, int num_channels);
 		//! Process a chunk of data from the audio stream
 		void Consume(short *input, int length);
 		//! Process any buffered input that was not processed before and clear buffers

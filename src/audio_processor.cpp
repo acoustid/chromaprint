@@ -29,6 +29,7 @@ extern "C" {
 using namespace std;
 using namespace Chromaprint;
 
+static const int kMinSampleRate = 1000;
 static const int kMaxBufferSize = 1024 * 8;
 
 // Resampler configuration
@@ -123,8 +124,14 @@ void AudioProcessor::Resample()
 }
 
 
-void AudioProcessor::Reset(int sample_rate, int num_channels)
+bool AudioProcessor::Reset(int sample_rate, int num_channels)
 {
+	if (num_channels <= 0) {
+		return false;
+	}
+	if (sample_rate <= kMinSampleRate) {
+		return false;
+	}
 	m_buffer_offset = 0;
 	if (m_resample_ctx) {
 		av_resample_close(m_resample_ctx);
@@ -139,6 +146,7 @@ void AudioProcessor::Reset(int sample_rate, int num_channels)
 			kResampleCutoff);
 	}
 	m_num_channels = num_channels;
+	return true;
 }
 
 void AudioProcessor::Consume(short *input, int length)

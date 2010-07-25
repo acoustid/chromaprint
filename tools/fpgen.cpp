@@ -21,7 +21,9 @@ int main(int argc, char **argv)
 
 	Chromaprint::Fingerprinter fingerprinter;
 
-	fingerprinter.Init(decoder.SampleRate(), decoder.Channels());
+	if (!fingerprinter.Init(decoder.SampleRate(), decoder.Channels())) {
+		return 2;
+	}
 	decoder.Decode(&fingerprinter, 60);
 	vector<int32_t> fingerprint = fingerprinter.Calculate();
 

@@ -100,15 +100,19 @@ Fingerprinter::~Fingerprinter()
 	delete m_image_builder;
 }
 
-void Fingerprinter::Init(int sample_rate, int num_channels)
+bool Fingerprinter::Init(int sample_rate, int num_channels)
 {
-	m_audio_processor->Reset(sample_rate, num_channels);
+	if (!m_audio_processor->Reset(sample_rate, num_channels)) {
+		// FIXME save error message somewhere
+		return false;
+	}
 	m_fft->Reset();
 	m_chroma->Reset();
 	m_chroma_filter->Reset();
 	m_chroma_normalizer->Reset();
 	m_image = Image(12); // XXX
 	m_image_builder->Reset(&m_image);
+	return true;
 }
 
 void Fingerprinter::Consume(short *samples, int length)

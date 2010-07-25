@@ -23,6 +23,7 @@
 
 #include <math.h>
 #include "integral_image.h"
+#include "utils.h"
 
 namespace Chromaprint
 {

@@ -137,6 +137,11 @@ inline bool Decoder::Open()
 		return false;
 	}*/
 
+	if (Channels() <= 0) {
+		m_error = "Invalid audio stream (no channels).\n";
+		return false;
+	}
+
 	return true;
 }
 
