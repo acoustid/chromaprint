@@ -52,6 +52,7 @@ bool ReadTags(const string &filename)
 	TagLib::AudioProperties *props = file.audioProperties();
 	if (!tags || !props)
 		return false;
+	cerr << filename << "\n";
 	cout << "ARTIST=" << tags->artist().to8Bit(true) << "\n";
 	cout << "TITLE=" << tags->title().to8Bit(true) << "\n";
 	cout << "ALBUM=" << tags->album().to8Bit(true) << "\n";
