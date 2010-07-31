@@ -36,8 +36,10 @@ inline double FreqToOctave(double freq, double base = 440.0 / 16.0)
 
 Chroma::Chroma(int min_freq, int max_freq, int frame_size, int sample_rate, FeatureVectorConsumer *consumer)
 	: m_notes(frame_size),
+	  m_notes_frac(frame_size),
 	  m_features(NUM_BANDS),
-	  m_consumer(consumer)
+	  m_consumer(consumer),
+	  m_interpolate(false)
 {
 	PrepareNotes(min_freq, max_freq, frame_size, sample_rate);
 }
@@ -53,7 +55,9 @@ void Chroma::PrepareNotes(int min_freq, int max_freq, int frame_size, int sample
 	for (int i = m_min_index; i < m_max_index; i++) {
 		double freq = IndexToFreq(i, frame_size, sample_rate);
 		double octave = FreqToOctave(freq);
-		m_notes[i] = NUM_BANDS * (octave - floor(octave)); 
+		double note = NUM_BANDS * (octave - floor(octave)); 
+		m_notes[i] = note;
+		m_notes_frac[i] = note - m_notes[i];
 	}
 }
 
@@ -65,7 +69,25 @@ void Chroma::Consume(const FFTFrame &frame)
 {
 	fill(m_features.begin(), m_features.end(), 0.0);
 	for (int i = m_min_index; i < m_max_index; i++) {
-		m_features[m_notes[i]] += frame.Energy(i);
+		int note = m_notes[i];
+		double energy = frame.Energy(i);
+		if (m_interpolate) {
+			int note2 = note;
+			double a = 1.0;
+			if (m_notes_frac[i] < 0.5 && note > 0) {
+				note2 = note - 1;
+				a = 0.5 + m_notes_frac[i];
+			}
+			if (m_notes_frac[i] > 0.5 && note + 1 < NUM_BANDS) {
+				note2 = note + 1;
+				a = 1.5 - m_notes_frac[i];
+			}
+			m_features[note] += energy * a; 
+			m_features[note2] += energy * (1.0 - a); 
+		}
+		else {
+			m_features[note] += energy; 
+		}
 	}
 	m_consumer->Consume(m_features);
 }

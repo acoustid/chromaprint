@@ -36,6 +36,16 @@ namespace Chromaprint
 		Chroma(int min_freq, int max_freq, int frame_size, int sample_rate, FeatureVectorConsumer *consumer);
 		~Chroma();
 
+		bool interpolate() const
+		{
+			return m_interpolate;
+		}
+
+		void set_interpolate(bool interpolate)
+		{
+			m_interpolate = interpolate;
+		}
+
 		void Reset();
 		void Consume(const FFTFrame &frame);
 
@@ -44,7 +54,9 @@ namespace Chromaprint
 
 		void PrepareNotes(int min_freq, int max_freq, int frame_size, int sample_rate);
 
+		bool m_interpolate;
 		std::vector<char> m_notes;
+		std::vector<double> m_notes_frac;
 		int m_min_index;
 		int m_max_index;
 		std::vector<double> m_features;
