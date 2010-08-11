@@ -5,7 +5,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/dynamic_bitset.hpp>
-#include "ext/sox_decoder.h"
+#include "ext/ffmpeg_decoder.h"
 #include "ext/image_utils.h"
 #include "audio_processor.h"
 #include "chroma.h"
@@ -75,14 +75,14 @@ vector<int> MultiMapValues(const multimap<int, int> &data, const int &key)
 
 static const int SAMPLE_RATE = 11025;
 static const int FRAME_SIZE = 4096;
-/*static const int OVERLAP = FRAME_SIZE - FRAME_SIZE / 3;// 2720;
+static const int OVERLAP = FRAME_SIZE - FRAME_SIZE / 3;// 2720;
 static const int MIN_FREQ = 28;
 static const int MAX_FREQ = 3520;
-static const int MAX_FILTER_WIDTH = 20;*/
-static const int OVERLAP = FRAME_SIZE - FRAME_SIZE / 2;// 2720;
+static const int MAX_FILTER_WIDTH = 16;
+/*static const int OVERLAP = FRAME_SIZE - FRAME_SIZE / 2;// 2720;
 static const int MIN_FREQ = 300;
 static const int MAX_FREQ = 5300;
-static const int MAX_FILTER_WIDTH = 20;
+static const int MAX_FILTER_WIDTH = 20;*/
 
 static const int TRAINING_SET_SIZE = 60000;
 
@@ -97,21 +97,23 @@ void PrintRate(const std::string &name, const std::vector<int> &values, int scal
 	cout << "]\n";
 }
 
+#define FP_TYPE_CHROMA		1
+#define FP_TYPE_CENTROID	2
+#define FP_TYPE FP_TYPE_CHROMA
+
 int main(int argc, char **argv)
 {
 	Chromaprint::ImageBuilder image_builder;
-
-	/*Chromaprint::ChromaNormalizer chroma_normalizer(&image_builder);
+#if FP_TYPE == FP_TYPE_CHROMA
+	Chromaprint::ChromaNormalizer chroma_normalizer(&image_builder);
 	static const double kChromaFilterCoeffs[] = { 0.25, 0.75, 1.0, 0.75, 0.25 };
 	Chromaprint::ChromaFilter chroma_filter(kChromaFilterCoeffs, 5, &chroma_normalizer);
-	Chromaprint::Chroma chroma(MIN_FREQ, MAX_FREQ, FRAME_SIZE, SAMPLE_RATE, &chroma_filter);*/
-
+	Chromaprint::Chroma chroma(MIN_FREQ, MAX_FREQ, FRAME_SIZE, SAMPLE_RATE, &chroma_filter);
+	Chromaprint::FFT fft(FRAME_SIZE, OVERLAP, &chroma);
+#elif FP_TYPE == FP_TYPE_CHROMA
 	Chromaprint::SpectralCentroid centroid(16, MIN_FREQ, MAX_FREQ, FRAME_SIZE, SAMPLE_RATE, &image_builder);
-
-//	Chromaprint::ChromaResampler chroma_resampler(false, &chroma_normalizer);
-	//Chromaprint::Chroma chroma(MIN_FREQ, MAX_FREQ, FRAME_SIZE, SAMPLE_RATE, &chroma_resampler);
-
 	Chromaprint::FFT fft(FRAME_SIZE, OVERLAP, &centroid);
+#endif
 	Chromaprint::AudioProcessor processor(SAMPLE_RATE, &fft);
 
 	cout << "Loading audio files\n";
@@ -129,18 +131,24 @@ int main(int argc, char **argv)
 				cerr << "ERROR: " << decoder.LastError() << "\n";
 				return 1;
 			}
+#if FP_TYPE == FP_TYPE_CHROMA
+			Image *image = new Image(12);
+#elif FP_TYPE == FP_TYPE_CENTROID
 			Image *image = new Image(16);
+#endif
 			processor.Reset(decoder.SampleRate(), decoder.Channels());
 			fft.Reset();
-			//chroma.Reset();
-			//chroma_filter.Reset();
-			//chroma_normalizer.Reset();
-			//chroma_resampler.Reset();
+#if FP_TYPE == FP_TYPE_CHROMA
+			chroma.Reset();
+			chroma_filter.Reset();
+			chroma_normalizer.Reset();
+#elif FP_TYPE == FP_TYPE_CENTROID
 			centroid.Reset();
+#endif
 			image_builder.Reset(image);
 			decoder.Decode(&processor);
 			processor.Flush();
-			ExportTextImage(image, files[i][j] + ".img.txt");
+			//ExportTextImage(image, files[i][j] + ".img.txt");
 			//Chromaprint::ExportImage(image_builder.image(), files[i][j] + ".img.png");
 			reverse_groups.insert(make_pair(i, images.size()));
 			groups.push_back(i);
