@@ -13,6 +13,7 @@ set(tests_SOURCES
 	test_lloyds.cpp
 	test_audio_processor.cpp
 	test_chromaprint.cpp
+	test_chroma.cpp
 	test_chroma_filter.cpp
 	test_chroma_resampler.cpp
 	test_fingerprint_calculator.cpp

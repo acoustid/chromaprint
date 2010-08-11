@@ -74,12 +74,12 @@ void Chroma::Consume(const FFTFrame &frame)
 		if (m_interpolate) {
 			int note2 = note;
 			double a = 1.0;
-			if (m_notes_frac[i] < 0.5 && note > 0) {
-				note2 = note - 1;
+			if (m_notes_frac[i] < 0.5) {
+				note2 = (note + NUM_BANDS - 1) % NUM_BANDS;
 				a = 0.5 + m_notes_frac[i];
 			}
-			if (m_notes_frac[i] > 0.5 && note + 1 < NUM_BANDS) {
-				note2 = note + 1;
+			if (m_notes_frac[i] > 0.5) {
+				note2 = (note + 1) % NUM_BANDS;
 				a = 1.5 - m_notes_frac[i];
 			}
 			m_features[note] += energy * a; 
