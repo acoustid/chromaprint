@@ -27,7 +27,7 @@ if(BUILD_EXTRA_TOOLS)
 	target_link_libraries(decode chromaprint chromaprintext)
 
 	add_executable(chromagram chromagram.cpp)
-	target_link_libraries(chromagram chromaprint chromaprintext)
+	target_link_libraries(chromagram chromaprint chromaprintext -lpng)
 
 	add_executable(learn_filters learn_filters.cpp)
 	target_link_libraries(learn_filters chromaprint chromaprintext

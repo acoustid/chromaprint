@@ -10,6 +10,7 @@ using namespace std;
 #include "spectral_centroid.h"
 #include "chroma_normalizer.h"
 #include "chroma_resampler.h"
+#include "chroma_filter.h"
 #include "fft.h"
 #include "audio_processor.h"
 #include "image.h"
@@ -23,6 +24,9 @@ static const int OVERLAP = FRAME_SIZE - FRAME_SIZE / 3;// 2720;
 static const int MIN_FREQ = 28;
 static const int MAX_FREQ = 3520;
 static const int MAX_FILTER_WIDTH = 20;
+
+static const int kChromaFilterSize = 5;
+static const double kChromaFilterCoefficients[] = { 0.25, 0.75, 1.0, 0.75, 0.25 };
 
 int main(int argc, char **argv)
 {
@@ -43,14 +47,11 @@ int main(int argc, char **argv)
 	Chromaprint::Image image(12);
 	Chromaprint::ImageBuilder image_builder(&image);
 	Chromaprint::ChromaNormalizer chroma_normalizer(&image_builder);
-	//Chromaprint::ChromaResampler resampler(true, &image_builder);
-	//Chromaprint::Chroma chroma(MIN_FREQ, MAX_FREQ, FRAME_SIZE, SAMPLE_RATE, &resampler);
-	Chromaprint::Chroma chroma(MIN_FREQ, MAX_FREQ, FRAME_SIZE, SAMPLE_RATE, &chroma_normalizer);
-	//Chromaprint::SpectralCentroid centroid(16, MIN_FREQ, MAX_FREQ, FRAME_SIZE, SAMPLE_RATE, &image_builder);
+	Chromaprint::ChromaFilter chroma_filter(kChromaFilterCoefficients, kChromaFilterSize, &chroma_normalizer);
+	Chromaprint::Chroma chroma(MIN_FREQ, MAX_FREQ, FRAME_SIZE, SAMPLE_RATE, &chroma_filter);
 	Chromaprint::FFT fft(FRAME_SIZE, OVERLAP, &chroma);
 	Chromaprint::AudioProcessor processor(SAMPLE_RATE, &fft);
 
-	cout << decoder.Channels() << "\n";
 	processor.Reset(decoder.SampleRate(), decoder.Channels());
 	decoder.Decode(&processor);
 	processor.Flush();
