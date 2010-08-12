@@ -21,5 +21,58 @@
 #ifndef CHROMAPRINT_CHROMAPRINT_H_
 #define CHROMAPRINT_CHROMAPRINT_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef void *ChromaprintContext;
+
+ChromaprintContext *chromaprint_init();
+void chromaprint_destroy(ChromaprintContext *ctx);
+
+/**
+ * Restart the computation of a fingerprint with a new audio stream.
+ *
+ * Parameters:
+ *  - ctx: Chromaprint context pointer
+ *  - sample_rate: sample rate of the audio stream (in Hz)
+ *  - num_channels: numbers of channels in the audio stream (1 or 2)
+ *
+ * Returns:
+ *  - 0 on error, 1 on success
+ */
+int chromaprint_setup(ChromaprintContext *ctx, int sample_rate, int num_channels);
+
+/**
+ * Sent audio data to the fingerprint calculator.
+ *
+ * Parameters:
+ *  - ctx: Chromaprint context pointer
+ *  - data: raw audio data, should point to an array of 16-bit signed
+ *          integers in native byte-order
+ *  - size: size of the data buffer (in samples)
+ *
+ * Returns:
+ *  - 0 on error, 1 on success
+ */
+int chromaprint_feed(ChromaprintContext *ctx, void *data, int size);
+
+/**
+ * Process the recieved audio stream and calculate the fingerprint.
+ *
+ * Parameters:
+ *  - ctx: Chromaprint context pointer
+ *  - data: raw audio data, should point to an array of 16-bit signed
+ *          integers in native byte-order
+ *  - size: size of the data buffer 
+ *
+ * Returns:
+ *  - 0 on error, 1 on success
+ */
+int chromaprint_compute(ChromaprintContext *ctx, void **fingerprint, int **size);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
