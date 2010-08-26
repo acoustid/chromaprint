@@ -34,6 +34,11 @@ if(BUILD_EXTRA_TOOLS)
 		${Boost_SYSTEM_LIBRARY}
 		${Boost_FILESYSTEM_LIBRARY})
 
+	add_executable(fpeval fpeval.cpp)
+	target_link_libraries(fpeval chromaprint chromaprintext
+		${Boost_SYSTEM_LIBRARY}
+		${Boost_FILESYSTEM_LIBRARY})
+
 endif(BUILD_EXTRA_TOOLS)
 
 add_executable(fpgen fpgen.cpp)

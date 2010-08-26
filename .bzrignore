@@ -9,3 +9,8 @@ cmake_install.cmake
 *.exe
 *.dll
 
+./tools/fpeval
+./tools/learn_filters
+./tools/decode
+./tools/chromagram
+./tools/resample

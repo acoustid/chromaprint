@@ -109,6 +109,7 @@ int main(int argc, char **argv)
 	static const double kChromaFilterCoeffs[] = { 0.25, 0.75, 1.0, 0.75, 0.25 };
 	Chromaprint::ChromaFilter chroma_filter(kChromaFilterCoeffs, 5, &chroma_normalizer);
 	Chromaprint::Chroma chroma(MIN_FREQ, MAX_FREQ, FRAME_SIZE, SAMPLE_RATE, &chroma_filter);
+	chroma.set_interpolate(true);
 	Chromaprint::FFT fft(FRAME_SIZE, OVERLAP, &chroma);
 #elif FP_TYPE == FP_TYPE_CHROMA
 	Chromaprint::SpectralCentroid centroid(16, MIN_FREQ, MAX_FREQ, FRAME_SIZE, SAMPLE_RATE, &image_builder);
