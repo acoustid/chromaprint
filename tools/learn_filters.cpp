@@ -38,7 +38,7 @@ string_vector FindAudioFiles(const char *dirname)
 	for (fs::directory_iterator dir_iter(path); dir_iter != end_iter; ++dir_iter) {
 		if (fs::is_regular_file(dir_iter->status())) {
 			string filename = dir_iter->path().string(); 
-			if (boost::ends_with(filename, ".mp3") || boost::ends_with(filename, ".wav")) {
+			if (boost::ends_with(filename, ".mp3") || boost::ends_with(filename, ".wma") || boost::ends_with(filename, ".wav")) {
 				result.push_back(filename);
 			}
 		}
@@ -109,7 +109,7 @@ int main(int argc, char **argv)
 	static const double kChromaFilterCoeffs[] = { 0.25, 0.75, 1.0, 0.75, 0.25 };
 	Chromaprint::ChromaFilter chroma_filter(kChromaFilterCoeffs, 5, &chroma_normalizer);
 	Chromaprint::Chroma chroma(MIN_FREQ, MAX_FREQ, FRAME_SIZE, SAMPLE_RATE, &chroma_filter);
-	chroma.set_interpolate(true);
+	//chroma.set_interpolate(true);
 	Chromaprint::FFT fft(FRAME_SIZE, OVERLAP, &chroma);
 #elif FP_TYPE == FP_TYPE_CHROMA
 	Chromaprint::SpectralCentroid centroid(16, MIN_FREQ, MAX_FREQ, FRAME_SIZE, SAMPLE_RATE, &image_builder);

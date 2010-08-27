@@ -112,6 +112,22 @@ static const Classifier kClassifiers[] = {
     Classifier(Filter(5, 2, 7, 9), Quantizer(-0.690934, -0.611684, -0.537998)),
     Classifier(Filter(2, 0, 2, 6), Quantizer(-0.0811706, 0.0113086, 0.163895)),*/
 
+    /*Classifier(Filter(4, 2, 9, 16), Quantizer(-1.12428, -0.756033, -0.385572)),
+    Classifier(Filter(0, 7, 4, 15), Quantizer(2.44165, 2.68851, 2.91156)),
+    Classifier(Filter(4, 6, 3, 6), Quantizer(-0.63249, -0.390897, -0.153277)),
+    Classifier(Filter(1, 2, 2, 4), Quantizer(-0.370669, -0.14436, 0.0488315)),
+    Classifier(Filter(2, 5, 1, 10), Quantizer(-0.146453, 0.0220111, 0.134183)),
+    Classifier(Filter(5, 1, 1, 12), Quantizer(-0.46844, -0.309355, -0.153397)),
+    Classifier(Filter(3, 9, 2, 16), Quantizer(-0.13884, -0.0196506, 0.0947371)),
+    Classifier(Filter(3, 8, 2, 8), Quantizer(-0.0875754, 0.00648537, 0.0980732)),
+    Classifier(Filter(3, 0, 2, 4), Quantizer(-0.0694078, -0.0108569, 0.0414498)),
+    Classifier(Filter(2, 1, 3, 14), Quantizer(-0.175625, 0.0397514, 0.285024)),
+    Classifier(Filter(2, 2, 4, 4), Quantizer(-0.10482, -0.0236973, 0.0484204)),
+    Classifier(Filter(2, 9, 2, 2), Quantizer(-0.0280319, 0.00478084, 0.038747)),
+    Classifier(Filter(5, 0, 1, 15), Quantizer(-0.6048, -0.418006, -0.220434)),
+    Classifier(Filter(4, 4, 3, 6), Quantizer(-0.901731, -0.626115, -0.365567)),
+    Classifier(Filter(2, 6, 4, 4), Quantizer(-0.062481, 0.00987519, 0.131144)),
+    Classifier(Filter(3, 7, 2, 10), Quantizer(-0.0877314, 0.0122448, 0.179216)),*/
 
 };
 
