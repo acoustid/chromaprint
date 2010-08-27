@@ -18,6 +18,7 @@ set(tests_SOURCES
 	test_chroma_resampler.cpp
 	test_fingerprint_calculator.cpp
 	test_filter.cpp
+	test_silence_remover.cpp
 )
 
 add_executable(all_tests ${tests_SOURCES})

@@ -5,28 +5,11 @@
 #include <fstream>
 #include "test_utils.h"
 #include "audio_processor.h"
+#include "audio_buffer.h"
 #include "utils.h"
 
 using namespace std;
 using namespace Chromaprint;
-
-class AudioBuffer : public AudioConsumer
-{
-public:
-	void Consume(short *input, int length)
-	{
-		//cout << "AudioBuffer::Consume(" << length << ")\n";
-		int last_size = m_data.size();
-		//cout << "got " << input[0] << " at index " << last_size << "\n";
-		m_data.resize(last_size + length);
-		copy(input, input + length, m_data.begin() + last_size);
-	}
-
-	const vector<short> &data() { return m_data; }
-
-private:
-	vector<short> m_data;
-};
 
 TEST(AudioProcessor, Accessors)
 {

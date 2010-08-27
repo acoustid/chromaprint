@@ -17,6 +17,7 @@ set(chromaprint_SRCS
 	fingerprinter.cpp
 	image_builder.cpp
 	lloyds.cpp
+	silence_remover.cpp
 	fingerprint_calculator.cpp
 	avresample/resample2.c
 )
