@@ -18,40 +18,15 @@
  * USA
  */
 
-#ifndef CHROMAPRINT_FINGERPRINT_COMPRESSOR_H_
-#define CHROMAPRINT_FINGERPRINT_COMPRESSOR_H_
+#ifndef CHROMAPRINT_BASE64_H_
+#define CHROMAPRINT_BASE64_H_
 
-#include <stdint.h>
-#include <vector>
 #include <string>
 
 namespace Chromaprint
 {
-	class Classifier;
-	class Image;
-	class IntegralImage;
 
-	class FingerprintCompressor
-	{
-	public:
-		FingerprintCompressor();
-		std::string Compress(const std::vector<int32_t> &fingerprint);
-
-	private:
-
-		void WriteNormalBits();
-		void WriteExceptionBits();
-		void ProcessSubfingerprint(int32_t);
-
-		std::string m_result;
-		std::vector<char> m_bits; 
-	};
-
-	inline std::string CompressFingerprint(const std::vector<int32_t> &data)
-	{
-		FingerprintCompressor compressor;
-		return compressor.Compress(data);
-	}
+	std::string Base64Encode(const std::string &str);
 
 };
 

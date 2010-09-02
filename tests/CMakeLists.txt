@@ -21,6 +21,7 @@ set(tests_SOURCES
 	test_fingerprint_calculator.cpp
 	test_filter.cpp
 	test_silence_remover.cpp
+	test_base64.cpp
 )
 
 add_executable(all_tests ${tests_SOURCES})

@@ -18,42 +18,34 @@
  * USA
  */
 
-#ifndef CHROMAPRINT_FINGERPRINT_COMPRESSOR_H_
-#define CHROMAPRINT_FINGERPRINT_COMPRESSOR_H_
+#include <algorithm>
+#include "base64.h"
 
-#include <stdint.h>
-#include <vector>
-#include <string>
+using namespace std;
+using namespace Chromaprint;
 
-namespace Chromaprint
+static const char kBase64Chars[65] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+
+string Chromaprint::Base64Encode(const string &orig)
 {
-	class Classifier;
-	class Image;
-	class IntegralImage;
-
-	class FingerprintCompressor
-	{
-	public:
-		FingerprintCompressor();
-		std::string Compress(const std::vector<int32_t> &fingerprint);
-
-	private:
-
-		void WriteNormalBits();
-		void WriteExceptionBits();
-		void ProcessSubfingerprint(int32_t);
-
-		std::string m_result;
-		std::vector<char> m_bits; 
-	};
-
-	inline std::string CompressFingerprint(const std::vector<int32_t> &data)
-	{
-		FingerprintCompressor compressor;
-		return compressor.Compress(data);
+	int size = orig.size();
+	int encoded_size = (size * 4 + 2) / 3;
+	string encoded(encoded_size, ' ');
+	const unsigned char *src = (unsigned char *)orig.data();
+	string::iterator dest = encoded.begin();
+	int i = 0, j = 0;
+	while (size > 0) {
+		*dest++ = kBase64Chars[(src[0] >> 2)];
+		*dest++ = kBase64Chars[((src[0] << 4) | (--size ? (src[1] >> 4) : 0)) & 63];
+		if (size) {
+			*dest++ = kBase64Chars[((src[1] << 2) | (--size ? (src[2] >> 6) : 0)) & 63];
+			if (size) {
+				*dest++ = kBase64Chars[src[2] & 63];
+				--size;
+			}
+		}
+		src += 3;
 	}
-
-};
-
-#endif
+	return encoded;
+}
 
