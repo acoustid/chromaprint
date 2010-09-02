@@ -35,7 +35,7 @@ FingerprintCompressor::FingerprintCompressor()
 {
 }
 
-void FingerprintCompressor::ProcessSubfingerprint(int32_t x)
+void FingerprintCompressor::ProcessSubfingerprint(uint32_t x)
 {
 	int bit = 1, last_bit = 0;
 	while (x != 0) {

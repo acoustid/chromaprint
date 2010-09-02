@@ -41,7 +41,7 @@ namespace Chromaprint
 
 		void WriteNormalBits();
 		void WriteExceptionBits();
-		void ProcessSubfingerprint(int32_t);
+		void ProcessSubfingerprint(uint32_t);
 
 		std::string m_result;
 		std::vector<char> m_bits; 

@@ -6,6 +6,8 @@
 #include <fileref.h>
 #include <tag.h>
 #include "fingerprinter.h"
+#include "fingerprint_compressor.h"
+#include "base64.h"
 #include "ext/ffmpeg_decoder.h"
 
 using namespace std;
@@ -89,13 +91,7 @@ bool ProcessFile(Chromaprint::Fingerprinter *fingerprinter, const string &filena
 	cout << "FORMAT=" << ExtractExtension(filename) << "\n";
 	decoder.Decode(fingerprinter, 60);
 	vector<int32_t> fp = fingerprinter->Calculate();
-	cout << "FINGERPRINT=";
-	cout.setf(ios_base::hex, ios::basefield);
-	for (vector<int32_t>::const_iterator it = fp.begin(); it != fp.end(); ++it) {
-		cout << *it << " ";
-	}
-	cout.unsetf(ios_base::hex);
-	cout << "\n\n";
+	cout << "FINGERPRINT=" << Chromaprint::Base64Encode(Chromaprint::CompressFingerprint(fp)) << "\n\n";
 	return true;
 }
 
