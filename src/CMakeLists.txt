@@ -19,6 +19,7 @@ set(chromaprint_SRCS
 	lloyds.cpp
 	silence_remover.cpp
 	fingerprint_calculator.cpp
+	fingerprint_compressor.cpp
 	avresample/resample2.c
 )
 

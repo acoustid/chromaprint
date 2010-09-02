@@ -24,7 +24,8 @@ int main(int argc, char **argv)
 	if (!fingerprinter.Init(decoder.SampleRate(), decoder.Channels())) {
 		return 2;
 	}
-	decoder.Decode(&fingerprinter, 60);
+	decoder.Decode(&fingerprinter);
+	//decoder.Decode(&fingerprinter, 60);
 	vector<int32_t> fingerprint = fingerprinter.Calculate();
 
 	for (int i = 0; i < fingerprint.size(); i++) {

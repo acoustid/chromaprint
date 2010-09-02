@@ -3,6 +3,15 @@
 
 #include <vector>
 #include <fstream>
+#include <string>
+
+inline void CheckString(std::string actual, char *expected, int expected_size)
+{
+	ASSERT_EQ(expected_size, actual.size());
+	for (int i = 0; i < expected_size; i++) {
+		EXPECT_EQ(expected[i], actual[i]) << "Different at index " << i;
+	}
+}
 
 inline std::vector<short> LoadAudioFile(const std::string &file_name)
 {
