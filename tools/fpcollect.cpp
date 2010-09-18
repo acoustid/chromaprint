@@ -45,6 +45,143 @@ string_vector FindFiles(const char *dirname)
 	return result;
 }
 
+#define DISPATCH_TAGLIB_FILE(type, file) \
+	{ \
+		type *tmp = dynamic_cast<type *>(file); \
+		if (tmp) { \
+			return ExtractMBIDFromFile(tmp); \
+		} \
+	}
+
+#include <xiphcomment.h>
+#include <apetag.h>
+#include <vorbisfile.h>
+#include <oggflacfile.h>
+#include <speexfile.h>
+#include <flacfile.h>
+#include <mpcfile.h>
+#include <wavpackfile.h>
+#ifdef TAGLIB_WITH_ASF
+#include <asffile.h>
+#endif
+#ifdef TAGLIB_WITH_MP4
+#include <mp4file.h>
+#endif
+#include <mpegfile.h>
+#include <id3v2tag.h>
+#include <uniquefileidentifierframe.h>
+
+string ExtractMBIDFromXiphComment(TagLib::Ogg::XiphComment *tag)
+{
+	string key = "MUSICBRAINZ_TRACKID"; 
+	if (tag->fieldListMap().contains(key)) {
+		return tag->fieldListMap()[key].front().to8Bit(true);
+	}
+	return string();
+}
+
+string ExtractMBIDFromAPETag(TagLib::APE::Tag *tag)
+{
+	string key = "MUSICBRAINZ_TRACKID";
+	if (tag->itemListMap().contains(key)) {
+		return tag->itemListMap()[key].toString().to8Bit(true);
+	}
+	return string();
+}
+
+string ExtractMBIDFromFile(TagLib::Ogg::Vorbis::File *file)
+{
+	return ExtractMBIDFromXiphComment(file->tag());
+}
+
+string ExtractMBIDFromFile(TagLib::Ogg::FLAC::File *file)
+{
+	return ExtractMBIDFromXiphComment(file->tag());
+}
+
+string ExtractMBIDFromFile(TagLib::Ogg::Speex::File *file)
+{
+	return ExtractMBIDFromXiphComment(file->tag());
+}
+
+string ExtractMBIDFromFile(TagLib::FLAC::File *file)
+{
+	return ExtractMBIDFromXiphComment(file->xiphComment());
+}
+
+string ExtractMBIDFromFile(TagLib::MPC::File *file)
+{
+	return ExtractMBIDFromAPETag(file->APETag());
+}
+
+string ExtractMBIDFromFile(TagLib::WavPack::File *file)
+{
+	return ExtractMBIDFromAPETag(file->APETag());
+}
+
+/*string ExtractMBIDFromFile(TagLib::APE::File *file)
+{
+	return ExtractMBIDFromAPETag(file->APETag());
+}*/
+
+#ifdef TAGLIB_WITH_ASF
+string ExtractMBIDFromFile(TagLib::ASF::File *file)
+{
+	string key = "MusicBrainz/Track Id";
+	TagLib::ASF::Tag *tag = file->tag();
+	if (tag->attributeListMap().contains(key)) {
+		return tag->attributeListMap()[key].front().toString().to8Bit(true);
+	}
+	return string();
+}
+#endif
+
+#ifdef TAGLIB_WITH_MP4
+string ExtractMBIDFromFile(TagLib::MP4::File *file)
+{
+	string key = "----:com.apple.iTunes:MusicBrainz Track Id";
+	TagLib::MP4::Tag *tag = file->tag();
+	if (tag->itemListMap().contains(key)) {
+		return tag->itemListMap()[key].toStringList().toString().to8Bit(true);
+	}
+	return string();
+}
+#endif
+
+string ExtractMBIDFromFile(TagLib::MPEG::File *file)
+{
+	TagLib::ID3v2::Tag *tag = file->ID3v2Tag();
+	TagLib::ID3v2::FrameList ufid = tag->frameListMap()["UFID"];
+	if (!ufid.isEmpty()) {
+		for (TagLib::ID3v2::FrameList::Iterator i = ufid.begin(); i != ufid.end(); i++) {
+			TagLib::ID3v2::UniqueFileIdentifierFrame *frame = dynamic_cast<TagLib::ID3v2::UniqueFileIdentifierFrame *>(*i);
+			if (frame && frame->owner() == "http://musicbrainz.org") {
+				TagLib::ByteVector id = frame->identifier();
+				return string(id.data(), id.size());
+			}
+		}
+	}
+	return string();
+}
+
+string ExtractMusicBrainzTrackID(TagLib::File *file)
+{
+	DISPATCH_TAGLIB_FILE(TagLib::FLAC::File, file);
+	DISPATCH_TAGLIB_FILE(TagLib::Ogg::Vorbis::File, file);
+	DISPATCH_TAGLIB_FILE(TagLib::Ogg::FLAC::File, file);
+	DISPATCH_TAGLIB_FILE(TagLib::Ogg::Speex::File, file);
+	DISPATCH_TAGLIB_FILE(TagLib::MPC::File, file);
+	DISPATCH_TAGLIB_FILE(TagLib::WavPack::File, file);
+#ifdef TAGLIB_WITH_ASF
+	DISPATCH_TAGLIB_FILE(TagLib::ASF::File, file);
+#endif
+#ifdef TAGLIB_WITH_MP4
+	DISPATCH_TAGLIB_FILE(TagLib::MP4::File, file);
+#endif
+	DISPATCH_TAGLIB_FILE(TagLib::MPEG::File, file);
+	return string();
+}
+
 bool ReadTags(const string &filename)
 {
 	TagLib::FileRef file(filename.c_str(), true);
@@ -54,11 +191,16 @@ bool ReadTags(const string &filename)
 	TagLib::AudioProperties *props = file.audioProperties();
 	if (!tags || !props)
 		return false;
-	cout << "ARTIST=" << tags->artist().to8Bit(true) << "\n";
-	cout << "TITLE=" << tags->title().to8Bit(true) << "\n";
-	cout << "ALBUM=" << tags->album().to8Bit(true) << "\n";
-	cout << "LENGTH=" << props->length() << "\n";
+	//cout << "ARTIST=" << tags->artist().to8Bit(true) << "\n";
+	//cout << "TITLE=" << tags->title().to8Bit(true) << "\n";
+	//cout << "ALBUM=" << tags->album().to8Bit(true) << "\n";
+	int length = props->length();
+	string mbid = ExtractMusicBrainzTrackID(file.file());
+	if (!length || mbid.size() != 36)
+		return false;
+	cout << "LENGTH=" << length << "\n";
 	cout << "BITRATE=" << props->bitrate() << "\n";
+	cout << "MBID=" << mbid << "\n";
 	return true;
 }
 
@@ -89,8 +231,13 @@ bool ProcessFile(Chromaprint::Fingerprinter *fingerprinter, const string &filena
 	cerr << filename << "\n";
 //	cout << "FILENAME=" << filename << "\n";
 	cout << "FORMAT=" << ExtractExtension(filename) << "\n";
-	decoder.Decode(fingerprinter, 60);
+	decoder.Decode(fingerprinter, 135);
 	vector<int32_t> fp = fingerprinter->Calculate();
+	/*cout << "FINGERPRINT1=";
+	for (int i = 0; i < fp.size(); i++) {
+		cout << fp[i] << ", ";
+	}
+	cout << "\n";*/
 	cout << "FINGERPRINT=" << Chromaprint::Base64Encode(Chromaprint::CompressFingerprint(fp)) << "\n\n";
 	return true;
 }
