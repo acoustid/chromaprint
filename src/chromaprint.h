@@ -46,7 +46,7 @@ typedef void *ChromaprintContext;
 #define CHROMAPRINT_VERSION_PATCH 1
 
 enum ChromaprintAlgorithm {
-	CHROMAPRINT_ALGORITHM_TEST1,
+	CHROMAPRINT_ALGORITHM_TEST1 = 0,
 	CHROMAPRINT_ALGORITHM_TEST2
 };
 

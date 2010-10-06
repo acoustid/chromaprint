@@ -89,7 +89,7 @@ int chromaprint_finish(ChromaprintContext *c)
 int chromaprint_get_fingerprint(ChromaprintContext *c, char **data)
 {
 	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *)c;
-	string fp = Chromaprint::Base64Encode(Chromaprint::CompressFingerprint(ctx->fingerprint));
+	string fp = Chromaprint::Base64Encode(Chromaprint::CompressFingerprint(ctx->fingerprint, ctx->algorithm));
 	*data = (char *)malloc(fp.size() + 1);
 	if (!*data) {
 		return 0;
