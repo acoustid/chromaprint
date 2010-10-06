@@ -25,10 +25,63 @@
 extern "C" {
 #endif
 
+#if (defined(_WIN32) || defined(_WIN64))
+#	ifdef CHROMAPRINT_API_EXPORTS
+#       define CHROMAPRINT_API __declspec(dllexport)
+#   else
+#       define CHROMAPRINT_API __declspec(dllimport)
+#   endif
+#else
+#   ifdef GCC_HASCLASSVISIBILITY
+#       define CHROMAPRINT_API __attribute__ ((visibility("default")))
+#   else
+#       define CHROMAPRINT_API
+#   endif
+#endif
+
 typedef void *ChromaprintContext;
 
-ChromaprintContext *chromaprint_init();
-void chromaprint_destroy(ChromaprintContext *ctx);
+#define CHROMAPRINT_VERSION_MAJOR 0
+#define CHROMAPRINT_VERSION_MINOR 1
+#define CHROMAPRINT_VERSION_PATCH 1
+
+enum ChromaprintAlgorithm {
+	CHROMAPRINT_ALGORITHM_TEST1,
+	CHROMAPRINT_ALGORITHM_TEST2
+};
+
+#define CHROMAPRINT_ALGORITHM_DEFAULT CHROMAPRINT_ALGORITHM_TEST1
+
+/**
+ * Return the version number of Chromaprint.
+ */
+CHROMAPRINT_API const char *chromaprint_get_version(void);
+
+/**
+ * Allocate and initialize the Chromaprint context.
+ *
+ * Parameters:
+ *  - version: Version of the fingerprint algorithm, use
+ *             CHROMAPRINT_VERSION_DEFAULT for the default
+ *             algorithm
+ *
+ * Returns:
+ *  - Chromaprint context pointer
+ */
+CHROMAPRINT_API ChromaprintContext *chromaprint_new(int algorithm);
+
+/**
+ * Deallocate the Chromaprint context.
+ *
+ * Parameters:
+ *  - ctx: Chromaprint context pointer
+ */
+CHROMAPRINT_API void chromaprint_free(ChromaprintContext *ctx);
+
+/**
+ * Return the fingerprint algorithm this context is configured to use.
+ */
+CHROMAPRINT_API int chromaprint_get_algorithm(ChromaprintContext *ctx);
 
 /**
  * Restart the computation of a fingerprint with a new audio stream.
@@ -41,10 +94,10 @@ void chromaprint_destroy(ChromaprintContext *ctx);
  * Returns:
  *  - 0 on error, 1 on success
  */
-int chromaprint_setup(ChromaprintContext *ctx, int sample_rate, int num_channels);
+CHROMAPRINT_API int chromaprint_start(ChromaprintContext *ctx, int sample_rate, int num_channels);
 
 /**
- * Sent audio data to the fingerprint calculator.
+ * Send audio data to the fingerprint calculator.
  *
  * Parameters:
  *  - ctx: Chromaprint context pointer
@@ -55,21 +108,51 @@ int chromaprint_setup(ChromaprintContext *ctx, int sample_rate, int num_channels
  * Returns:
  *  - 0 on error, 1 on success
  */
-int chromaprint_feed(ChromaprintContext *ctx, void *data, int size);
+CHROMAPRINT_API int chromaprint_feed(ChromaprintContext *ctx, void *data, int size);
 
 /**
- * Process the recieved audio stream and calculate the fingerprint.
+ * Process any remaining buffered audio data and calculate the fingerprint.
  *
  * Parameters:
  *  - ctx: Chromaprint context pointer
- *  - data: raw audio data, should point to an array of 16-bit signed
- *          integers in native byte-order
- *  - size: size of the data buffer 
  *
  * Returns:
  *  - 0 on error, 1 on success
  */
-int chromaprint_compute(ChromaprintContext *ctx, void **fingerprint, int **size);
+CHROMAPRINT_API int chromaprint_finish(ChromaprintContext *ctx);
+
+/**
+ * Return the calculated fingerprint as a compressed string.
+ *
+ * The returned string is allocated using malloc() and the caller
+ * is responsible for freeing the memory.
+ *
+ * Parameters:
+ *  - ctx: Chromaprint context pointer
+ *  - fingerprint: pointer to a pointer, where a pointer to the allocated array
+ *                 will be stored
+ *
+ * Returns:
+ *  - 0 on error, 1 on success
+ */
+CHROMAPRINT_API int chromaprint_get_fingerprint(ChromaprintContext *ctx, char **fingerprint);
+
+/**
+ * Return the calculated fingerprint as an array of 32-bit integers.
+ *
+ * The returned array is allocated using malloc() and the caller
+ * is responsible for freeing the memory.
+ *
+ * Parameters:
+ *  - ctx: Chromaprint context pointer
+ *  - fingerprint: pointer to a pointer, where a pointer to the allocated array
+ *                 will be stored
+ *  - size: pointer to an integer where the array size will be stored
+ *
+ * Returns:
+ *  - 0 on error, 1 on success
+ */
+CHROMAPRINT_API int chromaprint_get_raw_fingerprint(ChromaprintContext *ctx, void **fingerprint, int *size);
 
 #ifdef __cplusplus
 }

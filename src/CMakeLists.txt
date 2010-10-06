@@ -6,6 +6,7 @@ add_definitions(
 )
 
 set(chromaprint_SRCS
+	chromaprint.cpp
 	audio_processor.cpp
 	chroma.cpp
 	chroma_resampler.cpp
@@ -50,6 +51,11 @@ set(chromaprintext_SRCS
 )
 
 add_library(chromaprint SHARED ${chromaprint_SRCS})
+set_target_properties(chromaprint PROPERTIES
+    VERSION ${chromaprint_VERSION}
+    SOVERSION ${chromaprint_SOVERSION}
+    DEFINE_SYMBOL CHROMAPRINT_API_EXPORTS
+)
 target_link_libraries(chromaprint ${chromaprint_LINK_LIBS})
 
 add_library(chromaprintext STATIC ${chromaprintext_SRCS})
@@ -60,4 +66,7 @@ target_link_libraries(chromaprintext
 	${PNG_LIBRARIES}
 #	-lsox
 )
+
+install(FILES chromaprint.h DESTINATION ${INCLUDE_INSTALL_DIR})
+install(TARGETS chromaprint DESTINATION ${LIB_INSTALL_DIR})
 

@@ -21,8 +21,6 @@
 #ifndef CHROMAPRINT_AUDIO_CONSUMER_H_
 #define CHROMAPRINT_AUDIO_CONSUMER_H_
 
-#include "chromaprint.h"
-
 namespace Chromaprint
 {
 

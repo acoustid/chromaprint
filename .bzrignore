@@ -14,3 +14,5 @@ cmake_install.cmake
 ./tools/decode
 ./tools/chromagram
 ./tools/resample
+libchromaprint.pc
+install_manifest.txt
