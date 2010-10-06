@@ -41,11 +41,15 @@ def submit_data(entries):
         return True
     params = { 'user': USER_API_KEY, 'client': CLIENT_API_KEY }
     print 'Submitting...'
-    for i, entry in enumerate(entries):
+    for i, entry in enumerate(e for e in entries if e['LENGTH'] >= 40 and len(e['FINGERPRINT'])>100):
         print '  ', entry['MBID'], entry['FINGERPRINT'][:20] + '...'
         params['mbid.%d' % i] = entry['MBID']
         params['fingerprint.%d' % i] = entry['FINGERPRINT']
         params['length.%d' % i] = entry['LENGTH']
+        if 'BITRATE' in entry:
+            params['bitrate.%d' % i] = entry['BITRATE']
+        if 'FORMAT' in entry:
+            params['format.%d' % i] = entry['FORMAT']
     data = encode_params(params)
     request = urllib2.Request(API_URL, data, headers={'Content-Encoding': 'gzip'})
     try:
@@ -60,7 +64,7 @@ def submit_data(entries):
 
 
 batch = []
-for entry in read_log_file(open(sys.argv[1])):
+for entry in read_log_file(open(sys.argv[1]) if sys.argv[1] != '-' else sys.stdin):
     batch.append(entry)
     if len(batch) >= BATCH_SIZE:
         if not submit_data(batch):
