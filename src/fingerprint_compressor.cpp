@@ -71,7 +71,7 @@ void FingerprintCompressor::WriteExceptionBits()
 	m_result += writer.value();
 }
 
-std::string FingerprintCompressor::Compress(const vector<int32_t> &data)
+std::string FingerprintCompressor::Compress(const vector<int32_t> &data, int algorithm)
 {
 	if (data.size() > 0) {
 		ProcessSubfingerprint(data[0]);
@@ -81,7 +81,7 @@ std::string FingerprintCompressor::Compress(const vector<int32_t> &data)
 	}
 	int length = data.size();
 	m_result.resize(4);
-	m_result[0] = (length >> 24) & 255;
+	m_result[0] = algorithm & 255;
 	m_result[1] = (length >> 16) & 255;
 	m_result[2] = (length >>  8) & 255;
 	m_result[3] = (length      ) & 255;

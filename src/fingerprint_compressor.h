@@ -35,7 +35,7 @@ namespace Chromaprint
 	{
 	public:
 		FingerprintCompressor();
-		std::string Compress(const std::vector<int32_t> &fingerprint);
+		std::string Compress(const std::vector<int32_t> &fingerprint, int algorithm = 0);
 
 	private:
 
@@ -47,10 +47,10 @@ namespace Chromaprint
 		std::vector<char> m_bits; 
 	};
 
-	inline std::string CompressFingerprint(const std::vector<int32_t> &data)
+	inline std::string CompressFingerprint(const std::vector<int32_t> &data, int algorithm = 0)
 	{
 		FingerprintCompressor compressor;
-		return compressor.Compress(data);
+		return compressor.Compress(data, algorithm);
 	}
 
 };
