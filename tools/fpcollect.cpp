@@ -5,12 +5,16 @@
 #include <boost/algorithm/string.hpp>
 #include <fileref.h>
 #include <tag.h>
+#include "chromaprint.h"
 #include "fingerprinter.h"
+#include "fingerprinter_configuration.h"
 #include "fingerprint_compressor.h"
 #include "base64.h"
 #include "ext/ffmpeg_decoder.h"
 
 using namespace std;
+
+static const int kChromaprintAlgorithm = CHROMAPRINT_ALGORITHM_DEFAULT;
 
 typedef vector<string> string_vector;
 
@@ -226,19 +230,19 @@ bool ProcessFile(Chromaprint::Fingerprinter *fingerprinter, const string &filena
 	Decoder decoder(filename);
 	if (!decoder.Open())
 		return false;
-	if (!fingerprinter->Init(decoder.SampleRate(), decoder.Channels()))
+	if (!fingerprinter->Start(decoder.SampleRate(), decoder.Channels()))
 		return false;
 	cerr << filename << "\n";
 //	cout << "FILENAME=" << filename << "\n";
 	cout << "FORMAT=" << ExtractExtension(filename) << "\n";
-	decoder.Decode(fingerprinter, 135);
-	vector<int32_t> fp = fingerprinter->Calculate();
+	decoder.Decode(fingerprinter, 120);
+	vector<int32_t> fp = fingerprinter->Finish();
 	/*cout << "FINGERPRINT1=";
 	for (int i = 0; i < fp.size(); i++) {
 		cout << fp[i] << ", ";
 	}
 	cout << "\n";*/
-	cout << "FINGERPRINT=" << Chromaprint::Base64Encode(Chromaprint::CompressFingerprint(fp)) << "\n\n";
+	cout << "FINGERPRINT=" << Chromaprint::Base64Encode(Chromaprint::CompressFingerprint(fp, kChromaprintAlgorithm)) << "\n\n";
 	return true;
 }
 
@@ -249,7 +253,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	Chromaprint::Fingerprinter fingerprinter;
+	Chromaprint::Fingerprinter fingerprinter(Chromaprint::CreateFingerprinterConfiguration(kChromaprintAlgorithm));
 	string_vector files = FindFiles(argv[1]);
 	for (string_vector::iterator it = files.begin(); it != files.end(); it++) {
 		ProcessFile(&fingerprinter, *it);

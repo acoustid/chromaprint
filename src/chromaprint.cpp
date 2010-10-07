@@ -24,6 +24,7 @@
 #include <chromaprint.h>
 #include "fingerprinter.h"
 #include "fingerprint_compressor.h"
+#include "fingerprinter_configuration.h"
 #include "base64.h"
 
 using namespace std;
@@ -55,7 +56,7 @@ ChromaprintContext *chromaprint_new(int algorithm)
 {
 	ChromaprintContextPrivate *ctx = new ChromaprintContextPrivate();
 	ctx->algorithm = algorithm;
-	ctx->fingerprinter = new Fingerprinter();
+	ctx->fingerprinter = new Fingerprinter(CreateFingerprinterConfiguration(algorithm));
 	return (ChromaprintContext *)ctx;
 }
 
@@ -69,7 +70,7 @@ void chromaprint_free(ChromaprintContext *c)
 int chromaprint_start(ChromaprintContext *c, int sample_rate, int num_channels)
 {
 	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *)c;
-	return ctx->fingerprinter->Init(sample_rate, num_channels) ? 1 : 0;
+	return ctx->fingerprinter->Start(sample_rate, num_channels) ? 1 : 0;
 }
 
 int chromaprint_feed(ChromaprintContext *c, void *data, int length)
@@ -82,7 +83,7 @@ int chromaprint_feed(ChromaprintContext *c, void *data, int length)
 int chromaprint_finish(ChromaprintContext *c)
 {
 	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *)c;
-	ctx->fingerprint = ctx->fingerprinter->Calculate();
+	ctx->fingerprint = ctx->fingerprinter->Finish();
 	return 1;
 }
 

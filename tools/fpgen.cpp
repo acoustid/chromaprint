@@ -21,12 +21,12 @@ int main(int argc, char **argv)
 
 	Chromaprint::Fingerprinter fingerprinter;
 
-	if (!fingerprinter.Init(decoder.SampleRate(), decoder.Channels())) {
+	if (!fingerprinter.Start(decoder.SampleRate(), decoder.Channels())) {
 		return 2;
 	}
 	decoder.Decode(&fingerprinter);
 	//decoder.Decode(&fingerprinter, 60);
-	vector<int32_t> fingerprint = fingerprinter.Calculate();
+	vector<int32_t> fingerprint = fingerprinter.Finish();
 
 	for (int i = 0; i < fingerprint.size(); i++) {
 		cout << fingerprint[i] << "\n";

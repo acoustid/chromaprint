@@ -21,63 +21,104 @@
 #ifndef CHROMAPRINT_FINGERPRINTER_CONFIGURATION_H_
 #define CHROMAPRINT_FINGERPRINTER_CONFIGURATION_H_
 
-#include <stdint.h>
-#include <vector>
-#include "audio_consumer.h"
+#include "classifier.h"
+#include "chromaprint.h"
 
 namespace Chromaprint
 {
-	class Image;
-	class ImageBuilder;
-	class IntegralImage;
-	class FFT;
-	class Chroma;
-	class AudioProcessor;
-
 	class FingerprinterConfiguration
 	{
 	public:	
+
 		FingerprinterConfiguration()
-			: m_classifiers(0), m_num_classifiers(0)
-		{}
+			: m_num_classifiers(0), m_classifiers(0)
+		{
+		}
 
-		virtual ~FingerprinterConfiguration() {}
+		int num_filter_coefficients() const
+		{
+			return m_num_filter_coefficients;
+		}
 
-		virtual CreatePipeline(ImageBuilder *image_builder);
+		const double *filter_coefficients() const
+		{
+			return m_filter_coefficients;
+		}
 
-		/**
-		 * Initialize the fingerprinting process.
-		 */
-		void Init(int length, int sample_rate, bool stereo);
-
-		/**
-		 * Process a block of raw audio data. Call this method as many times
-		 * as you need. 
-		 */
-		void Consume(short *input, int length);
+		void set_filter_coefficients(const double *filter_coefficients, int size)
+		{
+			m_filter_coefficients = filter_coefficients;
+			m_num_filter_coefficients = size;
+		}
 
 		int num_classifiers() const
 		{
 			return m_num_classifiers;
 		}
 
-		const Classifier &classifier(int i) const
+		const Classifier *classifiers() const
 		{
-			return m_classifiers[i];
+			return m_classifiers;
 		}
 
-	protected:
-		FingerprinterConfiguration(const Classifier *classifiers, int num_classifiers)
-			: m_classifiers(classifiers), m_num_classifiers(num_classifiers)
-		{}
+		void set_classifiers(const Classifier *classifiers, int size)
+		{
+			m_classifiers = classifiers;
+			m_num_classifiers = size;
+		}
+
+		bool interpolate() const 
+		{
+			return m_interpolate;
+		}
+
+		void set_interpolate(bool value)
+		{
+			m_interpolate = value;
+		}
 
 	private:
 		int m_num_classifiers;
 		const Classifier *m_classifiers;
-		Chroma *m_chroma;
-		FFT *m_fft;
-		AudioProcessor *m_audio_processor;
+		int m_num_filter_coefficients;
+		const double *m_filter_coefficients;
+		bool m_interpolate;
 	};
+
+	// Used for http://oxygene.sk/lukas/2010/07/introducing-chromaprint/
+	// Trained on a randomly selected test data
+	class FingerprinterConfigurationTest1 : public FingerprinterConfiguration
+	{
+	public:
+		FingerprinterConfigurationTest1();
+	};
+
+	// Trained on 60k pairs based on eMusic samples (mp3)
+	class FingerprinterConfigurationTest2 : public FingerprinterConfiguration
+	{
+	public:
+		FingerprinterConfigurationTest2();
+	};
+
+	// Trained on 60k pairs based on eMusic samples with interpolation enabled (mp3)
+	class FingerprinterConfigurationTest3 : public FingerprinterConfiguration
+	{
+	public:
+		FingerprinterConfigurationTest3();
+	};
+
+	inline FingerprinterConfiguration *CreateFingerprinterConfiguration(int algorithm)
+	{
+		switch (algorithm) {
+		case CHROMAPRINT_ALGORITHM_TEST1:
+			return new FingerprinterConfigurationTest1();
+		case CHROMAPRINT_ALGORITHM_TEST2:
+			return new FingerprinterConfigurationTest2();
+		case CHROMAPRINT_ALGORITHM_TEST3:
+			return new FingerprinterConfigurationTest3();
+		}
+		return 0;
+	}
 
 };
 

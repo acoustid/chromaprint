@@ -21,6 +21,7 @@ set(chromaprint_SRCS
 	silence_remover.cpp
 	fingerprint_calculator.cpp
 	fingerprint_compressor.cpp
+	fingerprinter_configuration.cpp
 	base64.cpp
 	avresample/resample2.c
 )

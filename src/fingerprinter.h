@@ -36,17 +36,18 @@ namespace Chromaprint
 	class ChromaFilter;
 	class AudioProcessor;
 	class FingerprintCalculator;
+	class FingerprinterConfiguration;
 
 	class Fingerprinter : public AudioConsumer
 	{
 	public:
-		Fingerprinter();
+		Fingerprinter(FingerprinterConfiguration *config = 0);
 		~Fingerprinter();
 
 		/**
 		 * Initialize the fingerprinting process.
 		 */
-		bool Init(int sample_rate, int num_channels);
+		bool Start(int sample_rate, int num_channels);
 
 		/**
 		 * Process a block of raw audio data. Call this method as many times
@@ -57,7 +58,7 @@ namespace Chromaprint
 		/**
 		 * Calculate the fingerprint based on the provided audio data.
 		 */
-		std::vector<int32_t> Calculate();
+		std::vector<int32_t> Finish();
 
 	private:
 		Image m_image;
@@ -68,6 +69,7 @@ namespace Chromaprint
 		FFT *m_fft;
 		AudioProcessor *m_audio_processor;
 		FingerprintCalculator *m_fingerprint_calculator;
+		FingerprinterConfiguration *m_config;
 	};
 
 };

@@ -109,9 +109,9 @@ int main(int argc, char **argv)
 			cerr << "ERROR: " << decoder.LastError() << "\n";
 			return 1;
 		}
-		fingerprinter.Init(decoder.SampleRate(), decoder.Channels());
+		fingerprinter.Start(decoder.SampleRate(), decoder.Channels());
 		decoder.Decode(&fingerprinter, 60);
-		vector<int32_t> fp = fingerprinter.Calculate();
+		vector<int32_t> fp = fingerprinter.Finish();
 		int orig = files[i].find("orig") != string::npos ? 1 : 0;
 		fingerprints[orig].push_back(fp);
 		names[orig].push_back(files[i]);
