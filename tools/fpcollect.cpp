@@ -18,7 +18,7 @@ static const int kChromaprintAlgorithm = CHROMAPRINT_ALGORITHM_DEFAULT;
 
 typedef vector<string> string_vector;
 
-void FindFiles(const string &dirname, string_vector *result)
+void FindFiles(const string &dirname, string_vector *result, time_t changed_since)
 {
 	DIR *dirp = opendir(dirname.c_str());
 	while (dirp) {
@@ -28,10 +28,13 @@ void FindFiles(const string &dirname, string_vector *result)
 			string filename = dirname + '/' + string(dp->d_name); 
 			stat(filename.c_str(), &sp);
 			if (S_ISREG(sp.st_mode)) {
-				result->push_back(filename);
+				//cerr << "file " << filename << " mtime=" << sp.st_mtime << " ch=" << changed_since << "\n";
+				if (!changed_since || sp.st_mtime >= changed_since) {
+					result->push_back(filename);
+				}
 			}
 			if (S_ISDIR(sp.st_mode) && dp->d_name[0] != '.') {
-				FindFiles(filename, result);
+				FindFiles(filename, result, changed_since);
 			}
 		}
 		else {
@@ -41,10 +44,10 @@ void FindFiles(const string &dirname, string_vector *result)
     closedir(dirp);
 }
 
-string_vector FindFiles(const char *dirname)
+string_vector FindFiles(const char *dirname, time_t changed_since)
 {
 	string_vector result;
-	FindFiles(dirname, &result);
+	FindFiles(dirname, &result, changed_since);
 	sort(result.begin(), result.end());
 	return result;
 }
@@ -249,12 +252,30 @@ bool ProcessFile(Chromaprint::Fingerprinter *fingerprinter, const string &filena
 int main(int argc, char **argv)
 {
 	if (argc < 2) {
-		cerr << "Usage: " << argv[0] << " DIR\n";
+		cerr << "Usage: " << argv[0] << " DIR [DATE]\n";
 		return 1;
 	}
 
+	time_t changed_since = 0;
+	if (argc > 2) {
+		struct tm tm;
+		memset(&tm, 0, sizeof(tm));
+		if (strptime(argv[2], "%Y-%m-%d %H:%M", &tm) == NULL) {
+			if (strptime(argv[2], "%Y-%m-%d", &tm) == NULL) {
+				cerr << "ERROR: Invalid date, the expected format is 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM'\n";
+				return 1;
+			}
+		}
+		tm.tm_isdst = -1;
+		changed_since = mktime(&tm);
+		cerr << "Calculating fingerprints for files in " << argv[1] << " that were changed since " << argv[2] << "\n";
+	}
+	else {
+		cerr << "Calculating fingerprints for all files in " << argv[1] << "\n";
+	}
+
 	Chromaprint::Fingerprinter fingerprinter(Chromaprint::CreateFingerprinterConfiguration(kChromaprintAlgorithm));
-	string_vector files = FindFiles(argv[1]);
+	string_vector files = FindFiles(argv[1], changed_since);
 	for (string_vector::iterator it = files.begin(); it != files.end(); it++) {
 		ProcessFile(&fingerprinter, *it);
 	}
