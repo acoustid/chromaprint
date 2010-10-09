@@ -85,10 +85,8 @@ batch = []
 for entry in read_log_file(open(args[0]) if args[0] != '-' else sys.stdin):
     batch.append(entry)
     if len(batch) >= BATCH_SIZE:
-        if not submit_data(batch):
-            raise SystemExit(1)
+        submit_data(batch)
         batch = []
         time.sleep(0.1)
-if not submit_data(batch):
-    raise SystemExit(1)
+submit_data(batch)
 
