@@ -1,16 +1,34 @@
 #!/usr/bin/env python
 
+import time
 import sys
 import urllib2
 import urllib
 import gzip
 from cStringIO import StringIO
+from optparse import OptionParser
 
-USER_API_KEY = ''
-CLIENT_API_KEY = ''
+
+usage = "usage: %prog [options] logfile"
+parser = OptionParser(usage=usage)
+parser.add_option("-a", "--api-key", dest="api_key", metavar="KEY",
+                  help="your Acoustid API key (http://acoustid.org/api-key)")
+parser.add_option("-b", "--batch-size", dest="batch_size", type="int",
+                  default=50, metavar="SIZE",
+                  help="how many fingerprints to submit in one request [default: %default]")
+
+(options, args) = parser.parse_args()
+if not options.api_key:
+    parser.error("no API key specified")
+if len(args) != 1:
+    parser.error("no log file specified")
+
+
+USER_API_KEY = options.api_key
+CLIENT_API_KEY = '5hOby2eZ'
 API_URL = 'http://api.acoustid.org/submit'
 #API_URL = 'http://127.0.0.1:8080/submit'
-BATCH_SIZE = 50
+BATCH_SIZE = options.batch_size
 
 
 def read_log_file(input):
@@ -64,12 +82,13 @@ def submit_data(entries):
 
 
 batch = []
-for entry in read_log_file(open(sys.argv[1]) if sys.argv[1] != '-' else sys.stdin):
+for entry in read_log_file(open(args[0]) if args[0] != '-' else sys.stdin):
     batch.append(entry)
     if len(batch) >= BATCH_SIZE:
         if not submit_data(batch):
             raise SystemExit(1)
         batch = []
+        time.sleep(0.1)
 if not submit_data(batch):
     raise SystemExit(1)
 
