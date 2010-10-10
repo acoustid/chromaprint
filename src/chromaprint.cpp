@@ -96,6 +96,7 @@ int chromaprint_get_fingerprint(ChromaprintContext *c, char **data)
 		return 0;
 	}
 	copy(fp.begin(), fp.end(), *data);
+	(*data)[fp.size()] = 0;
 	return 1;
 }
 
