@@ -16,6 +16,11 @@ parser.add_option("-a", "--api-key", dest="api_key", metavar="KEY",
 parser.add_option("-b", "--batch-size", dest="batch_size", type="int",
                   default=50, metavar="SIZE",
                   help="how many fingerprints to submit in one request [default: %default]")
+parser.add_option("--app-url", dest="app_url", type="string",
+                  default='http://api.acoustid.org/submit',
+                  help="how many fingerprints to submit in one request [default: %default]")
+parser.add_option("--app-api-key", dest="app_api_key", type="string", default='5hOby2eZ',
+                  help="application API key (needed only if you submit to a non-default URL)")
 
 (options, args) = parser.parse_args()
 if not options.api_key:
@@ -25,9 +30,8 @@ if len(args) != 1:
 
 
 USER_API_KEY = options.api_key
-CLIENT_API_KEY = '5hOby2eZ'
-API_URL = 'http://api.acoustid.org/submit'
-#API_URL = 'http://127.0.0.1:8080/submit'
+CLIENT_API_KEY = options.app_api_key
+API_URL = options.app_url
 BATCH_SIZE = options.batch_size
 
 
@@ -76,6 +80,9 @@ def submit_data(entries):
         print e
         for line in e.readlines():
             print line.rstrip()
+        return False
+    except urllib2.URLError, e:
+        print e
         return False
     print 'OK'
     return True
