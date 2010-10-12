@@ -108,7 +108,7 @@ int chromaprint_get_raw_fingerprint(ChromaprintContext *c, void **data, int *siz
 		return 0;
 	}
 	*size = ctx->fingerprint.size();
-	copy(ctx->fingerprint.begin(), ctx->fingerprint.end(), (int32_t *)(*data));
+	copy(ctx->fingerprint.begin(), ctx->fingerprint.end(), *((int32_t **)data));
 	return 1;
 }
 
