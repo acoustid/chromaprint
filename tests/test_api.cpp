@@ -24,7 +24,7 @@ TEST(API, Test2SilenceFp)
 	chromaprint_get_fingerprint(ctx, &fp);
 
 	ASSERT_EQ(18, strlen(fp));
-	EXPECT_EQ(string("AQAAAkmUaEkSRZEGAA"), string(fp));
+	EXPECT_EQ(string("AQAAA0mUaEkSRZEGAA"), string(fp));
 }
 
 TEST(API, Test2SilenceRawFp)
@@ -44,7 +44,8 @@ TEST(API, Test2SilenceRawFp)
 	chromaprint_finish(ctx);
 	chromaprint_get_raw_fingerprint(ctx, (void **)&fp, &length);
 
-	ASSERT_EQ(2, length);
+	ASSERT_EQ(3, length);
 	EXPECT_EQ(627964279, fp[0]);
 	EXPECT_EQ(627964279, fp[1]);
+	EXPECT_EQ(627964279, fp[2]);
 }

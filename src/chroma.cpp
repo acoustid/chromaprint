@@ -23,6 +23,7 @@
 #include "fft_frame.h"
 #include "utils.h"
 #include "chroma.h"
+#include "debug.h"
 
 using namespace std;
 using namespace Chromaprint;

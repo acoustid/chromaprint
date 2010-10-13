@@ -22,6 +22,7 @@
 #include "utils.h"
 #include "fft_lib.h"
 #include "fft.h"
+#include "debug.h"
 
 using namespace std;
 using namespace Chromaprint;
