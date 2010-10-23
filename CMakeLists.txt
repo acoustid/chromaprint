@@ -24,6 +24,7 @@ check_function_exists(lrintf HAVE_LRINTF)
 
 add_definitions(-DHAVE_CONFIG_H)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 set(LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)")
 set(EXEC_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} CACHE PATH "Installation prefix for executables and object code libraries" FORCE)
