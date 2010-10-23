@@ -81,7 +81,7 @@ string_vector FindFiles(const char *dirname, time_t changed_since)
 string ExtractMBIDFromXiphComment(TagLib::Ogg::XiphComment *tag)
 {
 	string key = "MUSICBRAINZ_TRACKID"; 
-	if (tag->fieldListMap().contains(key)) {
+	if (tag && tag->fieldListMap().contains(key)) {
 		return tag->fieldListMap()[key].front().to8Bit(true);
 	}
 	return string();
@@ -90,7 +90,7 @@ string ExtractMBIDFromXiphComment(TagLib::Ogg::XiphComment *tag)
 string ExtractMBIDFromAPETag(TagLib::APE::Tag *tag)
 {
 	string key = "MUSICBRAINZ_TRACKID";
-	if (tag->itemListMap().contains(key)) {
+	if (tag && tag->itemListMap().contains(key)) {
 		return tag->itemListMap()[key].toString().to8Bit(true);
 	}
 	return string();
@@ -136,7 +136,7 @@ string ExtractMBIDFromFile(TagLib::ASF::File *file)
 {
 	string key = "MusicBrainz/Track Id";
 	TagLib::ASF::Tag *tag = file->tag();
-	if (tag->attributeListMap().contains(key)) {
+	if (tag && tag->attributeListMap().contains(key)) {
 		return tag->attributeListMap()[key].front().toString().to8Bit(true);
 	}
 	return string();
@@ -148,7 +148,7 @@ string ExtractMBIDFromFile(TagLib::MP4::File *file)
 {
 	string key = "----:com.apple.iTunes:MusicBrainz Track Id";
 	TagLib::MP4::Tag *tag = file->tag();
-	if (tag->itemListMap().contains(key)) {
+	if (tag && tag->itemListMap().contains(key)) {
 		return tag->itemListMap()[key].toStringList().toString().to8Bit(true);
 	}
 	return string();
@@ -158,6 +158,9 @@ string ExtractMBIDFromFile(TagLib::MP4::File *file)
 string ExtractMBIDFromFile(TagLib::MPEG::File *file)
 {
 	TagLib::ID3v2::Tag *tag = file->ID3v2Tag();
+	if (!tag) {
+		return string();
+	}
 	TagLib::ID3v2::FrameList ufid = tag->frameListMap()["UFID"];
 	if (!ufid.isEmpty()) {
 		for (TagLib::ID3v2::FrameList::Iterator i = ufid.begin(); i != ufid.end(); i++) {
