@@ -9,7 +9,7 @@ Homepage: http://wiki.acoustid.org/wiki/Chromaprint
 Package: libchromaprint-dev
 Section: libdevel
 Architecture: any
-Depends: libchromaprint0 (= ${binary:Version})
+Depends: libchromaprint0 (= ${binary:Version}), ${misc:Depends}
 Description: audio fingerprinting library
  Chromaprint is a library for calculating audio fingerprints
  which are used by the Acoustid service.
