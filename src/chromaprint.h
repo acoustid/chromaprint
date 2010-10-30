@@ -43,7 +43,7 @@ typedef void *ChromaprintContext;
 
 #define CHROMAPRINT_VERSION_MAJOR 0
 #define CHROMAPRINT_VERSION_MINOR 1
-#define CHROMAPRINT_VERSION_PATCH 1
+#define CHROMAPRINT_VERSION_PATCH 0
 
 enum ChromaprintAlgorithm {
 	CHROMAPRINT_ALGORITHM_TEST1 = 0,
@@ -63,7 +63,7 @@ CHROMAPRINT_API const char *chromaprint_get_version(void);
  *
  * Parameters:
  *  - version: Version of the fingerprint algorithm, use
- *             CHROMAPRINT_VERSION_DEFAULT for the default
+ *             CHROMAPRINT_ALGORITHM_DEFAULT for the default
  *             algorithm
  *
  * Returns:
