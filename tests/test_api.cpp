@@ -49,3 +49,51 @@ TEST(API, Test2SilenceRawFp)
 	EXPECT_EQ(627964279, fp[1]);
 	EXPECT_EQ(627964279, fp[2]);
 }
+
+TEST(API, TestEncodeFingerprint)
+{
+	int32_t fingerprint[] = { 1, 0 };
+	char expected[] = { 55, 0, 0, 2, 65, 0 };
+
+	char *encoded;
+	int encoded_size;
+	chromaprint_encode_fingerprint(fingerprint, 2, 55, (void **)&encoded, &encoded_size, 0);
+
+	ASSERT_EQ(6, encoded_size);
+	for (int i = 0; i < encoded_size; i++) {
+		ASSERT_EQ(expected[i], encoded[i]) << "Different at " << i;
+	}
+
+	free(encoded);
+}
+
+TEST(API, TestEncodeFingerprintBase64)
+{
+	int32_t fingerprint[] = { 1, 0 };
+	char expected[] = "NwAAAkEA";
+
+	char *encoded;
+	int encoded_size;
+	chromaprint_encode_fingerprint(fingerprint, 2, 55, (void **)&encoded, &encoded_size, 1);
+
+	ASSERT_EQ(8, encoded_size);
+	ASSERT_STREQ(expected, encoded);
+
+	free(encoded);
+}
+
+TEST(API, TestDecodeFingerprint)
+{
+	char data[] = { 55, 0, 0, 2, 65, 0 };
+
+	int32_t *fingerprint;
+	int size;
+	int algorithm;
+	chromaprint_decode_fingerprint(data, 6, (void **)&fingerprint, &size, &algorithm, 0);
+
+	ASSERT_EQ(2, size);
+	ASSERT_EQ(55, algorithm);
+	ASSERT_EQ(1, fingerprint[0]);
+	ASSERT_EQ(0, fingerprint[1]);
+}
+

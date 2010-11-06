@@ -141,19 +141,67 @@ CHROMAPRINT_API int chromaprint_get_fingerprint(ChromaprintContext *ctx, char **
 /**
  * Return the calculated fingerprint as an array of 32-bit integers.
  *
- * The returned array is allocated using malloc() and the caller
+ * The returned pointer is allocated using malloc() and the caller
  * is responsible for freeing the memory.
  *
  * Parameters:
  *  - ctx: Chromaprint context pointer
  *  - fingerprint: pointer to a pointer, where a pointer to the allocated array
  *                 will be stored
- *  - size: pointer to an integer where the array size will be stored
+ *  - size: number of items in the returned raw fingerprint
  *
  * Returns:
  *  - 0 on error, 1 on success
  */
 CHROMAPRINT_API int chromaprint_get_raw_fingerprint(ChromaprintContext *ctx, void **fingerprint, int *size);
+
+/*
+ * Compress and optionally base64-encode a raw fingerprint
+ *
+ * The returned pointer is allocated using malloc() and the caller
+ * is responsible for freeing the memory.
+ *
+ * Parameters:
+ *  - fp: pointer to an array of 32-bit integers representing the raw
+ *        fingerprint to be encoded
+ *  - size: number of items in the raw fingerprint
+ *  - algorithm: Chromaprint algorithm version which was used to generate the
+ *               raw fingerprint
+ *  - encoded_fp: pointer to a pointer, where the encoded fingerprint will be
+ *                stored
+ *  - encoded_size: size of the encoded fingerprint in bytes
+ *  - base64: Whether to return binary data or base64-encoded ASCII data. The
+ *            compressed fingerprint will be encoded using base64 with the
+ *            URL-safe scheme if you set this parameter to 1. It will return
+ *            binary data if it's 0.
+ *
+ * Returns:
+ *  - 0 on error, 1 on success
+ */
+CHROMAPRINT_API int chromaprint_encode_fingerprint(void *fp, int size, int algorithm, void **encoded_fp, int *encoded_size, int base64);
+
+/*
+ * Uncompress and optionally base64-decode an encoded fingerprint
+ *
+ * The returned pointer is allocated using malloc() and the caller
+ * is responsible for freeing the memory.
+ *
+ * Parameters:
+ *  - encoded_fp: Pointer to an encoded fingerprint
+ *  - encoded_size: Size of the encoded fingerprint in bytes
+ *  - fp: Pointer to a pointer, where the decoded raw fingerprint (array
+ *        of 32-bit integers) will be stored
+ *  - size: Number of items in the returned raw fingerprint
+ *  - algorithm: Chromaprint algorithm version which was used to generate the
+ *               raw fingerprint
+ *  - base64: Whether the encoded_fp parameter contains binary data or
+ *            base64-encoded ASCII data. If 1, it will base64-decode the data
+ *            before uncompressing the fingerprint.
+ *
+ * Returns:
+ *  - 0 on error, 1 on success
+ */
+CHROMAPRINT_API int chromaprint_decode_fingerprint(void *encoded_fp, int encoded_size, void **fp, int *size, int *algorithm, int base64);
 
 #ifdef __cplusplus
 }
