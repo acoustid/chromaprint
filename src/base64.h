@@ -27,6 +27,7 @@ namespace Chromaprint
 {
 
 	std::string Base64Encode(const std::string &str);
+	std::string Base64Decode(const std::string &encoded);
 
 };
 
