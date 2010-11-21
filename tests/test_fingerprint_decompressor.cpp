@@ -8,8 +8,6 @@
 using namespace std;
 using namespace Chromaprint;
 
-#define NELEMS(x) (sizeof(x)/sizeof(x[0]))
-
 TEST(FingerprintDecompressor, OneItemOneBit)
 {
 	int32_t expected[] = { 1 };

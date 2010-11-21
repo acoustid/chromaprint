@@ -136,7 +136,6 @@ int chromaprint_decode_fingerprint(void *encoded_fp, int encoded_size, void **fp
 	string encoded = string((char *)encoded_fp, encoded_size);
 	string compressed = base64 ? Chromaprint::Base64Decode(encoded) : encoded;
 	vector<int32_t> uncompressed = Chromaprint::DecompressFingerprint(compressed, algorithm);
-
 	*fp = malloc(sizeof(int32_t) * uncompressed.size());
 	*size = uncompressed.size();	
 	copy(uncompressed.begin(), uncompressed.end(), (int32_t *)*fp);

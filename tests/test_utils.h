@@ -5,6 +5,8 @@
 #include <fstream>
 #include <string>
 
+#define NELEMS(x) (sizeof(x)/sizeof(x[0]))
+
 inline void CheckString(std::string actual, char *expected, int expected_size)
 {
 	ASSERT_EQ(expected_size, actual.size());

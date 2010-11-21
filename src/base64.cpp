@@ -19,8 +19,10 @@
  */
 
 #include <algorithm>
+#include <assert.h>
 #include "base64.h"
 #include "bit_string_writer.h"
+#include "debug.h"
 
 using namespace std;
 using namespace Chromaprint;
@@ -70,15 +72,19 @@ string Chromaprint::Base64Decode(const string &encoded)
 		if (--size) {
 			int b1 = kBase64CharsReversed[*src++];
 			int r = (b0 << 2) | (b1 >> 4);
+			assert(dest != str.end());
 			*dest++ = r;
 			if (--size) {
 				int b2 = kBase64CharsReversed[*src++];
 				r = ((b1 << 4) & 255) | (b2 >> 2);
+				assert(dest != str.end());
 				*dest++ = r;
 				if (--size) {
 					int b3 = kBase64CharsReversed[*src++];
 					r = ((b2 << 6) & 255) | b3;
+					assert(dest != str.end());
 					*dest++ = r;
+					--size;
 				}
 			}
 		}
