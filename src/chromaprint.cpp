@@ -143,4 +143,9 @@ int chromaprint_decode_fingerprint(void *encoded_fp, int encoded_size, void **fp
 	return 0;
 }
 
+void chromaprint_dealloc(void *ptr)
+{
+	free(ptr);
+}
+
 }

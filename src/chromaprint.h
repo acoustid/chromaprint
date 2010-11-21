@@ -125,8 +125,8 @@ CHROMAPRINT_API int chromaprint_finish(ChromaprintContext *ctx);
 /**
  * Return the calculated fingerprint as a compressed string.
  *
- * The returned string is allocated using malloc() and the caller
- * is responsible for freeing the memory.
+ * The caller is responsible for freeing the returned pointer using
+ * chromaprint_dealloc().
  *
  * Parameters:
  *  - ctx: Chromaprint context pointer
@@ -141,8 +141,8 @@ CHROMAPRINT_API int chromaprint_get_fingerprint(ChromaprintContext *ctx, char **
 /**
  * Return the calculated fingerprint as an array of 32-bit integers.
  *
- * The returned pointer is allocated using malloc() and the caller
- * is responsible for freeing the memory.
+ * The caller is responsible for freeing the returned pointer using
+ * chromaprint_dealloc().
  *
  * Parameters:
  *  - ctx: Chromaprint context pointer
@@ -155,11 +155,11 @@ CHROMAPRINT_API int chromaprint_get_fingerprint(ChromaprintContext *ctx, char **
  */
 CHROMAPRINT_API int chromaprint_get_raw_fingerprint(ChromaprintContext *ctx, void **fingerprint, int *size);
 
-/*
+/**
  * Compress and optionally base64-encode a raw fingerprint
  *
- * The returned pointer is allocated using malloc() and the caller
- * is responsible for freeing the memory.
+ * The caller is responsible for freeing the returned pointer using
+ * chromaprint_dealloc().
  *
  * Parameters:
  *  - fp: pointer to an array of 32-bit integers representing the raw
@@ -180,11 +180,11 @@ CHROMAPRINT_API int chromaprint_get_raw_fingerprint(ChromaprintContext *ctx, voi
  */
 CHROMAPRINT_API int chromaprint_encode_fingerprint(void *fp, int size, int algorithm, void **encoded_fp, int *encoded_size, int base64);
 
-/*
+/**
  * Uncompress and optionally base64-decode an encoded fingerprint
  *
- * The returned pointer is allocated using malloc() and the caller
- * is responsible for freeing the memory.
+ * The caller is responsible for freeing the returned pointer using
+ * chromaprint_dealloc().
  *
  * Parameters:
  *  - encoded_fp: Pointer to an encoded fingerprint
@@ -202,6 +202,14 @@ CHROMAPRINT_API int chromaprint_encode_fingerprint(void *fp, int size, int algor
  *  - 0 on error, 1 on success
  */
 CHROMAPRINT_API int chromaprint_decode_fingerprint(void *encoded_fp, int encoded_size, void **fp, int *size, int *algorithm, int base64);
+
+/**
+ * Free memory allocated by any function from the Chromaprint API.
+ *
+ * Parameters:
+ *  - ptr: Pointer to be deallocated
+ */
+CHROMAPRINT_API void chromaprint_dealloc(void *ptr);
 
 #ifdef __cplusplus
 }
