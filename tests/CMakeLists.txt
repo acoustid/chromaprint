@@ -13,6 +13,7 @@ set(tests_SOURCES
 	test_integral_image.cpp
 	test_lloyds.cpp
 	test_audio_processor.cpp
+	test_bit_string_reader.cpp
 	test_bit_string_writer.cpp
 	test_chromaprint.cpp
 	test_chroma.cpp
@@ -32,7 +33,7 @@ target_link_libraries(all_tests
 )
 
 add_custom_target(check
-	./all_tests
+	./all_tests $ENV{GTEST_FLAGS}
 	DEPENDS all_tests
 )
 
