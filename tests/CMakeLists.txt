@@ -20,6 +20,7 @@ set(tests_SOURCES
 	test_chroma_filter.cpp
 	test_chroma_resampler.cpp
 	test_fingerprint_compressor.cpp
+	test_fingerprint_decompressor.cpp
 	test_fingerprint_calculator.cpp
 	test_filter.cpp
 	test_silence_remover.cpp

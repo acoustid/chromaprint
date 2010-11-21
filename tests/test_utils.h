@@ -13,6 +13,14 @@ inline void CheckString(std::string actual, char *expected, int expected_size)
 	}
 }
 
+inline void CheckFingerprints(std::vector<int32_t> actual, int32_t *expected, int expected_size)
+{
+	ASSERT_EQ(expected_size, actual.size());
+	for (int i = 0; i < expected_size; i++) {
+		EXPECT_EQ(expected[i], actual[i]) << "Different at index " << i;
+	}
+}
+
 inline std::vector<short> LoadAudioFile(const std::string &file_name)
 {
 	std::ifstream file(file_name.c_str(), std::ifstream::in);

@@ -18,50 +18,37 @@
  * USA
  */
 
-#ifndef CHROMAPRINT_BIT_STRING_READER_H_
-#define CHROMAPRINT_BIT_STRING_READER_H_
+#ifndef CHROMAPRINT_FINGERPRINT_COMPRESSOR_H_
+#define CHROMAPRINT_FINGERPRINT_COMPRESSOR_H_
 
 #include <stdint.h>
+#include <vector>
 #include <string>
-#include "debug.h"
+#include "bit_string_reader.h"
 
 namespace Chromaprint
 {
-	class BitStringReader
+	class FingerprintDecompressor
 	{
 	public:
-		BitStringReader(const std::string &input) : m_buffer(0), m_buffer_size(0), m_value(input)
-		{
-			m_value_iter = m_value.begin();
-		}
-
-		uint32_t Read(int bits)
-		{
-			if (m_buffer_size < bits) {
-				if (m_value_iter != m_value.end()) {
-					m_buffer |= (unsigned char)(*m_value_iter++) << m_buffer_size;
-					m_buffer_size += 8;
-				}
-			}
-			uint32_t result = m_buffer & ((1 << bits) - 1);
-			m_buffer >>= bits;
-			m_buffer_size -= bits;
-			return result;
-		}
-
-		void Reset()
-		{
-			m_buffer = 0;
-			m_buffer_size = 0;
-		}
+		FingerprintDecompressor();
+		std::vector<int32_t> Decompress(const std::string &fingerprint, int *algorithm = 0);
 
 	private:
 
-		std::string m_value;
-		std::string::iterator m_value_iter;
-		uint32_t m_buffer;
-		int m_buffer_size;
+		void ReadNormalBits(BitStringReader *reader);
+		void ReadExceptionBits(BitStringReader *reader);
+		void UnpackBits();
+
+		std::vector<int32_t> m_result;
+		std::vector<char> m_bits;
 	};
+
+	inline std::vector<int32_t> DecompressFingerprint(const std::string &data, int *algorithm = 0)
+	{
+		FingerprintDecompressor decompressor;
+		return decompressor.Decompress(data, algorithm);
+	}
 
 };
 
