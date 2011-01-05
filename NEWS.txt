@@ -1,0 +1,14 @@
+Version 0.2 -- January 6, 2011
+==============================
+
+ - New public functions chromaprint_{encode,decode}_fingerprint to
+   encoding/decoding raw fingerprints.
+ - New public function chromaprint_dealloc that should be used for
+   releasing all memory allocated in Chromaprint functions.
+ - Extended fpcollect to allow processing files with MBIDs.
+
+Version 0.1 -- October 30, 2010
+===============================
+
+ - Initial release
+
