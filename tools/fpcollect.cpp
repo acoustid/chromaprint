@@ -192,7 +192,7 @@ string ExtractMusicBrainzTrackID(TagLib::File *file)
 	return string();
 }
 
-bool ReadTags(const string &filename)
+bool ReadTags(const string &filename, bool ignore_missing_mbid)
 {
 	TagLib::FileRef file(filename.c_str(), true);
 	if (file.isNull())
@@ -205,12 +205,14 @@ bool ReadTags(const string &filename)
 	//cout << "TITLE=" << tags->title().to8Bit(true) << "\n";
 	//cout << "ALBUM=" << tags->album().to8Bit(true) << "\n";
 	int length = props->length();
-	string mbid = ExtractMusicBrainzTrackID(file.file());
-	if (!length || mbid.size() != 36)
+	if (!length)
 		return false;
+	string mbid = ExtractMusicBrainzTrackID(file.file());
+	if (mbid.size() != 36 && !ignore_missing_mbid)
+		return false;
+	cout << "MBID=" << mbid << "\n";
 	cout << "LENGTH=" << length << "\n";
 	cout << "BITRATE=" << props->bitrate() << "\n";
-	cout << "MBID=" << mbid << "\n";
 	return true;
 }
 
@@ -229,9 +231,9 @@ string EncodeFingerprint(const vector<uint32_t> &fp)
 	res.resize(fp.size());
 }
 
-bool ProcessFile(Chromaprint::Fingerprinter *fingerprinter, const string &filename)
+bool ProcessFile(Chromaprint::Fingerprinter *fingerprinter, const string &filename, bool ignore_missing_mbid, int audio_length)
 {
-	if (!ReadTags(filename))
+	if (!ReadTags(filename, ignore_missing_mbid))
 		return false;
 	Decoder decoder(filename);
 	if (!decoder.Open())
@@ -239,9 +241,9 @@ bool ProcessFile(Chromaprint::Fingerprinter *fingerprinter, const string &filena
 	if (!fingerprinter->Start(decoder.SampleRate(), decoder.Channels()))
 		return false;
 	cerr << filename << "\n";
-//	cout << "FILENAME=" << filename << "\n";
+	cout << "FILENAME=" << filename << "\n";
 	cout << "FORMAT=" << ExtractExtension(filename) << "\n";
-	decoder.Decode(fingerprinter, 120);
+	decoder.Decode(fingerprinter, audio_length);
 	vector<int32_t> fp = fingerprinter->Finish();
 	/*cout << "FINGERPRINT1=";
 	for (int i = 0; i < fp.size(); i++) {
@@ -255,16 +257,39 @@ bool ProcessFile(Chromaprint::Fingerprinter *fingerprinter, const string &filena
 int main(int argc, char **argv)
 {
 	if (argc < 2) {
-		cerr << "Usage: " << argv[0] << " DIR [DATE]\n";
+		cerr << "Usage: " << argv[0] << " [OPTIONS] DIR\n";
+		cerr << "Options:\n";
+		cerr << " -nombid            Do not require a MBID embedded in the file\n";
+		cerr << " -since [date]      Process only files modified since the given date\n";
+		cerr << " -length [seconds]  Length of the audio data used for fingerprinting (default 120)\n";
 		return 1;
 	}
 
+	char *directory = NULL;
+	char *changed_since_str = NULL;
+	int audio_length = 120;
+	bool ignore_missing_mbid = false;
+	for (int i = 1; i < argc; i++) {
+		if (strcmp(argv[i], "-nombid") == 0) {
+			ignore_missing_mbid = true;
+		}
+		else if (strcmp(argv[i], "-since") == 0 && i + 1 < argc) {
+			changed_since_str = argv[++i];
+		}
+		else if (strcmp(argv[i], "-length") == 0 && i + 1 < argc) {
+			audio_length = atoi(argv[++i]);
+		}
+		else {
+			directory = argv[i];
+		}
+	}
+
 	time_t changed_since = 0;
-	if (argc > 2) {
+	if (changed_since_str) {
 		struct tm tm;
 		memset(&tm, 0, sizeof(tm));
-		if (strptime(argv[2], "%Y-%m-%d %H:%M", &tm) == NULL) {
-			if (strptime(argv[2], "%Y-%m-%d", &tm) == NULL) {
+		if (strptime(changed_since_str, "%Y-%m-%d %H:%M", &tm) == NULL) {
+			if (strptime(changed_since_str, "%Y-%m-%d", &tm) == NULL) {
 				cerr << "ERROR: Invalid date, the expected format is 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM'\n";
 				return 1;
 			}
@@ -278,9 +303,9 @@ int main(int argc, char **argv)
 	}
 
 	Chromaprint::Fingerprinter fingerprinter(Chromaprint::CreateFingerprinterConfiguration(kChromaprintAlgorithm));
-	string_vector files = FindFiles(argv[1], changed_since);
+	string_vector files = FindFiles(directory, changed_since);
 	for (string_vector::iterator it = files.begin(); it != files.end(); it++) {
-		ProcessFile(&fingerprinter, *it);
+		ProcessFile(&fingerprinter, *it, ignore_missing_mbid, audio_length);
 	}
 
 	return 0;
