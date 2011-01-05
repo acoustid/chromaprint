@@ -21,6 +21,12 @@ typedef vector<string> string_vector;
 void FindFiles(const string &dirname, string_vector *result, time_t changed_since)
 {
 	DIR *dirp = opendir(dirname.c_str());
+	if (!dirp) {
+		if (errno == ENOTDIR) {
+			result->push_back(dirname);
+		}
+		return;
+	}
 	while (dirp) {
 		struct dirent *dp;
 		if ((dp = readdir(dirp)) != NULL) {
@@ -44,10 +50,12 @@ void FindFiles(const string &dirname, string_vector *result, time_t changed_sinc
     closedir(dirp);
 }
 
-string_vector FindFiles(const char *dirname, time_t changed_since)
+string_vector FindFiles(const string_vector &files, time_t changed_since)
 {
 	string_vector result;
-	FindFiles(dirname, &result, changed_since);
+	for (int i = 0; i < files.size(); i++) {
+		FindFiles(files[i], &result, changed_since);
+	}
 	sort(result.begin(), result.end());
 	return result;
 }
@@ -257,15 +265,15 @@ bool ProcessFile(Chromaprint::Fingerprinter *fingerprinter, const string &filena
 int main(int argc, char **argv)
 {
 	if (argc < 2) {
-		cerr << "Usage: " << argv[0] << " [OPTIONS] DIR\n";
+		cerr << "Usage: " << argv[0] << " [OPTIONS] FILE...\n";
 		cerr << "Options:\n";
-		cerr << " -nombid            Do not require a MBID embedded in the file\n";
-		cerr << " -since [date]      Process only files modified since the given date\n";
-		cerr << " -length [seconds]  Length of the audio data used for fingerprinting (default 120)\n";
+		cerr << " -nombid          Do not require a MBID embedded in the file\n";
+		cerr << " -since DATE      Process only files modified since the given date\n";
+		cerr << " -length SECONDS  Length of the audio data used for fingerprinting (default 120)\n";
 		return 1;
 	}
 
-	char *directory = NULL;
+	string_vector files;
 	char *changed_since_str = NULL;
 	int audio_length = 120;
 	bool ignore_missing_mbid = false;
@@ -280,7 +288,7 @@ int main(int argc, char **argv)
 			audio_length = atoi(argv[++i]);
 		}
 		else {
-			directory = argv[i];
+			files.push_back(argv[i]);
 		}
 	}
 
@@ -296,14 +304,14 @@ int main(int argc, char **argv)
 		}
 		tm.tm_isdst = -1;
 		changed_since = mktime(&tm);
-		cerr << "Calculating fingerprints for files in " << directory << " that were changed since " << changed_since_str << "\n";
+		//cerr << "Calculating fingerprints for files in " << files << " that were changed since " << changed_since_str << "\n";
 	}
 	else {
-		cerr << "Calculating fingerprints for all files in " << directory << "\n";
+		//cerr << "Calculating fingerprints for all files in " << files << "\n";
 	}
 
 	Chromaprint::Fingerprinter fingerprinter(Chromaprint::CreateFingerprinterConfiguration(kChromaprintAlgorithm));
-	string_vector files = FindFiles(directory, changed_since);
+	files = FindFiles(files, changed_since);
 	for (string_vector::iterator it = files.begin(); it != files.end(); it++) {
 		ProcessFile(&fingerprinter, *it, ignore_missing_mbid, audio_length);
 	}
