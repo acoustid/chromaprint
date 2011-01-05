@@ -296,10 +296,10 @@ int main(int argc, char **argv)
 		}
 		tm.tm_isdst = -1;
 		changed_since = mktime(&tm);
-		cerr << "Calculating fingerprints for files in " << argv[1] << " that were changed since " << argv[2] << "\n";
+		cerr << "Calculating fingerprints for files in " << directory << " that were changed since " << changed_since_str << "\n";
 	}
 	else {
-		cerr << "Calculating fingerprints for all files in " << argv[1] << "\n";
+		cerr << "Calculating fingerprints for all files in " << directory << "\n";
 	}
 
 	Chromaprint::Fingerprinter fingerprinter(Chromaprint::CreateFingerprinterConfiguration(kChromaprintAlgorithm));
