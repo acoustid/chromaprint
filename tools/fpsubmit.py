@@ -67,7 +67,8 @@ def submit_data(i, entries):
         return True
     params = { 'user': USER_API_KEY, 'client': CLIENT_API_KEY }
     print 'Submitting... (entries from %d to %d)' % (i, i + len(entries) - 1)
-    for i, entry in enumerate(e for e in entries if e['LENGTH'] >= 40 and len(e['FINGERPRINT'])>100):
+    i = 0
+    for entry in [e for e in entries if e['LENGTH'] >= 40 and len(e['FINGERPRINT'])>100]:
         if 'MBID' not in entry and 'PUID' not in entry or int(entry.get('LENGTH', '0')) <= 0:
             continue
         if 'MBID' in entry:
@@ -83,6 +84,7 @@ def submit_data(i, entries):
             params['bitrate.%d' % i] = entry['BITRATE']
         if 'FORMAT' in entry:
             params['format.%d' % i] = entry['FORMAT']
+        i += 1
     data = encode_params(params)
     request = urllib2.Request(API_URL, data, headers={'Content-Encoding': 'gzip'})
     try:
