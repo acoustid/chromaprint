@@ -68,8 +68,15 @@ def submit_data(i, entries):
     params = { 'user': USER_API_KEY, 'client': CLIENT_API_KEY }
     print 'Submitting... (entries from %d to %d)' % (i, i + len(entries) - 1)
     for i, entry in enumerate(e for e in entries if e['LENGTH'] >= 40 and len(e['FINGERPRINT'])>100):
-        print '  ', entry['MBID'], entry['FINGERPRINT'][:20] + '...'
-        params['mbid.%d' % i] = entry['MBID']
+        if 'MBID' not in entry and 'PUID' not in entry or int(entry.get('LENGTH', '0')) <= 0:
+            continue
+        if 'MBID' in entry:
+            print '  MBID ', entry['MBID'], entry['FINGERPRINT'][:20] + '...'
+            for mbid in entry['MBID'].split(','):
+                params['mbid.%d' % i] = mbid
+        if 'PUID' in entry:
+            print '  PUID ', entry['PUID'], entry['FINGERPRINT'][:20] + '...'
+            params['puid.%d' % i] = entry['PUID']
         params['fingerprint.%d' % i] = entry['FINGERPRINT']
         params['length.%d' % i] = entry['LENGTH']
         if 'BITRATE' in entry:

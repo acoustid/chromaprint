@@ -218,7 +218,8 @@ bool ReadTags(const string &filename, bool ignore_missing_mbid)
 	string mbid = ExtractMusicBrainzTrackID(file.file());
 	if (mbid.size() != 36 && !ignore_missing_mbid)
 		return false;
-	cout << "MBID=" << mbid << "\n";
+	if (mbid.size() == 36)
+		cout << "MBID=" << mbid << "\n";
 	cout << "LENGTH=" << length << "\n";
 	cout << "BITRATE=" << props->bitrate() << "\n";
 	return true;
