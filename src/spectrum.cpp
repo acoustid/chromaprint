@@ -1,5 +1,5 @@
 /*
- * SpectralCentroidprint -- Audio fingerprinting toolkit
+ * Spectrumprint -- Audio fingerprinting toolkit
  * Copyright (C) 2010  Lukas Lalinsky <lalinsky@gmail.com>
  * 
  * This library is free software; you can redistribute it and/or
@@ -22,12 +22,12 @@
 #include <math.h>
 #include "fft_frame.h"
 #include "utils.h"
-#include "spectral_centroid.h"
+#include "spectrum.h"
 
 using namespace std;
 using namespace Chromaprint;
 
-SpectralCentroid::SpectralCentroid(int num_bands, int min_freq, int max_freq, int frame_size, int sample_rate, FeatureVectorConsumer *consumer)
+Spectrum::Spectrum(int num_bands, int min_freq, int max_freq, int frame_size, int sample_rate, FeatureVectorConsumer *consumer)
 	: m_bands(num_bands + 1),
 	  m_features(num_bands),
 	  m_consumer(consumer)
@@ -35,11 +35,11 @@ SpectralCentroid::SpectralCentroid(int num_bands, int min_freq, int max_freq, in
 	PrepareBands(num_bands, min_freq, max_freq, frame_size, sample_rate);
 }
 
-SpectralCentroid::~SpectralCentroid()
+Spectrum::~Spectrum()
 {
 }
 
-void SpectralCentroid::PrepareBands(int num_bands, int min_freq, int max_freq, int frame_size, int sample_rate)
+void Spectrum::PrepareBands(int num_bands, int min_freq, int max_freq, int frame_size, int sample_rate)
 {
     double min_bark = FreqToBark(min_freq);
     double max_bark = FreqToBark(max_freq);
@@ -65,11 +65,11 @@ void SpectralCentroid::PrepareBands(int num_bands, int min_freq, int max_freq, i
     }
 }
 
-void SpectralCentroid::Reset()
+void Spectrum::Reset()
 {
 }
 
-void SpectralCentroid::Consume(const FFTFrame &frame)
+void Spectrum::Consume(const FFTFrame &frame)
 {
 	for (int i = 0; i < NumBands(); i++) {
 		int first = FirstIndex(i);
@@ -81,10 +81,7 @@ void SpectralCentroid::Consume(const FFTFrame &frame)
 			numerator += j * s;
 			denominator += s;
 		}
-		double centroid = numerator / denominator;
-		if (centroid != centroid)
-			centroid = (first + last) / 2.0; // handle NaN
-		m_features[i] = (centroid - first) / (last - first);
+		m_features[i] = denominator / (last - first);
 	}
 	m_consumer->Consume(m_features);
 }

@@ -12,6 +12,7 @@ set(chromaprint_SRCS
 	chroma_resampler.cpp
 	chroma_filter.cpp
 	integral_image.cpp
+	spectrum.cpp
 	spectral_centroid.cpp
 	filter.cpp
 	fft.cpp

@@ -32,7 +32,7 @@ namespace Chromaprint
 {
 
 	//! Export image to a PNG file
-	inline void ExportImage(Image *data, const std::string &file_name)
+	inline void ExportImage(Image *data, const std::string &file_name, double power = 1.0)
 	{
 		static const int kNumColors = 6;
 		static int colors[][3] = {
@@ -59,6 +59,7 @@ namespace Chromaprint
 		for (size_t y = 0; y < data->NumRows(); y++) {
 			for (size_t x = 0; x < data->NumColumns(); x++) {
 				double value = ((*data)[y][x] - min_value) / (max_value - min_value);
+				value = pow(value, power);
 				double color_value = kNumColors * value;
 				int color_index = int(color_value);
 				double color_alpha = color_value - color_index;

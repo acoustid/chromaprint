@@ -7,7 +7,7 @@ using namespace std;
 #include "ext/audio_dumper.h"
 #include "audio_processor.h"
 #include "chroma.h"
-#include "spectral_centroid.h"
+#include "spectrum.h"
 #include "chroma_normalizer.h"
 #include "chroma_resampler.h"
 #include "chroma_filter.h"
@@ -44,12 +44,10 @@ int main(int argc, char **argv)
 		return 2;
 	}
 
-	Chromaprint::Image image(12);
+	const int numBands = 72;
+	Chromaprint::Image image(numBands);
 	Chromaprint::ImageBuilder image_builder(&image);
-	Chromaprint::ChromaNormalizer chroma_normalizer(&image_builder);
-	Chromaprint::ChromaFilter chroma_filter(kChromaFilterCoefficients, kChromaFilterSize, &chroma_normalizer);
-	//Chromaprint::Chroma chroma(MIN_FREQ, MAX_FREQ, FRAME_SIZE, SAMPLE_RATE, &chroma_normalizer);
-	Chromaprint::Chroma chroma(MIN_FREQ, MAX_FREQ, FRAME_SIZE, SAMPLE_RATE, &chroma_filter);
+	Chromaprint::Spectrum chroma(numBands, MIN_FREQ, MAX_FREQ, FRAME_SIZE, SAMPLE_RATE, &image_builder);
 	Chromaprint::FFT fft(FRAME_SIZE, OVERLAP, &chroma);
 	Chromaprint::AudioProcessor processor(SAMPLE_RATE, &fft);
 
@@ -58,7 +56,7 @@ int main(int argc, char **argv)
 	processor.Flush();
 
 	//Chromaprint::ExportTextImage(&image, argv[2]);
-	Chromaprint::ExportImage(&image, argv[2]);
+	Chromaprint::ExportImage(&image, argv[2], 0.5);
 
 	return 0;
 }

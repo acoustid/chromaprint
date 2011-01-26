@@ -122,6 +122,19 @@ namespace Chromaprint
 		return value != value;
 	}
 
+	inline double FreqToBark(double f)
+	{
+		double z = (26.81 * f) / (1960.0 + f) - 0.53;
+
+		if (z < 2.0) {
+			z = z + 0.15 * (2.0 - z);
+		} else if (z > 20.1) {
+			z = z + 0.22 * (z - 20.1);
+		}
+
+		return z;
+	}
+
 };
 
 #endif

@@ -16,3 +16,5 @@ cmake_install.cmake
 ./tools/resample
 libchromaprint.pc
 install_manifest.txt
+./tools/spectrogram
+src/libchromaprint.so.*

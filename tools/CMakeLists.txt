@@ -29,6 +29,9 @@ if(BUILD_EXTRA_TOOLS)
 	add_executable(chromagram chromagram.cpp)
 	target_link_libraries(chromagram chromaprint chromaprintext -lpng)
 
+	add_executable(spectrogram spectrogram.cpp)
+	target_link_libraries(spectrogram chromaprint chromaprintext -lpng)
+
 	add_executable(learn_filters learn_filters.cpp)
 	target_link_libraries(learn_filters chromaprint chromaprintext
 		${Boost_SYSTEM_LIBRARY}
