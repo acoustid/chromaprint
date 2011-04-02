@@ -21,6 +21,10 @@
 #ifndef CHROMAPRINT_UTILS_H_
 #define CHROMAPRINT_UTILS_H_
 
+#if defined(HAVE_CONFIG_H)
+#include <config.h>
+#endif
+
 #include <math.h>
 #include <stddef.h>
 #include <stdint.h>

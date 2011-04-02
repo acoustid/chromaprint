@@ -47,12 +47,6 @@ if(WITH_FFTW3)
 	include_directories(${FFTW3_INCLUDE_DIR})
 endif(WITH_FFTW3)
 
-set(chromaprintext_SRCS
-#	sox_audio_source.cpp
-#	ext/image_utils.cpp
-	foo.cpp
-)
-
 add_library(chromaprint SHARED ${chromaprint_SRCS})
 set_target_properties(chromaprint PROPERTIES
     VERSION ${chromaprint_VERSION}
@@ -60,15 +54,6 @@ set_target_properties(chromaprint PROPERTIES
     DEFINE_SYMBOL CHROMAPRINT_API_EXPORTS
 )
 target_link_libraries(chromaprint ${chromaprint_LINK_LIBS})
-
-add_library(chromaprintext STATIC ${chromaprintext_SRCS})
-#target_link_libraries(chromaprintext
-#	${FFMPEG_LIBAVFORMAT_LIBRARIES}
-#	${FFMPEG_LIBAVCODEC_LIBRARIES}
-#	${FFMPEG_LIBAVUTIL_LIBRARIES}
-#	${PNG_LIBRARIES}
-#	-lsox
-#)
 
 install(FILES chromaprint.h DESTINATION ${INCLUDE_INSTALL_DIR})
 install(TARGETS chromaprint DESTINATION ${LIB_INSTALL_DIR})
