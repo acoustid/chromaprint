@@ -52,7 +52,7 @@ void FingerprintCompressor::ProcessSubfingerprint(uint32_t x)
 void FingerprintCompressor::WriteNormalBits()
 {
 	BitStringWriter writer;
-	for (int i = 0; i < m_bits.size(); i++) {
+	for (size_t i = 0; i < m_bits.size(); i++) {
 		writer.Write(min(int(m_bits[i]), kMaxNormalValue), kNormalBits);
 	}
 	writer.Flush();
@@ -62,7 +62,7 @@ void FingerprintCompressor::WriteNormalBits()
 void FingerprintCompressor::WriteExceptionBits()
 {
 	BitStringWriter writer;
-	for (int i = 0; i < m_bits.size(); i++) {
+	for (size_t i = 0; i < m_bits.size(); i++) {
 		if (m_bits[i] >= kMaxNormalValue) {
 			writer.Write(int(m_bits[i]) - kMaxNormalValue, kExceptionBits);
 		}
@@ -75,7 +75,7 @@ std::string FingerprintCompressor::Compress(const vector<int32_t> &data, int alg
 {
 	if (data.size() > 0) {
 		ProcessSubfingerprint(data[0]);
-		for (int i = 1; i < data.size(); i++) {
+		for (size_t i = 1; i < data.size(); i++) {
 			ProcessSubfingerprint(data[i] ^ data[i - 1]);
 		}
 	}

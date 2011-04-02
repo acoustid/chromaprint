@@ -67,7 +67,6 @@ string Chromaprint::Base64Decode(const string &encoded)
 	int size = encoded.size();
 	string::iterator dest = str.begin();
 	while (size > 0) {
-		int r;
 		int b0 = kBase64CharsReversed[*src++];
 		if (--size) {
 			int b1 = kBase64CharsReversed[*src++];

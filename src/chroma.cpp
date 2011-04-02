@@ -57,7 +57,7 @@ void Chroma::PrepareNotes(int min_freq, int max_freq, int frame_size, int sample
 		double freq = IndexToFreq(i, frame_size, sample_rate);
 		double octave = FreqToOctave(freq);
 		double note = NUM_BANDS * (octave - floor(octave)); 
-		m_notes[i] = note;
+		m_notes[i] = (char)note;
 		m_notes_frac[i] = note - m_notes[i];
 	}
 }

@@ -21,8 +21,9 @@ set(chromaprint_SOVERSION ${chromaprint_SOVERSION_MAJOR})
 include(CheckFunctionExists)
 set(CMAKE_REQUIRED_LIBRARIES -lm)
 check_function_exists(lrintf HAVE_LRINTF)
+check_function_exists(round HAVE_ROUND)
 
-add_definitions(-DHAVE_CONFIG_H)
+add_definitions(-DHAVE_CONFIG_H -D_SCL_SECURE_NO_WARNINGS -D_USE_MATH_DEFINES)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 

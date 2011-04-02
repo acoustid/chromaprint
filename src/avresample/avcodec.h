@@ -30,7 +30,7 @@
 #endif
 
 #include <sys/types.h>
-#include <inttypes.h>
+#include <stdint.h>
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
@@ -44,7 +44,13 @@ typedef void *AVClass;
 #define av_realloc(p,l) realloc((p),(l))
 #define av_free(p) free(p)
 
-static inline void av_freep(void *k) {
+#ifdef _MSC_VER
+#define CHROMAPRINT_C_INLINE __inline
+#else
+#define CHROMAPRINT_C_INLINE inline
+#endif
+
+static CHROMAPRINT_C_INLINE void av_freep(void *k) {
     void **p = (void **)k;
 
     if (p) {
@@ -53,7 +59,7 @@ static inline void av_freep(void *k) {
     }
 }
 
-static inline int av_clip(int a, int amin, int amax)
+static CHROMAPRINT_C_INLINE int av_clip(int a, int amin, int amax)
 {
     if (a < amin)      return amin;
     else if (a > amax) return amax;

@@ -27,6 +27,16 @@
 #include <limits>
 #include <iterator>
 
+#ifndef HAVE_ROUND
+static inline double round(double x)
+{
+   if (x >= 0.0)
+      return floor(x + 0.5);
+   else
+      return ceil(x - 0.5);
+}
+#endif
+
 #define CHROMAPRINT_DISABLE_COPY(ClassName) \
 	ClassName(const ClassName &);			\
 	void operator=(const ClassName &);
@@ -107,7 +117,7 @@ namespace Chromaprint
 
 	inline int FreqToIndex(double freq, int frame_size, int sample_rate)
 	{
-		return round(frame_size * freq / sample_rate);
+		return (int)round(frame_size * freq / sample_rate);
 	}
 
     inline int32_t UnsignedToSigned(uint32_t x)

@@ -62,13 +62,13 @@ set_target_properties(chromaprint PROPERTIES
 target_link_libraries(chromaprint ${chromaprint_LINK_LIBS})
 
 add_library(chromaprintext STATIC ${chromaprintext_SRCS})
-target_link_libraries(chromaprintext
-	${FFMPEG_LIBAVFORMAT_LIBRARIES}
-	${FFMPEG_LIBAVCODEC_LIBRARIES}
-	${FFMPEG_LIBAVUTIL_LIBRARIES}
-	${PNG_LIBRARIES}
+#target_link_libraries(chromaprintext
+#	${FFMPEG_LIBAVFORMAT_LIBRARIES}
+#	${FFMPEG_LIBAVCODEC_LIBRARIES}
+#	${FFMPEG_LIBAVUTIL_LIBRARIES}
+#	${PNG_LIBRARIES}
 #	-lsox
-)
+#)
 
 install(FILES chromaprint.h DESTINATION ${INCLUDE_INSTALL_DIR})
 install(TARGETS chromaprint DESTINATION ${LIB_INSTALL_DIR})

@@ -1,3 +1,4 @@
+#cmakedefine HAVE_ROUND 1
 #cmakedefine HAVE_LRINTF 1
 #cmakedefine WITH_AVFFT 1
 #cmakedefine WITH_FFTW3 1

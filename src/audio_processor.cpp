@@ -85,7 +85,7 @@ void AudioProcessor::LoadMultiChannel(short *input, int length)
 		for (int i = 0; i < m_num_channels; i++) {
 			sum += *input++;
 		}
-		*output++ = sum / m_num_channels;
+		*output++ = (short)(sum / m_num_channels);
 	}
 }
 

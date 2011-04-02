@@ -127,6 +127,7 @@ namespace Chromaprint
 		int Shift(int shift)
 		{
 			m_offset += shift;
+			return m_offset;
 		}
 
 		int Offset() const

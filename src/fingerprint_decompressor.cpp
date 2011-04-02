@@ -36,7 +36,7 @@ FingerprintDecompressor::FingerprintDecompressor()
 void FingerprintDecompressor::UnpackBits()
 {
 	int i = 0, last_bit = 0, value = 0;
-	for (int j = 0; j < m_bits.size(); j++) {
+	for (size_t j = 0; j < m_bits.size(); j++) {
 		int bit = m_bits[j];
 		if (bit == 0) {
 			m_result[i] = (i > 0) ? value ^ m_result[i - 1] : value;
@@ -53,7 +53,7 @@ void FingerprintDecompressor::UnpackBits()
 
 void FingerprintDecompressor::ReadNormalBits(BitStringReader *reader)
 {
-	int i = 0;
+	size_t i = 0;
 	while (i < m_result.size()) {
 		int bit = reader->Read(kNormalBits);
 		if (bit == 0) {
@@ -65,7 +65,7 @@ void FingerprintDecompressor::ReadNormalBits(BitStringReader *reader)
 
 void FingerprintDecompressor::ReadExceptionBits(BitStringReader *reader)
 {
-	for (int i = 0; i < m_bits.size(); i++) {
+	for (size_t i = 0; i < m_bits.size(); i++) {
 		if (m_bits[i] == kMaxNormalValue) {
 			m_bits[i] += reader->Read(kExceptionBits);
 		}

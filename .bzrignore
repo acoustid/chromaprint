@@ -18,3 +18,15 @@ libchromaprint.pc
 install_manifest.txt
 ./tools/spectrogram
 src/libchromaprint.so.*
+*.vcxproj
+*.vcxproj.*
+*.dir
+*.sln
+*.suo
+./Debug
+./src/Debug
+*.dll
+*.lib
+*.pdb
+*.dll.manifest
+*.exp

@@ -74,7 +74,7 @@ vector<double> lloyds(vector<double> &sig, int len)
 		reldist = dist;
 		dist = 0.0;
 
-		int sig_it = 0;
+		size_t sig_it = 0;
 		for (int i = 0; i < len; i++) {
 			double sum = 0.0;
 			int cnt = 0;
