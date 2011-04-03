@@ -23,6 +23,7 @@
 
 #include <stdint.h>
 #include <vector>
+#include "chromaprint.h"
 #include "image.h"
 #include "audio_consumer.h"
 

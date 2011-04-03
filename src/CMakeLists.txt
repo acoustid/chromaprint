@@ -1,12 +1,10 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-add_definitions(
-	-D__STDC_LIMIT_MACROS
-	-D__STDC_CONSTANT_MACROS
-)
-
 set(chromaprint_SRCS
 	chromaprint.cpp
+)
+
+set(chromaprint_p_SRCS
 	audio_processor.cpp
 	chroma.cpp
 	chroma_resampler.cpp
@@ -29,8 +27,8 @@ set(chromaprint_SRCS
 )
 
 if(WITH_AVFFT)
-	set(chromaprint_SRCS fft_lib_avfft.cpp ${chromaprint_SRCS})
-	set(chromaprint_LINK_LIBS
+	set(chromaprint_p_SRCS fft_lib_avfft.cpp ${chromaprint_p_SRCS})
+	set(chromaprint_p_LINK_LIBS
 		${FFMPEG_LIBAVCODEC_LIBRARIES}
 		${FFMPEG_LIBAVUTIL_LIBRARIES}
 	)
@@ -42,18 +40,21 @@ if(WITH_AVFFT)
 endif(WITH_AVFFT)
 
 if(WITH_FFTW3)
-	set(chromaprint_SRCS fft_lib_fftw3.cpp ${chromaprint_SRCS})
-	set(chromaprint_LINK_LIBS ${FFTW3_LIBRARIES})
+	set(chromaprint_p_SRCS fft_lib_fftw3.cpp ${chromaprint_p_SRCS})
+	set(chromaprint_p_LINK_LIBS ${FFTW3_LIBRARIES})
 	include_directories(${FFTW3_INCLUDE_DIR})
 endif(WITH_FFTW3)
 
-add_library(chromaprint SHARED ${chromaprint_SRCS})
+add_library(chromaprint_p STATIC ${chromaprint_p_SRCS})
+target_link_libraries(chromaprint_p ${chromaprint_p_LINK_LIBS})
+
+add_library(chromaprint SHARED ${chromaprint_p_SRCS} ${chromaprint_SRCS})
 set_target_properties(chromaprint PROPERTIES
     VERSION ${chromaprint_VERSION}
     SOVERSION ${chromaprint_SOVERSION}
     DEFINE_SYMBOL CHROMAPRINT_API_EXPORTS
 )
-target_link_libraries(chromaprint ${chromaprint_LINK_LIBS})
+target_link_libraries(chromaprint chromaprint_p ${chromaprint_p_LINK_LIBS})
 
 install(FILES chromaprint.h DESTINATION ${INCLUDE_INSTALL_DIR})
 install(TARGETS chromaprint DESTINATION ${LIB_INSTALL_DIR})

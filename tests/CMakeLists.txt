@@ -30,7 +30,7 @@ set(tests_SOURCES
 add_executable(all_tests ${tests_SOURCES})
 target_link_libraries(all_tests
 	${GTEST_BOTH_LIBRARIES}
-	chromaprint
+	chromaprint_p
 )
 
 add_custom_target(check

@@ -23,7 +23,13 @@ set(CMAKE_REQUIRED_LIBRARIES -lm)
 check_function_exists(lrintf HAVE_LRINTF)
 check_function_exists(round HAVE_ROUND)
 
-add_definitions(-DHAVE_CONFIG_H -D_SCL_SECURE_NO_WARNINGS -D_USE_MATH_DEFINES)
+add_definitions(
+	-DHAVE_CONFIG_H
+	-D_SCL_SECURE_NO_WARNINGS
+	-D_USE_MATH_DEFINES
+	-D__STDC_LIMIT_MACROS
+	-D__STDC_CONSTANT_MACROS
+)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
