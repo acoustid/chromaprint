@@ -7,12 +7,6 @@ include_directories(
 	${TAGLIB_INCLUDES}
 )
 
-include_directories(
-	${CMAKE_CURRENT_SOURCE_DIR}/../src
-	${FFMPE}
-	${TAGLIB_INCLUDES}
-)
-
 if(BUILD_EXTRA_TOOLS)
 
 	add_executable(resample resample.cpp)
