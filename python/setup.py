@@ -8,6 +8,7 @@ setup(name='Chromaprint',
       author='Lukas Lalinsky',
       author_email='lalinsky@gmail.com',
       url='http://wiki.acoustid.org/wiki/Chromaprint',
+      license="MIT",
       packages=['chromaprint'],
      )
 
