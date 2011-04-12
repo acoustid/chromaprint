@@ -4,6 +4,9 @@
 #include <vector>
 #include <fstream>
 #include <string>
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #define NELEMS(x) (sizeof(x)/sizeof(x[0]))
 
@@ -25,7 +28,8 @@ inline void CheckFingerprints(std::vector<int32_t> actual, int32_t *expected, in
 
 inline std::vector<short> LoadAudioFile(const std::string &file_name)
 {
-	std::ifstream file(file_name.c_str(), std::ifstream::in);
+	std::string path = TESTS_DIR + file_name;
+	std::ifstream file(path.c_str(), std::ifstream::in);
 	file.seekg(0, std::ios::end);
 	int length = file.tellg();
 	file.seekg(0, std::ios::beg);

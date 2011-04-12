@@ -51,6 +51,8 @@ option(BUILD_EXTRA_TOOLS "Build extra tools (only useful for development of this
 option(WITH_AVFFT "Use FFmpeg for FFT calculations" OFF)
 option(WITH_FFTW3 "Use FFTW3 for FFT calculations" OFF)
 
+set(TESTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests/)
+
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 find_package(FFmpeg)
 find_package(FFTW3)
