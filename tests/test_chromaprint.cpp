@@ -14,7 +14,6 @@
 #include "image.h"
 #include "image_builder.h"
 #include "utils.h"
-#include "ext/image_utils.h"
 
 using namespace std;
 using namespace Chromaprint;

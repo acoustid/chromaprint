@@ -30,3 +30,4 @@ src/libchromaprint.so.*
 *.pdb
 *.dll.manifest
 *.exp
+*.dylib

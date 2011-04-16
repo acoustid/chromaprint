@@ -1,6 +1,6 @@
 /*
  * Chromaprint -- Audio fingerprinting toolkit
- * Copyright (C) 2010  Lukas Lalinsky <lalinsky@gmail.com>
+ * Copyright (C) 2011  Lukas Lalinsky <lalinsky@gmail.com>
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,23 +18,35 @@
  * USA
  */
 
-#ifndef CHROMAPRINT_FFT_LIB_H_
-#define CHROMAPRINT_FFT_LIB_H_
+#ifndef CHROMAPRINT_FFT_LIB_VDSP_H_
+#define CHROMAPRINT_FFT_LIB_VDSP_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include <math.h>
+#include <Accelerate/Accelerate.h>
+#include "combined_buffer.h"
 
-#ifdef WITH_AVFFT
-#include "fft_lib_avfft.h"
-#endif
+namespace Chromaprint
+{
 
-#ifdef WITH_FFTW3
-#include "fft_lib_fftw3.h"
-#endif
+	class FFTLib
+	{
+	public:
+		FFTLib(int frame_size, double *window);
+		~FFTLib();
 
-#ifdef WITH_VDSP
-#include "fft_lib_vdsp.h"
-#endif
+		void ComputeFrame(CombinedBuffer<short>::Iterator input, double *output);
+
+	private:
+		CHROMAPRINT_DISABLE_COPY(FFTLib);
+
+		double *m_window;
+		float *m_input;
+		int m_frame_size;
+		int m_log2n;
+		FFTSetup m_setup;
+		DSPSplitComplex m_a;
+	};
+
+};
 
 #endif

@@ -42,6 +42,11 @@ if(WITH_FFTW3)
 	include_directories(${FFTW3_INCLUDE_DIR})
 endif(WITH_FFTW3)
 
+if(WITH_VDSP)
+	set(chromaprint_SRCS fft_lib_vdsp.cpp ${chromaprint_SRCS})
+	set(chromaprint_LINK_LIBS ${ACCELERATE_LIBRARIES})
+endif()
+
 add_library(chromaprint_p STATIC ${chromaprint_SRCS})
 target_link_libraries(chromaprint_p ${chromaprint_LINK_LIBS})
 
