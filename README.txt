@@ -5,8 +5,9 @@ Dependencies
 ------------
 
 The library itself only depends on a FFT library, which at the moment can
-be either FFmpeg [1] (at least r22291, 0.6 is fine) or FFTW3 [2]. See the
-next section for details.
+be either FFmpeg [1] (at least r22291, 0.6 is fine), FFTW3 [2] or if you are
+on iOS or OS X, you can use the Accelerate/vDSP framework. See the next
+section for details.
 
 The tools included in the package require FFmpeg (can be older), TagLib [3]
 and Boost Filesystem [4].
@@ -22,10 +23,10 @@ In order to build the test suite, you will need the Google Test library [5].
 FFT Library
 -----------
 
-Chromaprint can use two FFT libraries, FFmpeg or FFTW3. FFmpeg is preffered,
-as it's a little faster for our purposes and it's LGPL-licensed, so it
-doesn't impact the license of Chromaprint. The FFT interface was added only
-recently though, so it might not be available in Linux distributions yet.
+Chromaprint can use three FFT libraries, FFmpeg, FFTW3 and vDSP. FFmpeg is
+preffered, as it's a little faster for our purposes and it's LGPL-licensed,
+so it doesn't impact the license of Chromaprint. The FFT interface was added
+only recently though, so it might not be available in Linux distributions yet.
 FFTW3 can be used in this case, but this library is released under the GPL
 license, which makes also the resulting Chromaprint binary GPL licensed.
 
@@ -42,6 +43,10 @@ $ cmake -DWITH_FFTW3=ON .
 
 There is also a `WITH_AVFFT` option, but the script will select the FFmpeg FFT
 automatically if it's available, so it shouldn't be necessary to use it.
+
+If you are on Mac, you can use the standard Accelerate framework with the vDSP
+library. This requires you to install no external libraries. To compile
+Chromaprint with vDSP support, use the `WITH_VDSP` option.
 
 Unit Tests
 ----------
