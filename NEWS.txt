@@ -1,3 +1,11 @@
+Version 0.3 -- April 26, 2011
+=============================
+
+ - Fixed compilation with MSVC 2010.
+ - Added support for calculating FFT using the Accelerate framework on
+   Mac OS X and iOS.
+ - Added Python bindings.
+
 Version 0.2 -- January 26, 2011
 ===============================
 
