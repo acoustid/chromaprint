@@ -45,8 +45,8 @@ There is also a `WITH_AVFFT` option, but the script will select the FFmpeg FFT
 automatically if it's available, so it shouldn't be necessary to use it.
 
 If you are on Mac, you can use the standard Accelerate framework with the vDSP
-library. This requires you to install no external libraries. To compile
-Chromaprint with vDSP support, use the `WITH_VDSP` option.
+library. This requires you to install no external libraries. It will use
+vDSP by default on OS X (but there still is a `WITH_VDSP` option).
 
 Unit Tests
 ----------
