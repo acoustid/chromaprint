@@ -103,7 +103,7 @@ inline bool Decoder::Open()
 
 	for (int i = 0; i < m_format_ctx->nb_streams; i++) {
 		AVCodecContext *avctx = m_format_ctx->streams[i]->codec;
-		if (avctx && avctx->codec_type == CODEC_TYPE_AUDIO) {
+		if (avctx && avctx->codec_type == AVMEDIA_TYPE_AUDIO) {
 			m_stream = m_format_ctx->streams[i];
 			m_codec_ctx = avctx;
 			break;
@@ -166,9 +166,9 @@ inline void Decoder::Decode(Chromaprint::AudioConsumer *consumer, int max_length
 		packet_temp.size = packet.size;
 		while (packet_temp.size > 0) {
 			int buffer_size = BUFFER_SIZE * sizeof(int16_t);
-			int consumed = avcodec_decode_audio2(
+			int consumed = avcodec_decode_audio3(
 				m_codec_ctx, (int16_t *)m_buffer1, &buffer_size,
-				packet_temp.data, packet_temp.size);
+				&packet_temp);
 
 			if (consumed < 0) {
 				break;
@@ -195,7 +195,7 @@ inline void Decoder::Decode(Chromaprint::AudioConsumer *consumer, int max_length
 				length = buffer_size / istride[0];
 				audio_buffer = (int16_t *)m_buffer2;
 			}*/
-
+	
 			if (max_length) {
 				length = std::min(remaining, length);
 			}
