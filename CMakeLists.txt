@@ -39,16 +39,16 @@ set(BIN_INSTALL_DIR ${EXEC_INSTALL_PREFIX}/bin CACHE PATH "Installation prefix f
 set(LIB_INSTALL_DIR ${EXEC_INSTALL_PREFIX}/lib${LIB_SUFFIX} CACHE PATH  "Installation prefix for object code libraries" FORCE)
 set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/include CACHE PATH "Installation prefix for C header files" FORCE)
 
-#if(CMAKE_COMPILER_IS_GNUCXX)
-#	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
-#	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
-#endif(CMAKE_COMPILER_IS_GNUCXX)
-
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(BUILD_EXAMPLES "Build the examples" OFF)
 option(BUILD_TESTS "Build the test suite" OFF)
 option(BUILD_TOOLS "Build standard tools" OFF)
 option(BUILD_EXTRA_TOOLS "Build extra tools (only useful for development of this library)" OFF)
+
+if(CMAKE_COMPILER_IS_GNUCXX AND BUILD_SHARED_LIBS)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
+endif()
 
 if(NOT BUILD_SHARED_LIBS)
 	add_definitions(-DCHROMAPRINT_NODLL)

@@ -36,7 +36,7 @@ extern "C" {
 #		endif
 #	endif
 #else
-#   ifdef GCC_HASCLASSVISIBILITY
+#   if __GNUC__ >= 4
 #       define CHROMAPRINT_API __attribute__ ((visibility("default")))
 #   else
 #       define CHROMAPRINT_API
