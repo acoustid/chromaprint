@@ -50,7 +50,7 @@ endif()
 add_library(chromaprint_p STATIC ${chromaprint_SRCS})
 target_link_libraries(chromaprint_p ${chromaprint_LINK_LIBS})
 
-add_library(chromaprint SHARED ${chromaprint_SRCS} ${chromaprint_SRCS})
+add_library(chromaprint ${chromaprint_SRCS} ${chromaprint_SRCS})
 set_target_properties(chromaprint PROPERTIES
     VERSION ${chromaprint_VERSION}
     SOVERSION ${chromaprint_SOVERSION}

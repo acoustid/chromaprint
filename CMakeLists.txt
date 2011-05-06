@@ -44,9 +44,15 @@ set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/include CACHE PATH "Installation
 #	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
 #endif(CMAKE_COMPILER_IS_GNUCXX)
 
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+option(BUILD_EXAMPLES "Build the examples" OFF)
 option(BUILD_TESTS "Build the test suite" OFF)
 option(BUILD_TOOLS "Build standard tools" OFF)
 option(BUILD_EXTRA_TOOLS "Build extra tools (only useful for development of this library)" OFF)
+
+if(NOT BUILD_SHARED_LIBS)
+	add_definitions(-DCHROMAPRINT_NODLL)
+endif()
 
 option(WITH_AVFFT "Use FFmpeg for FFT calculations" OFF)
 option(WITH_FFTW3 "Use FFTW3 for FFT calculations" OFF)
@@ -120,10 +126,16 @@ if(BUILD_TOOLS_EXTRA)
 endif(BUILD_TOOLS_EXTRA)
 
 find_package(Boost COMPONENTS system filesystem)
-if(BUILD_TOOLS OR BUILD_TOOLS_EXTRA)
+if(BUILD_TOOLS OR BUILD_TOOLS_EXTRA OR BUILD_EXAMPLES)
 	find_package(FFmpeg REQUIRED)
-	find_package(Taglib REQUIRED)
+endif()
+
+if(BUILD_EXAMPLES)
 	add_subdirectory(examples)
+endif()
+
+if(BUILD_TOOLS OR BUILD_TOOLS_EXTRA)
+	find_package(Taglib REQUIRED)
 	add_subdirectory(tools)
 endif(BUILD_TOOLS OR BUILD_TOOLS_EXTRA)
 
