@@ -27,7 +27,7 @@ extern "C" {
 
 #if (defined(_WIN32) || defined(_WIN64))
 #	ifdef CHROMAPRINT_NODLL
-#       define CHROMAPRINT_API
+#		define CHROMAPRINT_API
 #	else
 #		ifdef CHROMAPRINT_API_EXPORTS
 #			define CHROMAPRINT_API __declspec(dllexport)
