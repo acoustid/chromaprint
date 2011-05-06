@@ -123,6 +123,7 @@ find_package(Boost COMPONENTS system filesystem)
 if(BUILD_TOOLS OR BUILD_TOOLS_EXTRA)
 	find_package(FFmpeg REQUIRED)
 	find_package(Taglib REQUIRED)
+	add_subdirectory(examples)
 	add_subdirectory(tools)
 endif(BUILD_TOOLS OR BUILD_TOOLS_EXTRA)
 

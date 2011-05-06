@@ -1,0 +1,13 @@
+include_directories(
+	${CMAKE_CURRENT_SOURCE_DIR}/../src
+	${FFMPEG_LIBAVCODEC_INCLUDE_DIRS}
+	${FFMPEG_LIBAVFORMAT_INCLUDE_DIRS}
+	${FFMPEG_LIBAVUTIL_INCLUDE_DIRS}
+)
+
+add_executable(fpcalc fpcalc.c)
+target_link_libraries(fpcalc chromaprint
+	${FFMPEG_LIBAVFORMAT_LIBRARIES}
+	${FFMPEG_LIBAVCODEC_LIBRARIES}
+	${FFMPEG_LIBAVUTIL_LIBRARIES})
+
