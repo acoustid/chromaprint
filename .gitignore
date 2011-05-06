@@ -32,3 +32,8 @@ src/Debug
 *.dll.manifest
 *.exp
 *.dylib
+*.vcproj
+*.user
+*.ncb
+src/Release
+src/Debug
