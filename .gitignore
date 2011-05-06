@@ -36,4 +36,3 @@ src/Debug
 *.user
 *.ncb
 src/Release
-src/Debug
