@@ -28,7 +28,7 @@ int main(int argc, char **argv)
 	//decoder.Decode(&fingerprinter, 60);
 	vector<int32_t> fingerprint = fingerprinter.Finish();
 
-	for (int i = 0; i < fingerprint.size(); i++) {
+	for (size_t i = 0; i < fingerprint.size(); i++) {
 		cout << fingerprint[i] << "\n";
 	}
 

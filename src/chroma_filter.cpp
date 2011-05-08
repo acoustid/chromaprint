@@ -28,13 +28,13 @@ using namespace std;
 using namespace Chromaprint;
 
 ChromaFilter::ChromaFilter(const double *coefficients, int length, FeatureVectorConsumer *consumer)
-	: m_consumer(consumer),
+	: m_coefficients(coefficients),
+	  m_length(length),
 	  m_buffer(8),
+	  m_result(12),
 	  m_buffer_offset(0),
 	  m_buffer_size(1),
-	  m_coefficients(coefficients),
-	  m_length(length),
-	  m_result(12)
+	  m_consumer(consumer)
 {
 }
 

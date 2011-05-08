@@ -53,7 +53,7 @@ void FindFiles(const string &dirname, string_vector *result, time_t changed_sinc
 string_vector FindFiles(const string_vector &files, time_t changed_since)
 {
 	string_vector result;
-	for (int i = 0; i < files.size(); i++) {
+	for (size_t i = 0; i < files.size(); i++) {
 		FindFiles(files[i], &result, changed_since);
 	}
 	sort(result.begin(), result.end());
@@ -238,6 +238,7 @@ string EncodeFingerprint(const vector<uint32_t> &fp)
 {
 	string res;
 	res.resize(fp.size());
+	return res;
 }
 
 bool ProcessFile(Chromaprint::Fingerprinter *fingerprinter, const string &filename, bool ignore_missing_mbid, int audio_length)

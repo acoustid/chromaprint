@@ -30,7 +30,7 @@ namespace Chromaprint
 	class BitStringReader
 	{
 	public:
-		BitStringReader(const std::string &input) : m_buffer(0), m_buffer_size(0), m_value(input)
+		BitStringReader(const std::string &input) : m_value(input), m_buffer(0), m_buffer_size(0)
 		{
 			m_value_iter = m_value.begin();
 		}

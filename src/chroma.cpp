@@ -36,11 +36,11 @@ inline double FreqToOctave(double freq, double base = 440.0 / 16.0)
 }
 
 Chroma::Chroma(int min_freq, int max_freq, int frame_size, int sample_rate, FeatureVectorConsumer *consumer)
-	: m_notes(frame_size),
+	: m_interpolate(false),
+	  m_notes(frame_size),
 	  m_notes_frac(frame_size),
 	  m_features(NUM_BANDS),
-	  m_consumer(consumer),
-	  m_interpolate(false)
+	  m_consumer(consumer)
 {
 	PrepareNotes(min_freq, max_freq, frame_size, sample_rate);
 }

@@ -46,7 +46,7 @@ void Spectrum::PrepareBands(int num_bands, int min_freq, int max_freq, int frame
     double band_size = (max_bark - min_bark) / num_bands;
 
     int min_index = FreqToIndex(min_freq, frame_size, sample_rate);
-    int max_index = FreqToIndex(max_freq, frame_size, sample_rate);
+    //int max_index = FreqToIndex(max_freq, frame_size, sample_rate);
 
     m_bands[0] = min_index;
     double prev_bark = min_bark;

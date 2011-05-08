@@ -50,10 +50,10 @@ namespace Chromaprint
 		double *m_window;
 		int m_buffer_offset;
 		short *m_buffer;
+		FFTFrame m_frame;
 		int m_frame_size;
 		int m_increment;
 		FFTLib *m_lib;
-		FFTFrame m_frame;
 		FFTFrameConsumer *m_consumer;
 	};
 

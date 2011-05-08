@@ -37,7 +37,7 @@ ImageBuilder::~ImageBuilder()
 
 void ImageBuilder::Consume(std::vector<double> &features)
 {
-	assert(features.size() == m_image->NumColumns());
+	assert(features.size() == (size_t)m_image->NumColumns());
 	m_image->AddRow(features);
 }
 

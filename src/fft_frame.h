@@ -41,7 +41,7 @@ namespace Chromaprint
 
 		double Magnitude(int i) const
 		{
-			sqrt(Energy(i));					
+			return sqrt(Energy(i));					
 		}
 
 		double Energy(int i) const

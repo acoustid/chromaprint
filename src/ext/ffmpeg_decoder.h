@@ -105,7 +105,7 @@ inline bool Decoder::Open()
 
 	//dump_format(m_format_ctx, 0, m_file_name.c_str(), 0);
 
-	for (int i = 0; i < m_format_ctx->nb_streams; i++) {
+	for (size_t i = 0; i < m_format_ctx->nb_streams; i++) {
 		AVCodecContext *avctx = m_format_ctx->streams[i]->codec;
 #ifdef USE_OLD_FFMPEG_API
 		if (avctx && avctx->codec_type == CODEC_TYPE_AUDIO) {

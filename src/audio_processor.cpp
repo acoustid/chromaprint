@@ -40,10 +40,10 @@ static const int kResampleLinear = 0;
 static const double kResampleCutoff = 0.8;
 
 AudioProcessor::AudioProcessor(int sample_rate, AudioConsumer *consumer)
-	: m_target_sample_rate(sample_rate),
-	  m_resample_ctx(0),
-	  m_buffer_size(kMaxBufferSize),
-	  m_consumer(consumer)
+	: m_buffer_size(kMaxBufferSize),
+	  m_target_sample_rate(sample_rate),
+	  m_consumer(consumer),
+	  m_resample_ctx(0)
 {
 	m_buffer = new short[kMaxBufferSize];
 	m_buffer_offset = 0;

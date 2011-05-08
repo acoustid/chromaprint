@@ -23,7 +23,7 @@ TEST(SilenceRemover, PassThrough)
 	processor->Flush();
 
 	ASSERT_EQ(data.size(), buffer->data().size());
-	for (int i = 0; i < data.size(); i++) {
+	for (size_t i = 0; i < data.size(); i++) {
 		ASSERT_EQ(data[i], buffer->data()[i]) << "Signals differ at index " << i;
 	}
 }
@@ -43,7 +43,7 @@ TEST(SilenceRemover, RemoveLeadingSilence)
 	processor->Flush();
 
 	ASSERT_EQ(data2.size(), buffer->data().size());
-	for (int i = 0; i < data2.size(); i++) {
+	for (size_t i = 0; i < data2.size(); i++) {
 		ASSERT_EQ(data2[i], buffer->data()[i]) << "Signals differ at index " << i;
 	}
 }

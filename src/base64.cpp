@@ -44,7 +44,6 @@ string Chromaprint::Base64Encode(const string &orig)
 	string encoded(encoded_size, '\x00');
 	const unsigned char *src = (unsigned char *)orig.data();
 	string::iterator dest = encoded.begin();
-	int i = 0, j = 0;
 	while (size > 0) {
 		*dest++ = kBase64Chars[(src[0] >> 2)];
 		*dest++ = kBase64Chars[((src[0] << 4) | (--size ? (src[1] >> 4) : 0)) & 63];
