@@ -40,7 +40,7 @@ set(LIB_INSTALL_DIR ${EXEC_INSTALL_PREFIX}/lib${LIB_SUFFIX} CACHE PATH  "Install
 set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/include CACHE PATH "Installation prefix for C header files" FORCE)
 
 if(APPLE)
-	option(BUILD_FRAMEWORK "Build an OS X framework" ON)
+	option(BUILD_FRAMEWORK "Build an OS X framework" OFF)
 	set(FRAMEWORK_INSTALL_DIR "/Library/Frameworks" CACHE STRING "Directory to install frameworks to.")
 endif()
 
