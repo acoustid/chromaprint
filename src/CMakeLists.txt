@@ -50,14 +50,25 @@ endif()
 add_library(chromaprint_p STATIC ${chromaprint_SRCS})
 target_link_libraries(chromaprint_p ${chromaprint_LINK_LIBS})
 
-add_library(chromaprint ${chromaprint_SRCS} ${chromaprint_SRCS})
+set(chromaprint_HDRS chromaprint.h)
+
+add_library(chromaprint ${chromaprint_SRCS} ${chromaprint_SRCS} ${chromaprint_HDRS})
 set_target_properties(chromaprint PROPERTIES
     VERSION ${chromaprint_VERSION}
     SOVERSION ${chromaprint_SOVERSION}
+	PUBLIC_HEADER ${chromaprint_HDRS}
     DEFINE_SYMBOL CHROMAPRINT_API_EXPORTS
 )
+if(BUILD_FRAMEWORK)
+	set_target_properties(chromaprint PROPERTIES FRAMEWORK TRUE)
+endif()
 target_link_libraries(chromaprint ${chromaprint_LINK_LIBS})
 
-install(FILES chromaprint.h DESTINATION ${INCLUDE_INSTALL_DIR})
-install(TARGETS chromaprint DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS chromaprint
+	FRAMEWORK DESTINATION ${FRAMEWORK_INSTALL_DIR}
+	LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+	RUNTIME DESTINATION ${BIN_INSTALL_DIR}
+	ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
+	PUBLIC_HEADER DESTINATION ${INCLUDE_INSTALL_DIR}
+)
 
