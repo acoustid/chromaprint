@@ -6,8 +6,15 @@ include_directories(
 )
 
 add_executable(fpcalc fpcalc.c)
+
+set(EXTRA_LIBS)
+if(APPLE)
+    set(EXTRA_LIBS ${EXTRA_LIBS} -lz)
+endif()
+
 target_link_libraries(fpcalc chromaprint
 	${FFMPEG_LIBAVFORMAT_LIBRARIES}
 	${FFMPEG_LIBAVCODEC_LIBRARIES}
-	${FFMPEG_LIBAVUTIL_LIBRARIES})
+	${FFMPEG_LIBAVUTIL_LIBRARIES}
+	${EXTRA_LIBS})
 
