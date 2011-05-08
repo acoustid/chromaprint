@@ -53,12 +53,6 @@ if(BUILD_EXTRA_TOOLS)
 
 endif(BUILD_EXTRA_TOOLS)
 
-add_executable(fpgen fpgen.cpp)
-target_link_libraries(fpgen chromaprint_p
-	${FFMPEG_LIBAVFORMAT_LIBRARIES}
-	${FFMPEG_LIBAVCODEC_LIBRARIES}
-	${FFMPEG_LIBAVUTIL_LIBRARIES})
-
 if(NOT MSVC)
 add_executable(fpcollect fpcollect.cpp)
 target_link_libraries(fpcollect chromaprint_p
