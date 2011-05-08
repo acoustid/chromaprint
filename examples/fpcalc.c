@@ -129,8 +129,9 @@ done:
 
 int main(int argc, char **argv)
 {
-	int i, max_length = 60, num_file_names = 0;
+	int i, j, max_length = 60, num_file_names = 0, raw = 0, raw_fingerprint_size;
 	int16_t *buffer;
+	int32_t *raw_fingerprint;
 	char *file_name, *fingerprint, **file_names;
 	ChromaprintContext *chromaprint_ctx;
 
@@ -139,6 +140,9 @@ int main(int argc, char **argv)
 		char *arg = argv[i];
 		if (!strcmp(arg, "-length") && i + 1 < argc) {
 			max_length = atoi(argv[++i]);
+		}
+		else if (!strcmp(arg, "-raw")) {
+			raw = 1;
 		}
 		else {
 			file_names[num_file_names++] = argv[i];
@@ -149,6 +153,7 @@ int main(int argc, char **argv)
 		printf("usage: %s [OPTIONS] FILE...\n\n", argv[0]);
 		printf("Options:\n");
 		printf("  -length SECS  length of the audio data used for fingerprint calculation (default 60)\n");
+		printf("  -raw          output the raw uncompressed fingerprint\n");
 		return 2;
 	}
 
@@ -164,16 +169,29 @@ int main(int argc, char **argv)
 			fprintf(stderr, "ERROR: unable to calculate fingerprint for file %s, skipping\n", file_name);
 			continue;
 		}
-		if (!chromaprint_get_fingerprint(chromaprint_ctx, &fingerprint)) {
-			fprintf(stderr, "ERROR: unable to calculate fingerprint for file %s, skipping\n", file_name);
-			continue;
-		}
 		if (i > 0) {
 			printf("\n");
 		}
 		printf("FILE=%s\n", file_name);
-		printf("FINGERPRINT=%s\n", fingerprint);
-		chromaprint_dealloc(fingerprint);
+		if (raw) {
+			if (!chromaprint_get_raw_fingerprint(chromaprint_ctx, (void **)&raw_fingerprint, &raw_fingerprint_size)) {
+				fprintf(stderr, "ERROR: unable to calculate fingerprint for file %s, skipping\n", file_name);
+				continue;
+			}
+			printf("FINGERPRINT=");
+			for (j = 0; j < raw_fingerprint_size; j++) {
+				printf("%d%s", raw_fingerprint[j], j + 1 < raw_fingerprint_size ? "," : "\n");
+			}
+			chromaprint_dealloc(raw_fingerprint);
+		}
+		else {
+			if (!chromaprint_get_fingerprint(chromaprint_ctx, &fingerprint)) {
+				fprintf(stderr, "ERROR: unable to calculate fingerprint for file %s, skipping\n", file_name);
+				continue;
+			}
+			printf("FINGERPRINT=%s\n", fingerprint);
+			chromaprint_dealloc(fingerprint);
+		}
 	}
 
 	chromaprint_free(chromaprint_ctx);
