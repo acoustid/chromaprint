@@ -8,7 +8,7 @@
 
 #define BUFFER_SIZE ((AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2)
 
-int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer, const char *file_name, int max_length)
+int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer, const char *file_name, int max_length, int *duration)
 {
 	int i, ok = 0, remaining, length, consumed, buffer_size;
 	AVFormatContext *format_ctx = NULL;
@@ -59,6 +59,8 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer, cons
 		fprintf(stderr, "ERROR: no channels found in the audio stream\n");
 		goto done;
 	}
+
+	*duration = stream->time_base.num * stream->duration / stream->time_base.den;
 
 	av_init_packet(&packet);
 	av_init_packet(&packet_temp);
@@ -129,7 +131,7 @@ done:
 
 int main(int argc, char **argv)
 {
-	int i, j, max_length = 60, num_file_names = 0, raw = 0, raw_fingerprint_size;
+	int i, j, max_length = 60, num_file_names = 0, raw = 0, raw_fingerprint_size, duration;
 	int16_t *buffer;
 	int32_t *raw_fingerprint;
 	char *file_name, *fingerprint, **file_names;
@@ -165,7 +167,7 @@ int main(int argc, char **argv)
 
 	for (i = 0; i < num_file_names; i++) {
 		file_name = file_names[i];
-		if (!decode_audio_file(chromaprint_ctx, buffer, file_name, max_length)) {
+		if (!decode_audio_file(chromaprint_ctx, buffer, file_name, max_length, &duration)) {
 			fprintf(stderr, "ERROR: unable to calculate fingerprint for file %s, skipping\n", file_name);
 			continue;
 		}
@@ -173,6 +175,7 @@ int main(int argc, char **argv)
 			printf("\n");
 		}
 		printf("FILE=%s\n", file_name);
+		printf("DURATION=%d\n", duration);
 		if (raw) {
 			if (!chromaprint_get_raw_fingerprint(chromaprint_ctx, (void **)&raw_fingerprint, &raw_fingerprint_size)) {
 				fprintf(stderr, "ERROR: unable to calculate fingerprint for file %s, skipping\n", file_name);
