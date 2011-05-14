@@ -31,7 +31,7 @@ using namespace std;
 using namespace Chromaprint;
 
 static const int kMinSampleRate = 1000;
-static const int kMaxBufferSize = 1024 * 8;
+static const int kMaxBufferSize = 1024 * 16;
 
 // Resampler configuration
 static const int kResampleFilterLength = 16;
@@ -91,7 +91,9 @@ void AudioProcessor::LoadMultiChannel(short *input, int length)
 
 int AudioProcessor::Load(short *input, int length)
 {
-	length = min(length, buffer_size() - m_buffer_offset);
+	assert(length >= 0);
+	assert(m_buffer_offset <= m_buffer_size);
+	length = min(length, m_buffer_size - m_buffer_offset);
 	switch (m_num_channels) {
 	case 1:
 		LoadMono(input, length);
@@ -116,10 +118,18 @@ void AudioProcessor::Resample()
 	}
 	int consumed = 0;
 	int length = av_resample(m_resample_ctx, m_resample_buffer, m_buffer, &consumed, m_buffer_offset, kMaxBufferSize, 1);
+	if (length > kMaxBufferSize) {
+		DEBUG() << "Chromaprint::AudioProcessor::Resample() -- Resampling overwrote output buffer.\n";
+		length = kMaxBufferSize;
+	}
 	m_consumer->Consume(m_resample_buffer, length);
 	int remaining = m_buffer_offset - consumed;
 	if (remaining > 0) {
 		copy(m_buffer + consumed, m_buffer + m_buffer_offset, m_buffer);
+	}
+	else if (remaining < 0) {
+		DEBUG() << "Chromaprint::AudioProcessor::Resample() -- Resampling overread input buffer.\n";
+		remaining = 0;
 	}
 	m_buffer_offset = remaining;
 }
@@ -155,14 +165,19 @@ bool AudioProcessor::Reset(int sample_rate, int num_channels)
 
 void AudioProcessor::Consume(short *input, int length)
 {
+	assert(length >= 0);
 	assert(length % m_num_channels == 0);
 	length /= m_num_channels;
 	while (length > 0) {
 		int consumed = Load(input, length); 
 		input += consumed * m_num_channels;		
 		length -= consumed;
-		while (buffer_size() <= m_buffer_offset) {
+		if (m_buffer_size == m_buffer_offset) {
 			Resample();
+			if (m_buffer_size == m_buffer_offset) {
+				DEBUG() << "Chromaprint::AudioProcessor::Consume() -- Resampling failed?\n";
+				return;
+			}
 		}
 	}
 }

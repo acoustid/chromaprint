@@ -71,11 +71,6 @@ namespace Chromaprint
 		void LoadMultiChannel(short *input, int length);
 		void Resample();
 
-		int buffer_size() const
-		{
-			return m_buffer_size;
-		}
-		
 		short *m_buffer;
 		short *m_resample_buffer;
 		int m_buffer_offset;
