@@ -28,10 +28,6 @@ extern "C" {
 }
 #include "audio_consumer.h"
 
-#if LIBAVCODEC_VERSION_INT <= AV_VERSION_INT(52, 20, 0)
-#define USE_OLD_FFMPEG_API
-#endif
-
 class Decoder
 {
 public:
@@ -57,7 +53,7 @@ public:
 	}
 
 private:
-	static const int BUFFER_SIZE = (AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2;
+	static const int BUFFER_SIZE = AVCODEC_MAX_AUDIO_FRAME_SIZE * 2;
 	uint8_t *m_buffer1;
 	uint8_t *m_buffer2;
 	std::string m_file_name;
@@ -107,7 +103,7 @@ inline bool Decoder::Open()
 
 	for (size_t i = 0; i < m_format_ctx->nb_streams; i++) {
 		AVCodecContext *avctx = m_format_ctx->streams[i]->codec;
-#ifdef USE_OLD_FFMPEG_API
+#if LIBAVCODEC_VERSION_INT <= AV_VERSION_INT(52, 20, 0)
 		if (avctx && avctx->codec_type == CODEC_TYPE_AUDIO) {
 #else
 		if (avctx && avctx->codec_type == AVMEDIA_TYPE_AUDIO) {
@@ -173,8 +169,8 @@ inline void Decoder::Decode(Chromaprint::AudioConsumer *consumer, int max_length
 		packet_temp.data = packet.data;
 		packet_temp.size = packet.size;
 		while (packet_temp.size > 0) {
-			int buffer_size = BUFFER_SIZE * sizeof(int16_t);
-#ifdef USE_OLD_FFMPEG_API
+			int buffer_size = BUFFER_SIZE;
+#if LIBAVCODEC_VERSION_INT <= AV_VERSION_INT(52, 20, 0)
 			int consumed = avcodec_decode_audio2(
 				m_codec_ctx, (int16_t *)m_buffer1, &buffer_size,
 				packet_temp.data, packet_temp.size);
