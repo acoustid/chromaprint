@@ -21,3 +21,6 @@ target_link_libraries(fpcalc chromaprint
 	${FFMPEG_LIBAVUTIL_LIBRARIES}
 	${EXTRA_LIBS})
 
+install(TARGETS fpcalc
+	RUNTIME DESTINATION ${BIN_INSTALL_DIR}
+)
