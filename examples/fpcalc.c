@@ -98,6 +98,13 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer, cons
 			packet_temp.size -= consumed;
 
 			if (buffer_size <= 0) {
+				if (buffer_size < 0) {
+					fprintf(stderr, "WARNING: size returned from avcodec_decode_audioX is too small\n");
+				}
+				continue;
+			}
+			if (buffer_size > BUFFER_SIZE) {
+				fprintf(stderr, "WARNING: size returned from avcodec_decode_audioX is too large\n");
 				continue;
 			}
 
