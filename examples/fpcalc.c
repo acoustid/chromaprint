@@ -6,7 +6,7 @@
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
-#define BUFFER_SIZE ((AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2)
+#define BUFFER_SIZE (AVCODEC_MAX_AUDIO_FRAME_SIZE * 2)
 
 int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer, const char *file_name, int max_length, int *duration)
 {
@@ -29,7 +29,11 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer, cons
 
 	for (i = 0; i < format_ctx->nb_streams; i++) {
 		codec_ctx = format_ctx->streams[i]->codec;
+#if LIBAVCODEC_VERSION_INT <= AV_VERSION_INT(52, 20, 0)
+		if (codec_ctx && codec_ctx->codec_type == CODEC_TYPE_AUDIO) {
+#else
 		if (codec_ctx && codec_ctx->codec_type == AVMEDIA_TYPE_AUDIO) {
+#endif
 			stream = format_ctx->streams[i];
 			break;
 		}
@@ -78,8 +82,13 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer, cons
 
 		while (packet_temp.size > 0) {
 			buffer_size = BUFFER_SIZE;
+#if LIBAVCODEC_VERSION_INT <= AV_VERSION_INT(52, 20, 0)
+			consumed = avcodec_decode_audio2(codec_ctx,
+				buffer, &buffer_size, packet_temp.data, packet_temp.size);
+#else
 			consumed = avcodec_decode_audio3(codec_ctx,
 				buffer, &buffer_size, &packet_temp);
+#endif
 
 			if (consumed < 0) {
 				break;
@@ -162,7 +171,7 @@ int main(int argc, char **argv)
 	av_register_all();
 	av_log_set_level(AV_LOG_ERROR);
 
-	buffer = av_malloc(BUFFER_SIZE);
+	buffer = av_malloc(BUFFER_SIZE + 16);
 	chromaprint_ctx = chromaprint_new(CHROMAPRINT_ALGORITHM_DEFAULT);
 
 	for (i = 0; i < num_file_names; i++) {
