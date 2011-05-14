@@ -11,6 +11,9 @@ set(EXTRA_LIBS)
 if(APPLE)
     set(EXTRA_LIBS ${EXTRA_LIBS} -lz)
 endif()
+if(UNIX)
+    set(EXTRA_LIBS ${EXTRA_LIBS} -lpthread)
+endif()
 
 target_link_libraries(fpcalc chromaprint
 	${FFMPEG_LIBAVFORMAT_LIBRARIES}
