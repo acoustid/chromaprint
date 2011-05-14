@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='Chromaprint',
-      version='0.3',
+      version='0.4',
       description='Python bindings for Chromaprint',
       author='Lukas Lalinsky',
       author_email='lalinsky@gmail.com',
