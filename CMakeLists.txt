@@ -129,6 +129,8 @@ if(NOT APPLE AND NOT BUILD_FRAMEWORK)
 endif()
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/chromaprint-config.cmake ${CMAKE_CURRENT_BINARY_DIR}/chromaprint-config)
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/chromaprint-config DESTINATION ${BIN_INSTALL_DIR})
 
 add_subdirectory(src)
 
