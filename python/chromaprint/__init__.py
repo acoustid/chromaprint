@@ -89,15 +89,14 @@ def decode_fingerprint(data, base64=True):
     _libchromaprint.chromaprint_dealloc(result_ptr)
     return result, algorithm.value
 
-def encode_fingerprint(decoded_fingerprint, base64=True):
-	fp_data, algorithm = decoded_fingerprint
-	fp_array = (ctypes.c_int * len(fp_data))()
-	for i in range(len(fp_data)):
-		fp_array[i] = fp_data[i]
-	result_ptr = ctypes.POINTER(ctypes.c_char)()
-	result_size = ctypes.c_int()
-	_libchromaprint.chromaprint_encode_fingerprint(fp_array, len(fp_data), algorithm, ctypes.byref(result_ptr), ctypes.byref(result_size), 1 if base64 else 0)
-	result = result_ptr[:result_size.value]
-	_libchromaprint.chromaprint_dealloc(result_ptr)
-	return result
+def encode_fingerprint(fingerprint, algorithm, base64=True):
+    fp_array = (ctypes.c_int * len(fingerprint))()
+    for i in range(len(fingerprint)):
+        fp_array[i] = fingerprint[i]
+    result_ptr = ctypes.POINTER(ctypes.c_char)()
+    result_size = ctypes.c_int()
+    _libchromaprint.chromaprint_encode_fingerprint(fp_array, len(fingerprint), algorithm, ctypes.byref(result_ptr), ctypes.byref(result_size), 1 if base64 else 0)
+    result = result_ptr[:result_size.value]
+    _libchromaprint.chromaprint_dealloc(result_ptr)
+    return result
 
