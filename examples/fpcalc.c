@@ -10,7 +10,7 @@
 
 int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer, const char *file_name, int max_length, int *duration)
 {
-	int i, ok = 0, remaining, length, consumed, buffer_size;
+	int i, ok = 0, remaining, length, consumed, buffer_size, codec_ctx_opened = 0;
 	AVFormatContext *format_ctx = NULL;
 	AVCodecContext *codec_ctx = NULL;
 	AVCodec *codec = NULL;
@@ -53,6 +53,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer, cons
 		fprintf(stderr, "ERROR: couldn't open the codec\n");
 		goto done;
 	}
+	codec_ctx_opened = 1;
 
 	if (codec_ctx->sample_fmt != SAMPLE_FMT_S16) {
 		fprintf(stderr, "ERROR: unsupported sample format\n");
@@ -136,7 +137,7 @@ finish:
 	ok = 1;
 
 done:
-	if (codec_ctx) {
+	if (codec_ctx_opened) {
 		avcodec_close(codec_ctx);
 	}
 	if (format_ctx) {
