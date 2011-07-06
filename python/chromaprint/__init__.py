@@ -15,8 +15,11 @@ def _guess_lib_name():
 
 
 for name in _guess_lib_name():
-    _libchromaprint = ctypes.cdll.LoadLibrary(name)
-    break
+    try:
+        _libchromaprint = ctypes.cdll.LoadLibrary(name)
+        break
+    except OSError:
+        pass
 else:
     raise ImportError("couldn't find libchromaprint")
 
