@@ -253,7 +253,7 @@ int main(int win32_argc, char **win32_argv)
 #else
 int main(int argc, char **argv)
 {
-	return fpcalc_main(argv, argv);
+	return fpcalc_main(argc, argv);
 }
 #endif
 
