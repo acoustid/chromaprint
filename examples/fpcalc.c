@@ -221,7 +221,7 @@ int fpcalc_main(int argc, char **argv)
 	av_free(buffer);
 	free(file_names);
 
-	return 1;
+	return 0;
 }
 
 #ifdef _WIN32
@@ -248,7 +248,7 @@ int main(int win32_argc, char **win32_argv)
 
 	LocalFree(argv);
 
-	fpcalc_main(argc, utf8_argv);
+	return fpcalc_main(argc, utf8_argv);
 }
 #else
 int main(int argc, char **argv)
