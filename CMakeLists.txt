@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 2.6)
 
 project(chromaprint)
-set(PROJECT_VERSION 0.4.0)
+set(PROJECT_VERSION 0.5.0)
 
 # 1. If the library source code has changed at all since the last update, then increment revision.
 # 2. If any interfaces have been added, removed, or changed since the last update, increment current, and set revision to 0.
 # 3. If any interfaces have been added since the last public release, then increment age.
 # 4. If any interfaces have been removed since the last public release, then set age to 0. 
 set(chromaprint_SOVERSION_CURRENT  1)
-set(chromaprint_SOVERSION_REVISION 2)
+set(chromaprint_SOVERSION_REVISION 3)
 set(chromaprint_SOVERSION_AGE      1)
 
 math(EXPR chromaprint_SOVERSION_MAJOR "${chromaprint_SOVERSION_CURRENT} - ${chromaprint_SOVERSION_AGE}")
