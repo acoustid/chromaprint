@@ -151,7 +151,7 @@ done:
 
 int fpcalc_main(int argc, char **argv)
 {
-	int i, j, max_length = 60, num_file_names = 0, raw = 0, raw_fingerprint_size, duration;
+	int i, j, max_length = 120, num_file_names = 0, raw = 0, raw_fingerprint_size, duration;
 	int16_t *buffer;
 	int32_t *raw_fingerprint;
 	char *file_name, *fingerprint, **file_names;
@@ -174,7 +174,7 @@ int fpcalc_main(int argc, char **argv)
 	if (!num_file_names) {
 		printf("usage: %s [OPTIONS] FILE...\n\n", argv[0]);
 		printf("Options:\n");
-		printf("  -length SECS  length of the audio data used for fingerprint calculation (default 60)\n");
+		printf("  -length SECS  length of the audio data used for fingerprint calculation (default 120)\n");
 		printf("  -raw          output the raw uncompressed fingerprint\n");
 		return 2;
 	}
