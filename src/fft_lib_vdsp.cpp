@@ -25,8 +25,8 @@ using namespace std;
 using namespace Chromaprint;
 
 FFTLib::FFTLib(int frame_size, double *window)
-	: m_frame_size(frame_size),
-	  m_window(window)
+	: m_window(window),
+	  m_frame_size(frame_size)
 {
 	double log2n = log2(frame_size);
 	assert(log2n == int(log2n));
