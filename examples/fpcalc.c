@@ -32,7 +32,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer, cons
 
 	for (i = 0; i < format_ctx->nb_streams; i++) {
 		codec_ctx = format_ctx->streams[i]->codec;
-#if LIBAVCODEC_VERSION_INT <= AV_VERSION_INT(52, 20, 0)
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52, 64, 0)
 		if (codec_ctx && codec_ctx->codec_type == CODEC_TYPE_AUDIO) {
 #else
 		if (codec_ctx && codec_ctx->codec_type == AVMEDIA_TYPE_AUDIO) {
@@ -86,7 +86,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer, cons
 
 		while (packet_temp.size > 0) {
 			buffer_size = BUFFER_SIZE;
-#if LIBAVCODEC_VERSION_INT <= AV_VERSION_INT(52, 20, 0)
+#if LIBAVCODEC_VERSION_INT <= AV_VERSION_INT(52, 25, 0)
 			consumed = avcodec_decode_audio2(codec_ctx,
 				buffer, &buffer_size, packet_temp.data, packet_temp.size);
 #else
