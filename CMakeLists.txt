@@ -151,6 +151,7 @@ if(BUILD_TOOLS OR BUILD_TOOLS_EXTRA)
 endif(BUILD_TOOLS OR BUILD_TOOLS_EXTRA)
 
 if(BUILD_TESTS)
+	find_package(Threads)
 	find_package(GTest REQUIRED)
 	add_subdirectory(tests)
 endif(BUILD_TESTS)

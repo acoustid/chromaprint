@@ -30,6 +30,7 @@ set(tests_SOURCES
 add_executable(all_tests ${tests_SOURCES})
 target_link_libraries(all_tests
 	${GTEST_BOTH_LIBRARIES}
+	${CMAKE_THREAD_LIBS_INIT}
 	chromaprint_p
 )
 
