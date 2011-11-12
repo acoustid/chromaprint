@@ -3,6 +3,10 @@
 # Copyright (C) 2011 Lukas Lalinsky
 # Distributed under the MIT license, see the LICENSE file for details. 
 
+# This script just demonstrates how to use the API. See pyacoustid for a
+# complete Chromaprint/Acoustid library written in Python:
+# https://github.com/sampsyo/pyacoustid
+
 import wave
 import chromaprint
 from optparse import OptionParser

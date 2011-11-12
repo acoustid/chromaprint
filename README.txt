@@ -56,6 +56,12 @@ The test suite can be built and run using the following commands:
 $ cmake -DBUILD_TESTS=ON .
 $ make check
 
+Related Projects
+----------------
+
+ * pyacoustid - https://github.com/sampsyo/pyacoustid
+ * gst-chromaprint - https://github.com/lalinsky/gst-chromaprint
+
 Standing on the Shoulder of Giants
 ----------------------------------
 
