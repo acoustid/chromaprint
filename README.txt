@@ -20,6 +20,20 @@ In order to build the test suite, you will need the Google Test library [5].
 [4] http://www.boost.org/
 [5] http://code.google.com/p/googletest/
 
+Installing
+----------
+
+The most common way to build Chromaprint is like this:
+
+$ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON .
+$ make
+$ sudo make install
+
+This will build Chromaprint as a shared library and also include the fpcalc
+utility (which is used by MusicBrainz Picard, for example).
+
+See below for other options.
+
 FFT Library
 -----------
 
