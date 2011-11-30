@@ -2,6 +2,10 @@
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <chromaprint.h>
+#ifdef HAVE_AV_AUDIO_CONVERT
+#include "ffmpeg/audioconvert.h"
+#include "ffmpeg/samplefmt.h"
+#endif
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -11,7 +15,7 @@
 
 #define BUFFER_SIZE (AVCODEC_MAX_AUDIO_FRAME_SIZE * 2)
 
-int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer, const char *file_name, int max_length, int *duration)
+int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer1, int16_t *buffer2, const char *file_name, int max_length, int *duration)
 {
 	int i, ok = 0, remaining, length, consumed, buffer_size, codec_ctx_opened = 0;
 	AVFormatContext *format_ctx = NULL;
@@ -19,6 +23,10 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer, cons
 	AVCodec *codec = NULL;
 	AVStream *stream = NULL;
 	AVPacket packet, packet_temp;
+#ifdef HAVE_AV_AUDIO_CONVERT
+	AVAudioConvert *convert_ctx = NULL;
+#endif
+	int16_t *buffer;
 
 	if (av_open_input_file(&format_ctx, file_name, NULL, 0, NULL) != 0) {
 		fprintf(stderr, "ERROR: couldn't open the file\n");
@@ -58,14 +66,23 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer, cons
 	}
 	codec_ctx_opened = 1;
 
-	if (codec_ctx->sample_fmt != SAMPLE_FMT_S16) {
-		fprintf(stderr, "ERROR: unsupported sample format\n");
-		goto done;
-	}
-
 	if (codec_ctx->channels <= 0) {
 		fprintf(stderr, "ERROR: no channels found in the audio stream\n");
 		goto done;
+	}
+
+	if (codec_ctx->sample_fmt != SAMPLE_FMT_S16) {
+#ifdef HAVE_AV_AUDIO_CONVERT
+		convert_ctx = av_audio_convert_alloc(SAMPLE_FMT_S16, codec_ctx->channels,
+		                                     codec_ctx->sample_fmt, codec_ctx->channels, NULL, 0);
+		if (!convert_ctx) {
+			fprintf(stderr, "ERROR: couldn't create sample format converter\n");
+			goto done;
+		}
+#else
+		fprintf(stderr, "ERROR: unsupported sample format\n");
+		goto done;
+#endif
 	}
 
 	*duration = stream->time_base.num * stream->duration / stream->time_base.den;
@@ -88,10 +105,10 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer, cons
 			buffer_size = BUFFER_SIZE;
 #if LIBAVCODEC_VERSION_INT <= AV_VERSION_INT(52, 25, 0)
 			consumed = avcodec_decode_audio2(codec_ctx,
-				buffer, &buffer_size, packet_temp.data, packet_temp.size);
+				buffer1, &buffer_size, packet_temp.data, packet_temp.size);
 #else
 			consumed = avcodec_decode_audio3(codec_ctx,
-				buffer, &buffer_size, &packet_temp);
+				buffer1, &buffer_size, &packet_temp);
 #endif
 
 			if (consumed < 0) {
@@ -111,6 +128,26 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer, cons
 				fprintf(stderr, "WARNING: size returned from avcodec_decode_audioX is too large\n");
 				continue;
 			}
+
+#ifdef HAVE_AV_AUDIO_CONVERT
+			if (convert_ctx) {
+				const void *ibuf[6] = { buffer1 };
+				void *obuf[6] = { buffer2 };
+				int istride[6] = { av_get_bits_per_sample_format(codec_ctx->sample_fmt) / 8 };
+				int ostride[6] = { 2 };
+				int len = buffer_size / istride[0];
+				if (av_audio_convert(convert_ctx, obuf, ostride, ibuf, istride, len) < 0) {
+					break;
+				}
+				buffer = buffer2;
+				buffer_size = len * ostride[0];
+			}
+			else {
+				buffer = buffer1;
+			}
+#else
+			buffer = buffer1;
+#endif
 
 			length = MIN(remaining, buffer_size / 2);
 			if (!chromaprint_feed(chromaprint_ctx, buffer, length)) {
@@ -146,13 +183,18 @@ done:
 	if (format_ctx) {
 		av_close_input_file(format_ctx);
 	}
+#ifdef HAVE_AV_AUDIO_CONVERT
+	if (convert_ctx) {
+		av_audio_convert_free(convert_ctx);
+	}
+#endif
 	return ok;
 }
 
 int fpcalc_main(int argc, char **argv)
 {
 	int i, j, max_length = 120, num_file_names = 0, raw = 0, raw_fingerprint_size, duration;
-	int16_t *buffer;
+	int16_t *buffer1, *buffer2;
 	int32_t *raw_fingerprint;
 	char *file_name, *fingerprint, **file_names;
 	ChromaprintContext *chromaprint_ctx;
@@ -182,12 +224,13 @@ int fpcalc_main(int argc, char **argv)
 	av_register_all();
 	av_log_set_level(AV_LOG_ERROR);
 
-	buffer = av_malloc(BUFFER_SIZE + 16);
+	buffer1 = av_malloc(BUFFER_SIZE + 16);
+	buffer2 = av_malloc(BUFFER_SIZE + 16);
 	chromaprint_ctx = chromaprint_new(CHROMAPRINT_ALGORITHM_DEFAULT);
 
 	for (i = 0; i < num_file_names; i++) {
 		file_name = file_names[i];
-		if (!decode_audio_file(chromaprint_ctx, buffer, file_name, max_length, &duration)) {
+		if (!decode_audio_file(chromaprint_ctx, buffer1, buffer2, file_name, max_length, &duration)) {
 			fprintf(stderr, "ERROR: unable to calculate fingerprint for file %s, skipping\n", file_name);
 			continue;
 		}
@@ -218,7 +261,8 @@ int fpcalc_main(int argc, char **argv)
 	}
 
 	chromaprint_free(chromaprint_ctx);
-	av_free(buffer);
+	av_free(buffer1);
+	av_free(buffer2);
 	free(file_names);
 
 	return 0;
