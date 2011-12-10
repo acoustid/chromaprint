@@ -1,3 +1,9 @@
+Version 0.6 -- December 10, 2011
+================================
+
+ - Support for 24-bit file formats in fpcalc.
+ - Python bindings moved to a separate project (pyacoustid).
+
 Version 0.5 -- October 6, 2011
 ==============================
 
