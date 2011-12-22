@@ -1,7 +1,8 @@
-Version 0.6 -- December 10, 2011
+Version 0.6 -- December 22, 2011
 ================================
 
  - Support for 24-bit file formats in fpcalc.
+ - The fpcalc utility now uses 120 seconds of audio data by default.
  - Python bindings moved to a separate project (pyacoustid).
 
 Version 0.5 -- October 6, 2011
