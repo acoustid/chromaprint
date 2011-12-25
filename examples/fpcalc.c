@@ -2,10 +2,6 @@
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <chromaprint.h>
-#ifdef HAVE_AV_AUDIO_CONVERT
-#include "ffmpeg/audioconvert.h"
-#include "ffmpeg/samplefmt.h"
-#endif
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -24,7 +20,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer1, int
 	AVStream *stream = NULL;
 	AVPacket packet, packet_temp;
 #ifdef HAVE_AV_AUDIO_CONVERT
-	AVAudioConvert *convert_ctx = NULL;
+	ReSampleContext *convert_ctx = NULL;
 #endif
 	int16_t *buffer;
 
@@ -73,8 +69,9 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer1, int
 
 	if (codec_ctx->sample_fmt != SAMPLE_FMT_S16) {
 #ifdef HAVE_AV_AUDIO_CONVERT
-		convert_ctx = av_audio_convert_alloc(SAMPLE_FMT_S16, codec_ctx->channels,
-		                                     codec_ctx->sample_fmt, codec_ctx->channels, NULL, 0);
+        convert_ctx = av_audio_resample_init(1, 1, codec_ctx->sample_rate,
+                                             codec_ctx->sample_rate, SAMPLE_FMT_S16,
+                                             codec_ctx->channels, 16, 10, 0, 0.8);
 		if (!convert_ctx) {
 			fprintf(stderr, "ERROR: couldn't create sample format converter\n");
 			goto done;
@@ -131,16 +128,14 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer1, int
 
 #ifdef HAVE_AV_AUDIO_CONVERT
 			if (convert_ctx) {
-				const void *ibuf[6] = { buffer1 };
-				void *obuf[6] = { buffer2 };
-				int istride[6] = { av_get_bits_per_sample_format(codec_ctx->sample_fmt) / 8 };
-				int ostride[6] = { 2 };
-				int len = buffer_size / istride[0];
-				if (av_audio_convert(convert_ctx, obuf, ostride, ibuf, istride, len) < 0) {
+                int isize = buffer_size / av_get_bytes_per_sample(codec_ctx->sample_fmt);
+                int osize = buffer_size / 2 ;
+                int len = MIN(isize, osize);
+				if (audio_resample(convert_ctx, buffer2, buffer1, len) < 0) {
 					break;
 				}
 				buffer = buffer2;
-				buffer_size = len * ostride[0];
+				buffer_size = len * 2;
 			}
 			else {
 				buffer = buffer1;
@@ -185,7 +180,7 @@ done:
 	}
 #ifdef HAVE_AV_AUDIO_CONVERT
 	if (convert_ctx) {
-		av_audio_convert_free(convert_ctx);
+		audio_resample_close(convert_ctx);
 	}
 #endif
 	return ok;
