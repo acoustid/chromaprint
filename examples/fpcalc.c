@@ -69,9 +69,9 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer1, int
 
 	if (codec_ctx->sample_fmt != SAMPLE_FMT_S16) {
 #ifdef HAVE_AV_AUDIO_CONVERT
-        convert_ctx = av_audio_resample_init(1, 1, codec_ctx->sample_rate,
-                                             codec_ctx->sample_rate, SAMPLE_FMT_S16,
-                                             codec_ctx->channels, 16, 10, 0, 0.8);
+		convert_ctx = av_audio_resample_init(1, 1, codec_ctx->sample_rate,
+											 codec_ctx->sample_rate, SAMPLE_FMT_S16,
+											 codec_ctx->channels, 16, 10, 0, 0.8);
 		if (!convert_ctx) {
 			fprintf(stderr, "ERROR: couldn't create sample format converter\n");
 			goto done;
@@ -128,9 +128,9 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer1, int
 
 #ifdef HAVE_AV_AUDIO_CONVERT
 			if (convert_ctx) {
-                int isize = buffer_size / av_get_bytes_per_sample(codec_ctx->sample_fmt);
-                int osize = buffer_size / 2 ;
-                int len = MIN(isize, osize);
+				int isize = buffer_size / av_get_bytes_per_sample(codec_ctx->sample_fmt);
+				int osize = buffer_size / 2 ;
+				int len = MIN(isize, osize);
 				if (audio_resample(convert_ctx, buffer2, buffer1, len) < 0) {
 					break;
 				}
