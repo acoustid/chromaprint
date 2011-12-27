@@ -128,7 +128,11 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer1, int
 
 #ifdef HAVE_AV_AUDIO_CONVERT
 			if (convert_ctx) {
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(53, 3, 0)
 				int isize = buffer_size / av_get_bytes_per_sample(codec_ctx->sample_fmt);
+#else
+				int isize = buffer_size / (av_get_bits_per_sample_format(codec_ctx->sample_fmt) / 8);
+#endif
 				int osize = buffer_size / 2 ;
 				int len = MIN(isize, osize);
 				if (audio_resample(convert_ctx, buffer2, buffer1, len) < 0) {
