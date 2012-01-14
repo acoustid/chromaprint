@@ -139,7 +139,7 @@ int chromaprint_decode_fingerprint(void *encoded_fp, int encoded_size, void **fp
 	*fp = malloc(sizeof(int32_t) * uncompressed.size());
 	*size = uncompressed.size();	
 	copy(uncompressed.begin(), uncompressed.end(), (int32_t *)*fp);
-	return 0;
+	return 1;
 }
 
 void chromaprint_dealloc(void *ptr)
