@@ -35,7 +35,13 @@ namespace Chromaprint
 	class FFT : public AudioConsumer
 	{
 	public:
-		FFT(int frame_size, int overlap, FFTFrameConsumer *consumer);
+		enum WindowType
+		{
+			kHammingWindow,
+			kHannWindow,
+		};
+
+		FFT(int frame_size, int overlap, FFTFrameConsumer *consumer, WindowType window = kHammingWindow);
 		~FFT();
 
 		int FrameSize() const { return m_frame_size; }

@@ -27,7 +27,7 @@
 using namespace std;
 using namespace Chromaprint;
 
-FFT::FFT(int frame_size, int overlap, FFTFrameConsumer *consumer)
+FFT::FFT(int frame_size, int overlap, FFTFrameConsumer *consumer, WindowType wtype)
 	: m_window(new double[frame_size]),
 	  m_buffer_offset(0),
 	  m_buffer(new short[frame_size]),
@@ -36,7 +36,12 @@ FFT::FFT(int frame_size, int overlap, FFTFrameConsumer *consumer)
 	  m_increment(frame_size - overlap),
 	  m_consumer(consumer)
 {
-	PrepareHammingWindow(m_window, m_window + frame_size);
+	if (wtype == kHannWindow) {
+		PrepareHannWindow(m_window, m_window + frame_size);
+	}
+	else {
+		PrepareHammingWindow(m_window, m_window + frame_size);
+	}
 	for (int i = 0; i < frame_size; i++) {
 		m_window[i] /= numeric_limits<short>::max();
 	}

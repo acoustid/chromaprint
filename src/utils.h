@@ -60,6 +60,16 @@ namespace Chromaprint
 		}
 	}
 
+	template<class RandomAccessIterator>
+	void PrepareHannWindow(RandomAccessIterator first, RandomAccessIterator last)
+	{
+		size_t i = 0, max_i = last - first - 1;
+		double scale = 2. * M_PI / max_i;
+		while (first != last) {
+			*first++ = 0.5 * (1.0 - cos(scale * i++));
+		}
+	}
+
 	template<class InputIterator1, class InputIterator2, class OutputIterator>
 	void ApplyWindow(InputIterator1 input, InputIterator2 window, OutputIterator output, int size, double scale)
 	{
