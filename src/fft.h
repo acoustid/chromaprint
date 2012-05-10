@@ -41,7 +41,7 @@ namespace Chromaprint
 			kHannWindow,
 		};
 
-		FFT(int frame_size, int overlap, FFTFrameConsumer *consumer, WindowType window = kHammingWindow);
+		FFT(int frame_size, int overlap, FFTFrameConsumer *consumer, WindowType window = kHammingWindow, int frame_data_size = 0);
 		~FFT();
 
 		int FrameSize() const { return m_frame_size; }
@@ -58,6 +58,7 @@ namespace Chromaprint
 		short *m_buffer;
 		FFTFrame m_frame;
 		int m_frame_size;
+		int m_frame_data_size;
 		int m_increment;
 		FFTLib *m_lib;
 		FFTFrameConsumer *m_consumer;

@@ -27,22 +27,23 @@
 using namespace std;
 using namespace Chromaprint;
 
-FFT::FFT(int frame_size, int overlap, FFTFrameConsumer *consumer, WindowType wtype)
-	: m_window(new double[frame_size]),
+FFT::FFT(int frame_size, int overlap, FFTFrameConsumer *consumer, WindowType wtype, int frame_data_size)
+	: m_window(new double[frame_data_size ? frame_data_size : frame_size]),
 	  m_buffer_offset(0),
 	  m_buffer(new short[frame_size]),
 	  m_frame(frame_size),
 	  m_frame_size(frame_size),
+	  m_frame_data_size(frame_data_size ? frame_data_size : frame_size),
 	  m_increment(frame_size - overlap),
 	  m_consumer(consumer)
 {
 	if (wtype == kHannWindow) {
-		PrepareHannWindow(m_window, m_window + frame_size);
+		PrepareHannWindow(m_window, m_window + m_frame_data_size);
 	}
 	else {
-		PrepareHammingWindow(m_window, m_window + frame_size);
+		PrepareHammingWindow(m_window, m_window + m_frame_data_size);
 	}
-	for (int i = 0; i < frame_size; i++) {
+	for (int i = 0; i < m_frame_data_size; i++) {
 		m_window[i] /= numeric_limits<short>::max();
 	}
 	m_lib = new FFTLib(frame_size, m_window);
@@ -63,15 +64,15 @@ void FFT::Reset()
 void FFT::Consume(short *input, int length)
 {
 	// Special case, just pre-filling the buffer
-	if (m_buffer_offset + length < m_frame_size) {
+	if (m_buffer_offset + length < m_frame_data_size) {
 		copy(input, input + length, m_buffer + m_buffer_offset);
 		m_buffer_offset += length;
 		return;
 	}
 	// Apply FFT on the available data
 	CombinedBuffer<short> combined_buffer(m_buffer, m_buffer_offset, input, length);
-	while (combined_buffer.Size() >= m_frame_size) {
-		m_lib->ComputeFrame(combined_buffer.Begin(), m_frame.data());
+	while (combined_buffer.Size() >= m_frame_data_size) {
+		m_lib->ComputeFrame(combined_buffer.Begin(), m_frame_data_size, m_frame.data());
 		m_consumer->Consume(m_frame);
 		combined_buffer.Shift(m_increment);
 	}

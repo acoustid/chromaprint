@@ -35,6 +35,13 @@ if(BUILD_EXTRA_TOOLS)
 		${FFMPEG_LIBAVUTIL_LIBRARIES}
 		-lpng)
 
+	add_executable(aspec aspec.cpp)
+	target_link_libraries(aspec chromaprint_p
+		${FFMPEG_LIBAVFORMAT_LIBRARIES}
+		${FFMPEG_LIBAVCODEC_LIBRARIES}
+		${FFMPEG_LIBAVUTIL_LIBRARIES}
+		-lpng)
+
 	add_executable(learn_filters learn_filters.cpp)
 	target_link_libraries(learn_filters chromaprint_p
 		${FFMPEG_LIBAVFORMAT_LIBRARIES}
