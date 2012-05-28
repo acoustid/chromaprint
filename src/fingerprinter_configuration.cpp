@@ -105,3 +105,8 @@ FingerprinterConfigurationTest3::FingerprinterConfigurationTest3()
 	set_interpolate(true);
 }
 
+FingerprinterConfigurationTest4::FingerprinterConfigurationTest4()
+{
+	set_remove_silence(true);
+}
+

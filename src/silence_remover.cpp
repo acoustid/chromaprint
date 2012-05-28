@@ -26,6 +26,8 @@
 using namespace std;
 using namespace Chromaprint;
 
+const short kSilenceThreshold = 100;
+
 SilenceRemover::SilenceRemover(AudioConsumer *consumer)
     : m_start(true),
 	  m_consumer(consumer)
@@ -46,7 +48,7 @@ void SilenceRemover::Consume(short *input, int length)
 {
 	if (m_start) {
 		while (length) {
-			if (*input != 0) {
+			if (abs(*input) > kSilenceThreshold) {
 				m_start = false;
 				break;
 			}

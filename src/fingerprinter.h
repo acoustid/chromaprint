@@ -37,6 +37,7 @@ namespace Chromaprint
 	class AudioProcessor;
 	class FingerprintCalculator;
 	class FingerprinterConfiguration;
+	class SilenceRemover;
 
 	class Fingerprinter : public AudioConsumer
 	{
@@ -70,6 +71,7 @@ namespace Chromaprint
 		AudioProcessor *m_audio_processor;
 		FingerprintCalculator *m_fingerprint_calculator;
 		FingerprinterConfiguration *m_config;
+		SilenceRemover *m_silence_remover;
 	};
 
 };

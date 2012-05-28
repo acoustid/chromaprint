@@ -25,10 +25,12 @@
 #include "fft.h"
 #include "audio_processor.h"
 #include "image_builder.h"
+#include "silence_remover.h"
 #include "fingerprint_calculator.h"
 #include "fingerprinter_configuration.h"
 #include "classifier.h"
 #include "utils.h"
+#include "debug.h"
 
 using namespace std;
 using namespace Chromaprint;
@@ -51,7 +53,14 @@ Fingerprinter::Fingerprinter(FingerprinterConfiguration *config)
 	m_chroma = new Chroma(MIN_FREQ, MAX_FREQ, FRAME_SIZE, SAMPLE_RATE, m_chroma_filter);
 	//m_chroma->set_interpolate(true);
 	m_fft = new FFT(FRAME_SIZE, OVERLAP, m_chroma);
-	m_audio_processor = new AudioProcessor(SAMPLE_RATE, m_fft);
+	if (config->remove_silence()) {
+		m_silence_remover = new SilenceRemover(m_fft);
+		m_audio_processor = new AudioProcessor(SAMPLE_RATE, m_silence_remover);
+	}
+	else {
+		m_silence_remover = 0;
+		m_audio_processor = new AudioProcessor(SAMPLE_RATE, m_fft);
+	}
 	m_fingerprint_calculator = new FingerprintCalculator(config->classifiers(), config->num_classifiers());
 	m_config = config;
 }
@@ -60,6 +69,9 @@ Fingerprinter::~Fingerprinter()
 {
 	delete m_fingerprint_calculator;
 	delete m_audio_processor;
+	if (m_silence_remover) {
+		delete m_silence_remover;
+	}
 	delete m_fft;
 	delete m_chroma;
 	delete m_chroma_filter;

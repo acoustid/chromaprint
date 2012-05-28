@@ -31,7 +31,7 @@ namespace Chromaprint
 	public:	
 
 		FingerprinterConfiguration()
-			: m_num_classifiers(0), m_classifiers(0)
+			: m_num_classifiers(0), m_classifiers(0), m_remove_silence(false)
 		{
 		}
 
@@ -77,12 +77,23 @@ namespace Chromaprint
 			m_interpolate = value;
 		}
 
+		bool remove_silence() const 
+		{
+			return m_remove_silence;
+		}
+
+		void set_remove_silence(bool value)
+		{
+			m_remove_silence = value;
+		}
+
 	private:
 		int m_num_classifiers;
 		const Classifier *m_classifiers;
 		int m_num_filter_coefficients;
 		const double *m_filter_coefficients;
 		bool m_interpolate;
+		bool m_remove_silence;
 	};
 
 	// Used for http://oxygene.sk/lukas/2010/07/introducing-chromaprint/
@@ -107,6 +118,13 @@ namespace Chromaprint
 		FingerprinterConfigurationTest3();
 	};
 
+	// Same as v2, but trims leading silence
+	class FingerprinterConfigurationTest4 : public FingerprinterConfigurationTest2
+	{
+	public:
+		FingerprinterConfigurationTest4();
+	};
+
 	inline FingerprinterConfiguration *CreateFingerprinterConfiguration(int algorithm)
 	{
 		switch (algorithm) {
@@ -116,6 +134,8 @@ namespace Chromaprint
 			return new FingerprinterConfigurationTest2();
 		case CHROMAPRINT_ALGORITHM_TEST3:
 			return new FingerprinterConfigurationTest3();
+		case CHROMAPRINT_ALGORITHM_TEST4:
+			return new FingerprinterConfigurationTest4();
 		}
 		return 0;
 	}
