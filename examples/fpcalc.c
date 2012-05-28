@@ -198,6 +198,7 @@ int fpcalc_main(int argc, char **argv)
 	int32_t *raw_fingerprint;
 	char *file_name, *fingerprint, **file_names;
 	ChromaprintContext *chromaprint_ctx;
+	int algo = CHROMAPRINT_ALGORITHM_DEFAULT;
 
 	file_names = malloc(argc * sizeof(char *));
 	for (i = 1; i < argc; i++) {
@@ -207,6 +208,16 @@ int fpcalc_main(int argc, char **argv)
 		}
 		else if (!strcmp(arg, "-raw")) {
 			raw = 1;
+		}
+		else if (!strcmp(arg, "-algo") && i + 1 < argc) {
+			const char *v = argv[++i];
+			if (!strcmp(v, "test1")) { algo = CHROMAPRINT_ALGORITHM_TEST1; }
+			else if (!strcmp(v, "test2")) { algo = CHROMAPRINT_ALGORITHM_TEST2; }
+			else if (!strcmp(v, "test3")) { algo = CHROMAPRINT_ALGORITHM_TEST3; }
+			else if (!strcmp(v, "test4")) { algo = CHROMAPRINT_ALGORITHM_TEST4; }
+			else {
+				fprintf(stderr, "WARNING: unknown algorithm, using the default\n");
+			}
 		}
 		else {
 			file_names[num_file_names++] = argv[i];
@@ -218,6 +229,7 @@ int fpcalc_main(int argc, char **argv)
 		printf("Options:\n");
 		printf("  -length SECS  length of the audio data used for fingerprint calculation (default 120)\n");
 		printf("  -raw          output the raw uncompressed fingerprint\n");
+		printf("  -algo NAME    version of the fingerprint algorithm\n");
 		return 2;
 	}
 
@@ -226,7 +238,7 @@ int fpcalc_main(int argc, char **argv)
 
 	buffer1 = av_malloc(BUFFER_SIZE + 16);
 	buffer2 = av_malloc(BUFFER_SIZE + 16);
-	chromaprint_ctx = chromaprint_new(CHROMAPRINT_ALGORITHM_DEFAULT);
+	chromaprint_ctx = chromaprint_new(algo);
 
 	for (i = 0; i < num_file_names; i++) {
 		file_name = file_names[i];
@@ -246,8 +258,9 @@ int fpcalc_main(int argc, char **argv)
 			}
 			printf("FINGERPRINT=");
 			for (j = 0; j < raw_fingerprint_size; j++) {
-				printf("%d%s", raw_fingerprint[j], j + 1 < raw_fingerprint_size ? "," : "\n");
+				printf("%d%s", raw_fingerprint[j], j + 1 < raw_fingerprint_size ? "," : "");
 			}
+			printf("\n");
 			chromaprint_dealloc(raw_fingerprint);
 		}
 		else {
