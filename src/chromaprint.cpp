@@ -40,7 +40,7 @@ struct ChromaprintContextPrivate {
 };
 
 #define STR(x) #x
-#define VERSION_STR(minor, major, patch) \
+#define VERSION_STR(major, minor, patch) \
 	STR(major) "." STR(minor) "." STR(patch)
 
 static const char *version_str = VERSION_STR(

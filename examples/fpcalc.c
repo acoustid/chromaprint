@@ -206,6 +206,10 @@ int fpcalc_main(int argc, char **argv)
 		if (!strcmp(arg, "-length") && i + 1 < argc) {
 			max_length = atoi(argv[++i]);
 		}
+		else if (!strcmp(arg, "-version") || !strcmp(arg, "-v")) {
+			fprintf(stderr, "fpcalc version %s\n", chromaprint_get_version());
+			return 0;
+		}
 		else if (!strcmp(arg, "-raw")) {
 			raw = 1;
 		}
@@ -227,6 +231,7 @@ int fpcalc_main(int argc, char **argv)
 	if (!num_file_names) {
 		printf("usage: %s [OPTIONS] FILE...\n\n", argv[0]);
 		printf("Options:\n");
+		printf("  -version      print version information\n");
 		printf("  -length SECS  length of the audio data used for fingerprint calculation (default 120)\n");
 		printf("  -raw          output the raw uncompressed fingerprint\n");
 		printf("  -algo NAME    version of the fingerprint algorithm\n");
