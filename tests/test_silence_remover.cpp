@@ -13,7 +13,7 @@ using namespace Chromaprint;
 
 TEST(SilenceRemover, PassThrough)
 {
-	short samples[] = { 1, 2, 3, 4, 5, 6 };
+	short samples[] = { 1000, 2000, 3000, 4000, 5000, 6000 };
 	vector<short> data(samples, samples + 6);
 
 	boost::scoped_ptr<AudioBuffer> buffer(new AudioBuffer());
@@ -30,10 +30,10 @@ TEST(SilenceRemover, PassThrough)
 
 TEST(SilenceRemover, RemoveLeadingSilence)
 {
-	short samples1[] = { 0, 0, 1, 2, 0, 4, 5, 0 };
+	short samples1[] = { 0, 0, 1000, 2000, 0, 4000, 5000, 0 };
 	vector<short> data1(samples1, samples1 + 8);
 
-	short samples2[] = { 1, 2, 0, 4, 5, 0 };
+	short samples2[] = { 1000, 2000, 0, 4000, 5000, 0 };
 	vector<short> data2(samples2, samples2 + 6);
 
 	boost::scoped_ptr<AudioBuffer> buffer(new AudioBuffer());
