@@ -30,8 +30,8 @@ TEST(SilenceRemover, PassThrough)
 
 TEST(SilenceRemover, RemoveLeadingSilence)
 {
-	short samples1[] = { 0, 0, 1000, 2000, 0, 4000, 5000, 0 };
-	vector<short> data1(samples1, samples1 + 8);
+	short samples1[] = { 0, 60, 0, 1000, 2000, 0, 4000, 5000, 0 };
+	vector<short> data1(samples1, samples1 + 9);
 
 	short samples2[] = { 1000, 2000, 0, 4000, 5000, 0 };
 	vector<short> data2(samples2, samples2 + 6);

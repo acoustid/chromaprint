@@ -23,6 +23,7 @@
 
 #include "utils.h"
 #include "audio_consumer.h"
+#include "moving_average.h"
 
 namespace Chromaprint
 {
@@ -50,6 +51,7 @@ namespace Chromaprint
 		CHROMAPRINT_DISABLE_COPY(SilenceRemover);
 
 		bool m_start;
+		MovingAverage<short> m_average;
 		AudioConsumer *m_consumer;
 	};
 
