@@ -207,7 +207,7 @@ int fpcalc_main(int argc, char **argv)
 			max_length = atoi(argv[++i]);
 		}
 		else if (!strcmp(arg, "-version") || !strcmp(arg, "-v")) {
-			fprintf(stderr, "fpcalc version %s\n", chromaprint_get_version());
+			printf("fpcalc version %s\n", chromaprint_get_version());
 			return 0;
 		}
 		else if (!strcmp(arg, "-raw")) {
@@ -222,6 +222,9 @@ int fpcalc_main(int argc, char **argv)
 			else {
 				fprintf(stderr, "WARNING: unknown algorithm, using the default\n");
 			}
+		}
+		else if (!strcmp(arg, "-set") && i + 1 < argc) {
+			i += 1;
 		}
 		else {
 			file_names[num_file_names++] = argv[i];
@@ -244,6 +247,18 @@ int fpcalc_main(int argc, char **argv)
 	buffer1 = av_malloc(BUFFER_SIZE + 16);
 	buffer2 = av_malloc(BUFFER_SIZE + 16);
 	chromaprint_ctx = chromaprint_new(algo);
+
+	for (i = 1; i < argc; i++) {
+		char *arg = argv[i];
+		if (!strcmp(arg, "-set") && i + 1 < argc) {
+			char *name = argv[++i];
+			char *value = strchr(name, '=');
+			if (value) {
+				*value++ = '\0';
+				chromaprint_set_option(chromaprint_ctx, name, atoi(value));
+			}
+		}
+	}
 
 	for (i = 0; i < num_file_names; i++) {
 		file_name = file_names[i];

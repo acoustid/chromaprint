@@ -18,6 +18,7 @@
  * USA
  */
 
+#include <string.h>
 #include "fingerprinter.h"
 #include "chroma.h"
 #include "chroma_normalizer.h"
@@ -55,6 +56,7 @@ Fingerprinter::Fingerprinter(FingerprinterConfiguration *config)
 	m_fft = new FFT(FRAME_SIZE, OVERLAP, m_chroma);
 	if (config->remove_silence()) {
 		m_silence_remover = new SilenceRemover(m_fft);
+		m_silence_remover->set_threshold(config->silence_threshold());
 		m_audio_processor = new AudioProcessor(SAMPLE_RATE, m_silence_remover);
 	}
 	else {
@@ -78,6 +80,17 @@ Fingerprinter::~Fingerprinter()
 	delete m_chroma_normalizer;
 	delete m_image_builder;
 	delete m_config;
+}
+
+bool Fingerprinter::SetOption(const char *name, int value)
+{
+	if (!strcmp(name, "silence_threshold")) {
+		if (m_silence_remover) {
+			m_silence_remover->set_threshold(value);
+			return true;
+		}
+	}
+	return false;
 }
 
 bool Fingerprinter::Start(int sample_rate, int num_channels)

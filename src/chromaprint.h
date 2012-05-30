@@ -90,6 +90,25 @@ CHROMAPRINT_API void chromaprint_free(ChromaprintContext *ctx);
 CHROMAPRINT_API int chromaprint_get_algorithm(ChromaprintContext *ctx);
 
 /**
+ * Set a configuration option for the selected fingerprint algorithm.
+ *
+ * NOTE: DO NOT USE THIS FUNCTION IF YOU ARE PLANNING TO USE
+ * THE GENERATED FINGERPRINTS WITH THE ACOUSTID SERVICE.
+ *
+ * Parameters:
+ *  - ctx: Chromaprint context pointer
+ *  - name: option name
+ *  - value: option value
+ *
+ * Possible options:
+ *  - silence_threshold: threshold for detecting silence, 0-32767
+ *
+ * Returns:
+ *  - 0 on error, 1 on success
+ */
+CHROMAPRINT_API int chromaprint_set_option(ChromaprintContext *ctx, const char *name, int value);
+
+/**
  * Restart the computation of a fingerprint with a new audio stream.
  *
  * Parameters:

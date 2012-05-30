@@ -31,7 +31,7 @@ namespace Chromaprint
 	public:	
 
 		FingerprinterConfiguration()
-			: m_num_classifiers(0), m_classifiers(0), m_remove_silence(false)
+			: m_num_classifiers(0), m_classifiers(0), m_remove_silence(false), m_silence_threshold(0)
 		{
 		}
 
@@ -87,6 +87,16 @@ namespace Chromaprint
 			m_remove_silence = value;
 		}
 
+		int silence_threshold() const
+		{
+			return m_silence_threshold;
+		}
+
+		void set_silence_threshold(int value)
+		{
+			m_silence_threshold = value;
+		}
+
 	private:
 		int m_num_classifiers;
 		const Classifier *m_classifiers;
@@ -94,6 +104,7 @@ namespace Chromaprint
 		const double *m_filter_coefficients;
 		bool m_interpolate;
 		bool m_remove_silence;
+		int m_silence_threshold;
 	};
 
 	// Used for http://oxygene.sk/lukas/2010/07/introducing-chromaprint/

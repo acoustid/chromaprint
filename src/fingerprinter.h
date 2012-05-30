@@ -61,6 +61,8 @@ namespace Chromaprint
 		 */
 		std::vector<int32_t> Finish();
 
+		bool SetOption(const char *name, int value);
+
 	private:
 		Image m_image;
 		ImageBuilder *m_image_builder;

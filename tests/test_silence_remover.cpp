@@ -37,7 +37,7 @@ TEST(SilenceRemover, RemoveLeadingSilence)
 	vector<short> data2(samples2, samples2 + 6);
 
 	boost::scoped_ptr<AudioBuffer> buffer(new AudioBuffer());
-	boost::scoped_ptr<SilenceRemover> processor(new SilenceRemover(buffer.get()));
+	boost::scoped_ptr<SilenceRemover> processor(new SilenceRemover(buffer.get(), 100));
 	processor->Reset(44100, 1);
 	processor->Consume(&data1[0], data1.size());
 	processor->Flush();

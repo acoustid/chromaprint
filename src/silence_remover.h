@@ -31,7 +31,7 @@ namespace Chromaprint
 	class SilenceRemover : public AudioConsumer
 	{
 	public:
-		SilenceRemover(AudioConsumer *consumer);
+		SilenceRemover(AudioConsumer *consumer, int threshold = 0);
 
 		AudioConsumer *consumer() const
 		{
@@ -47,10 +47,21 @@ namespace Chromaprint
 		void Consume(short *input, int length);
 		void Flush();
 
+		int threshold()
+		{
+			return m_threshold;
+		}
+
+		void set_threshold(int value)
+		{
+			m_threshold = value;
+		}
+
 	private:
 		CHROMAPRINT_DISABLE_COPY(SilenceRemover);
 
 		bool m_start;
+		int m_threshold;
 		MovingAverage<short> m_average;
 		AudioConsumer *m_consumer;
 	};

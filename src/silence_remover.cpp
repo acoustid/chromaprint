@@ -26,11 +26,11 @@
 using namespace std;
 using namespace Chromaprint;
 
-const short kSilenceThreshold = 50;
 const short kSilenceWindow = 55; // 5 ms as 11025 Hz
 
-SilenceRemover::SilenceRemover(AudioConsumer *consumer)
+SilenceRemover::SilenceRemover(AudioConsumer *consumer, int threshold)
     : m_start(true),
+	  m_threshold(threshold),
 	  m_average(kSilenceWindow),
 	  m_consumer(consumer)
 {
@@ -51,7 +51,7 @@ void SilenceRemover::Consume(short *input, int length)
 	if (m_start) {
 		while (length) {
 			m_average.AddValue(abs(*input));
-			if (m_average.GetAverage() > kSilenceThreshold) {
+			if (m_average.GetAverage() > m_threshold) {
 				m_start = false;
 				break;
 			}

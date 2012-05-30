@@ -68,6 +68,12 @@ void chromaprint_free(ChromaprintContext *c)
 	delete ctx;
 }
 
+int chromaprint_set_option(ChromaprintContext *c, const char *name, int value)
+{
+	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *)c;
+	return ctx->fingerprinter->SetOption(name, value) ? 1 : 0;
+}
+
 int chromaprint_start(ChromaprintContext *c, int sample_rate, int num_channels)
 {
 	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *)c;

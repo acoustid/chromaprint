@@ -108,5 +108,6 @@ FingerprinterConfigurationTest3::FingerprinterConfigurationTest3()
 FingerprinterConfigurationTest4::FingerprinterConfigurationTest4()
 {
 	set_remove_silence(true);
+	set_silence_threshold(50);
 }
 
