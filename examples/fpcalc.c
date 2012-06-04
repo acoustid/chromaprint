@@ -15,6 +15,11 @@
 
 #define BUFFER_SIZE (AVCODEC_MAX_AUDIO_FRAME_SIZE * 2)
 
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52, 64, 0)
+#define AV_SAMPLE_FMT_S16 SAMPLE_FMT_S16
+#define AVMEDIA_TYPE_AUDIO CODEC_TYPE_AUDIO
+#endif
+
 int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer1, int16_t *buffer2, const char *file_name, int max_length, int *duration)
 {
 	int i, ok = 0, remaining, length, consumed, buffer_size, codec_ctx_opened = 0;
@@ -28,7 +33,11 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer1, int
 #endif
 	int16_t *buffer;
 
+#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(53, 2, 0)
 	if (av_open_input_file(&format_ctx, file_name, NULL, 0, NULL) != 0) {
+#else
+	if (avformat_open_input_file(&format_ctx, file_name, NULL, NULL) != 0) {
+#endif
 		fprintf(stderr, "ERROR: couldn't open the file\n");
 		goto done;
 	}
@@ -40,11 +49,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer1, int
 
 	for (i = 0; i < format_ctx->nb_streams; i++) {
 		codec_ctx = format_ctx->streams[i]->codec;
-#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52, 64, 0)
-		if (codec_ctx && codec_ctx->codec_type == CODEC_TYPE_AUDIO) {
-#else
 		if (codec_ctx && codec_ctx->codec_type == AVMEDIA_TYPE_AUDIO) {
-#endif
 			stream = format_ctx->streams[i];
 			break;
 		}
@@ -71,9 +76,9 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer1, int
 		goto done;
 	}
 
-	if (codec_ctx->sample_fmt != SAMPLE_FMT_S16) {
+	if (codec_ctx->sample_fmt != AV_SAMPLE_FMT_S16) {
 #ifdef HAVE_AV_AUDIO_CONVERT
-		convert_ctx = av_audio_convert_alloc(SAMPLE_FMT_S16, codec_ctx->channels,
+		convert_ctx = av_audio_convert_alloc(AV_SAMPLE_FMT_S16, codec_ctx->channels,
 		                                     codec_ctx->sample_fmt, codec_ctx->channels, NULL, 0);
 		if (!convert_ctx) {
 			fprintf(stderr, "ERROR: couldn't create sample format converter\n");
@@ -103,7 +108,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer1, int
 
 		while (packet_temp.size > 0) {
 			buffer_size = BUFFER_SIZE;
-#if LIBAVCODEC_VERSION_INT <= AV_VERSION_INT(52, 25, 0)
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52, 23, 0)
 			consumed = avcodec_decode_audio2(codec_ctx,
 				buffer1, &buffer_size, packet_temp.data, packet_temp.size);
 #else
@@ -133,7 +138,11 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer1, int
 			if (convert_ctx) {
 				const void *ibuf[6] = { buffer1 };
 				void *obuf[6] = { buffer2 };
+#if LIBAVUTIL_VERSION_INT < AV_VERSION_INT(51, 8, 0)
 				int istride[6] = { av_get_bits_per_sample_format(codec_ctx->sample_fmt) / 8 };
+#else
+				int istride[6] = { av_get_bytes_per_sample(codec_ctx->sample_fmt) };
+#endif
 				int ostride[6] = { 2 };
 				int len = buffer_size / istride[0];
 				if (av_audio_convert(convert_ctx, obuf, ostride, ibuf, istride, len) < 0) {
