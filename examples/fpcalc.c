@@ -36,7 +36,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer1, int
 #if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(53, 2, 0)
 	if (av_open_input_file(&format_ctx, file_name, NULL, 0, NULL) != 0) {
 #else
-	if (avformat_open_input_file(&format_ctx, file_name, NULL, NULL) != 0) {
+	if (avformat_open_input(&format_ctx, file_name, NULL, NULL) != 0) {
 #endif
 		fprintf(stderr, "ERROR: couldn't open the file\n");
 		goto done;
