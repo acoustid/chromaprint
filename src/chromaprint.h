@@ -66,6 +66,10 @@ CHROMAPRINT_API const char *chromaprint_get_version(void);
 /**
  * Allocate and initialize the Chromaprint context.
  *
+ * Note that when Chromaprint is compiled with FFTW, this function is
+ * not reentrant and you need to call it only from one thread at a time.
+ * This is not a problem when using FFmpeg or vDSP.
+ *
  * Parameters:
  *  - version: Version of the fingerprint algorithm, use
  *             CHROMAPRINT_ALGORITHM_DEFAULT for the default
@@ -78,6 +82,10 @@ CHROMAPRINT_API ChromaprintContext *chromaprint_new(int algorithm);
 
 /**
  * Deallocate the Chromaprint context.
+ *
+ * Note that when Chromaprint is compiled with FFTW, this function is
+ * not reentrant and you need to call it only from one thread at a time.
+ * This is not a problem when using FFmpeg or vDSP.
  *
  * Parameters:
  *  - ctx: Chromaprint context pointer
