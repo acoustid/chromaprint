@@ -16,7 +16,7 @@ In order to build the test suite, you will need the Google Test library [5].
 
 [1] http://www.ffmpeg.org/
 [2] http://www.fftw.org/
-[3] http://developer.kde.org/~wheeler/taglib.html
+[3] http://taglib.github.com/
 [4] http://www.boost.org/
 [5] http://code.google.com/p/googletest/
 
