@@ -1,3 +1,11 @@
+Version 0.7 -- September 5, 2012
+================================
+
+ - Support for the latest FFmpeg API.
+ - New (non-default) fingerprint algorithm that removes leading silence.
+ - API to configure fingerprint algorithms, currently only used by
+   CHROMAPRINT_ALGORITHM_TEST4.
+
 Version 0.6 -- December 22, 2011
 ================================
 
