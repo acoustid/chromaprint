@@ -1,0 +1,6 @@
+language: cpp
+compiler:
+  - gcc
+install: sudo apt-get install libboost-dev libavcodec-dev libavformat-dev libgtest-dev
+script: cmake -DBUILD_TESTS=ON . && make && make check
+
