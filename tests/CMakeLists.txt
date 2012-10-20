@@ -3,6 +3,7 @@ include_directories(
 	${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_SOURCE_DIR}/../src
 )
+add_subdirectory(${GTEST_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/gtest_build)
 
 set(tests_SOURCES
 	main.cpp
@@ -37,7 +38,9 @@ target_link_libraries(all_tests
 )
 
 add_custom_target(check
-	./all_tests $ENV{GTEST_FLAGS}
-	DEPENDS all_tests
-)
+	${CMAKE_CURRENT_BINARY_DIR}/all_tests
+	$ENV{GTEST_FLAGS} DEPENDS all_tests)
+
+enable_testing(true)
+add_test(ChromaprintTests all_tests)
 
