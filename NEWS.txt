@@ -1,3 +1,8 @@
+Version 0.8 -- Unreleased
+=========================
+
+ - Support for reading audio from stdin in fpcalc
+
 Version 0.7 -- September 5, 2012
 ================================
 

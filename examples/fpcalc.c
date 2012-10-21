@@ -33,6 +33,10 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer1, int
 #endif
 	int16_t *buffer;
 
+	if (!strcmp(file_name, "-")) {
+		file_name = "pipe:0";
+	}
+
 #if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(53, 2, 0)
 	if (av_open_input_file(&format_ctx, file_name, NULL, 0, NULL) != 0) {
 #else
