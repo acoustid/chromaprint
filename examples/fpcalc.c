@@ -211,7 +211,7 @@ int fpcalc_main(int argc, char **argv)
 	int32_t *raw_fingerprint;
 	char *file_name, *fingerprint, **file_names;
 	ChromaprintContext *chromaprint_ctx;
-	int algo = CHROMAPRINT_ALGORITHM_DEFAULT;
+	int algo = CHROMAPRINT_ALGORITHM_DEFAULT, num_failed = 0;
 
 	file_names = malloc(argc * sizeof(char *));
 	for (i = 1; i < argc; i++) {
@@ -277,6 +277,7 @@ int fpcalc_main(int argc, char **argv)
 		file_name = file_names[i];
 		if (!decode_audio_file(chromaprint_ctx, buffer1, buffer2, file_name, max_length, &duration)) {
 			fprintf(stderr, "ERROR: unable to calculate fingerprint for file %s, skipping\n", file_name);
+			num_failed++;
 			continue;
 		}
 		if (i > 0) {
@@ -287,6 +288,7 @@ int fpcalc_main(int argc, char **argv)
 		if (raw) {
 			if (!chromaprint_get_raw_fingerprint(chromaprint_ctx, (void **)&raw_fingerprint, &raw_fingerprint_size)) {
 				fprintf(stderr, "ERROR: unable to calculate fingerprint for file %s, skipping\n", file_name);
+				num_failed++;
 				continue;
 			}
 			printf("FINGERPRINT=");
@@ -299,6 +301,7 @@ int fpcalc_main(int argc, char **argv)
 		else {
 			if (!chromaprint_get_fingerprint(chromaprint_ctx, &fingerprint)) {
 				fprintf(stderr, "ERROR: unable to calculate fingerprint for file %s, skipping\n", file_name);
+				num_failed++;
 				continue;
 			}
 			printf("FINGERPRINT=%s\n", fingerprint);
@@ -311,7 +314,7 @@ int fpcalc_main(int argc, char **argv)
 	av_free(buffer2);
 	free(file_names);
 
-	return 0;
+	return num_failed ? 1 : 0;
 }
 
 #ifdef _WIN32
