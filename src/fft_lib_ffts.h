@@ -18,27 +18,34 @@
  * USA
  */
 
-#ifndef CHROMAPRINT_FFT_LIB_H_
-#define CHROMAPRINT_FFT_LIB_H_
+#ifndef CHROMAPRINT_FFT_LIB_FFTS_H_
+#define CHROMAPRINT_FFT_LIB_FFTS_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include <math.h>
+#include <ffts.h>
+#include "combined_buffer.h"
 
-#ifdef WITH_AVFFT
-#include "fft_lib_avfft.h"
-#endif
+namespace Chromaprint
+{
 
-#ifdef WITH_FFTW3
-#include "fft_lib_fftw3.h"
-#endif
+	class FFTLib
+	{
+	public:
+		FFTLib(int frame_size, double *window);
+		~FFTLib();
 
-#ifdef WITH_FFTS
-#include "fft_lib_ffts.h"
-#endif
+		void ComputeFrame(CombinedBuffer<short>::Iterator input, double *output);
 
-#ifdef WITH_VDSP
-#include "fft_lib_vdsp.h"
-#endif
+	private:
+		CHROMAPRINT_DISABLE_COPY(FFTLib);
+
+		int m_frame_size;
+		double *m_window;
+		double *m_input;
+		double *m_output;
+		ffts_plan_t *m_plan;
+	};
+
+};
 
 #endif

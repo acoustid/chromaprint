@@ -37,6 +37,14 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer1, int
 		file_name = "pipe:0";
 	}
 
+	format_ctx = avformat_alloc_context();
+	if (!format_ctx) {
+		fprintf(stderr, "ERROR: couldn't allocate the format context\n");
+		goto done;
+	}
+
+	av_opt_set_int(format_ctx, "analyzeduration", 30 * AV_TIME_BASE, 0);
+
 #if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(53, 2, 0)
 	if (av_open_input_file(&format_ctx, file_name, NULL, 0, NULL) != 0) {
 #else
