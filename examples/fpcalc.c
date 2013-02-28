@@ -69,6 +69,9 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer1, int
 		goto done;
 	}
 
+	/* request regular signed 16-bit packed format */
+	codec_ctx->request_sample_fmt = AV_SAMPLE_FMT_S16;
+
 	if (avcodec_open(codec_ctx, codec) < 0) {
 		fprintf(stderr, "ERROR: couldn't open the codec\n");
 		goto done;
@@ -150,6 +153,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, int16_t *buffer1, int
 				int ostride[6] = { 2 };
 				int len = buffer_size / istride[0];
 				if (av_audio_convert(convert_ctx, obuf, ostride, ibuf, istride, len) < 0) {
+					fprintf(stderr, "WARNING: unable to convert %d samples\n", buffer_size);
 					break;
 				}
 				buffer = buffer2;
