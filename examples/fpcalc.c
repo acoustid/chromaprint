@@ -76,7 +76,6 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 			fprintf(stderr, "ERROR: couldn't initialize the audio converter\n");
 			goto done;
 		}
-		fprintf(stderr, "WARNING converting audio format\n");
 	}
 
 	*duration = stream->time_base.num * stream->duration / stream->time_base.den;
