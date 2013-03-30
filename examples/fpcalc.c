@@ -2,7 +2,9 @@
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <libavutil/opt.h>
+#ifdef HAVE_SWRESAMPLE
 #include <libswresample/swresample.h>
+#endif
 #include <chromaprint.h>
 #ifdef _WIN32
 #include <windows.h>
@@ -19,9 +21,12 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 	AVCodec *codec = NULL;
 	AVStream *stream = NULL;
 	AVFrame *frame = NULL;
+#ifdef HAVE_SWRESAMPLE
 	SwrContext *swr_ctx = NULL;
-	uint8_t *dst_data[1] = { NULL }, **data;
 	int max_dst_nb_samples = 0, dst_linsize = 0;
+	uint8_t *dst_data[1] = { NULL };
+#endif
+	uint8_t **data;
 	AVPacket packet;
 
 	if (!strcmp(file_name, "-")) {
@@ -61,6 +66,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 	}
 
 	if (codec_ctx->sample_fmt != AV_SAMPLE_FMT_S16) {
+#ifdef HAVE_SWRESAMPLE
 		swr_ctx = swr_alloc_set_opts(NULL,
 			codec_ctx->channel_layout, AV_SAMPLE_FMT_S16, codec_ctx->channel_layout,
 			codec_ctx->channel_layout, codec_ctx->sample_fmt, codec_ctx->channel_layout,
@@ -73,6 +79,10 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 			fprintf(stderr, "ERROR: couldn't initialize the audio converter\n");
 			goto done;
 		}
+#else
+		fprintf(stderr, "ERROR: unsupported audio format (please build fpcalc with libswresample)\n");
+		goto done;
+#endif
 	}
 
 	*duration = stream->time_base.num * stream->duration / stream->time_base.den;
@@ -98,6 +108,8 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 			}
 
 			if (got_frame) {
+				data = frame->data;
+#ifdef HAVE_SWRESAMPLE
 				if (swr_ctx) {
 					if (frame->nb_samples > max_dst_nb_samples) {
 						av_freep(&dst_data[0]);
@@ -113,9 +125,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 					}
 					data = dst_data;
 				}
-				else {
-					data = frame->data;
-				}
+#endif
 
 				length = MIN(remaining, frame->nb_samples * codec_ctx->channels);
 				if (!chromaprint_feed(chromaprint_ctx, data[0], length)) {
@@ -145,12 +155,14 @@ done:
 	if (frame) {
 		avcodec_free_frame(&frame);
 	}
+#ifdef HAVE_SWRESAMPLE
 	if (dst_data[0]) {
 		av_freep(&dst_data[0]);
 	}
 	if (swr_ctx) {
 		swr_free(&swr_ctx);
 	}
+#endif
 	if (codec_ctx_opened) {
 		avcodec_close(codec_ctx);
 	}

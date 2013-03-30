@@ -25,6 +25,7 @@
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavcodec/avfft.h>
+#include <libavutil/mem.h>
 }
 #include "combined_buffer.h"
 
