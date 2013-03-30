@@ -103,6 +103,7 @@ FFMPEG_FIND(LIBAVCODEC  avcodec  avcodec.h)
 FFMPEG_FIND(LIBAVCODEC_FFT  avcodec  avfft.h)
 FFMPEG_FIND(LIBAVUTIL   avutil   avutil.h)
 FFMPEG_FIND(LIBSWSCALE  swscale  swscale.h)  # not sure about the header to look for here.
+FFMPEG_FIND(LIBSWRESAMPLE  swresample  swresample.h)  # not sure about the header to look for here.
 
 SET(FFMPEG_FOUND "NO")
 # Note we don't check FFMPEG_LIBSWSCALE_FOUND here, it's optional.
