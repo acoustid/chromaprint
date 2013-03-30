@@ -61,17 +61,14 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 	}
 
 	if (codec_ctx->sample_fmt != AV_SAMPLE_FMT_S16) {
-		swr_ctx = swr_alloc();
+		swr_ctx = swr_alloc_set_opts(NULL,
+			codec_ctx->channel_layout, AV_SAMPLE_FMT_S16, codec_ctx->channel_layout,
+			codec_ctx->channel_layout, codec_ctx->sample_fmt, codec_ctx->channel_layout,
+			0, NULL);
 		if (!swr_ctx) {
 			fprintf(stderr, "ERROR: couldn't allocate audio converter\n");
 			goto done;
 		}
-		av_opt_set_int(swr_ctx, "in_channel_layout", codec_ctx->channel_layout, 0);
-		av_opt_set_int(swr_ctx, "out_channel_layout", codec_ctx->channel_layout, 0);
-		av_opt_set_int(swr_ctx, "in_sample_rate", codec_ctx->sample_rate, 0);
-		av_opt_set_int(swr_ctx, "out_sample_rate", codec_ctx->sample_rate, 0);
-		av_opt_set_sample_fmt(swr_ctx, "in_sample_fmt", codec_ctx->sample_fmt, 0);
-		av_opt_set_sample_fmt(swr_ctx, "out_sample_fmt", AV_SAMPLE_FMT_S16, 0);
 		if (swr_init(swr_ctx) < 0) {
 			fprintf(stderr, "ERROR: couldn't initialize the audio converter\n");
 			goto done;
