@@ -5,7 +5,7 @@ includedir=${INCLUDE_INSTALL_DIR}
 
 Name: ${PROJECT_NAME}
 Description: Audio fingerprint library
-URL: http://wiki.acoustid.org/wiki/Chromaprint
+URL: http://acoustid.org/chromaprint
 Version: ${PROJECT_VERSION}
 Libs: -L${LIB_INSTALL_DIR} -lchromaprint
 Cflags: -I${INCLUDE_INSTALL_DIR}
