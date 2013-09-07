@@ -89,7 +89,16 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 #endif
 	}
 
-	*duration = stream->time_base.num * stream->duration / stream->time_base.den;
+	if (stream->duration != AV_NOPTS_VALUE) {
+		*duration = stream->time_base.num * stream->duration / stream->time_base.den;
+	}
+	else if (format_ctx->duration != AV_NOPTS_VALUE) {
+		*duration = format_ctx->duration / AV_TIME_BASE;
+	}
+	else {
+		fprintf(stderr, "ERROR: couldn't detect the audio duration\n");
+		goto done;
+	}
 
 	remaining = max_length * codec_ctx->channels * codec_ctx->sample_rate;
 	chromaprint_start(chromaprint_ctx, codec_ctx->sample_rate, codec_ctx->channels);
