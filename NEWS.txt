@@ -1,8 +1,9 @@
-Version 0.8 -- Unreleased
-=========================
+Version 1.0 -- September 7, 2013
+================================
 
- - Support for reading audio from stdin in fpcalc
- - Changed fpcalc to return non-zero status on failure
+ - Support for the latest FFmpeg API.
+ - Support for reading audio from stdin in fpcalc.
+ - Changed fpcalc to return non-zero status on failure.
 
 Version 0.7 -- September 5, 2012
 ================================
