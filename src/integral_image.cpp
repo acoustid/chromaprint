@@ -27,8 +27,8 @@ void IntegralImage::Transform()
 {
 	int num_rows = m_image->NumRows();
 	int num_columns = m_image->NumColumns();
-	double *current = m_image->Row(0) + 1;
-	double *last = m_image->Row(0);
+	double *current = &((*m_image)[0][0]) + 1;
+	double *last = &((*m_image)[0][0]);
 	for (int m = 1; m < num_columns; m++) {
 		// First column - add value on top
 		*current = current[0] + current[-1];

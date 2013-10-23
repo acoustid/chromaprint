@@ -25,8 +25,40 @@
 #include <algorithm>
 #include <assert.h>
 
+#ifdef NDEBUG
+#define CHROMAPRINT_IMAGE_ROW_TYPE double *
+#define CHROMAPRINT_IMAGE_ROW_TYPE_CAST(x, c) x
+#else
+#define CHROMAPRINT_IMAGE_ROW_TYPE ImageRow
+#define CHROMAPRINT_IMAGE_ROW_TYPE_CAST(x, c) ImageRow(x, c)
+#endif
+
 namespace Chromaprint
 {
+	class ImageRow
+	{
+	public:
+		explicit ImageRow(double *data, int columns) : m_data(data), m_columns(columns)
+		{
+		}
+
+		int NumColumns() const { return m_columns; }
+
+		double &Column(int i)
+		{
+			assert(0 <= i && i < NumColumns());
+			return m_data[i];
+		}
+
+		double &operator[](int i)
+		{
+			return Column(i);
+		}
+
+	private:
+		double *m_data;
+		int m_columns;
+	};
 
 	class Image
 	{
@@ -53,13 +85,13 @@ namespace Chromaprint
 			std::copy(row.begin(), row.end(), m_data.end() - m_columns);
 		}
 
-		double *Row(int i)
+		CHROMAPRINT_IMAGE_ROW_TYPE Row(int i)
 		{
 			assert(0 <= i && i < NumRows());
-			return &m_data[m_columns * i];
+			return CHROMAPRINT_IMAGE_ROW_TYPE_CAST(&m_data[m_columns * i], m_columns);
 		}
 
-		double *operator[](int i)
+		CHROMAPRINT_IMAGE_ROW_TYPE operator[](int i)
 		{
 			return Row(i);
 		}

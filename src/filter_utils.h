@@ -47,8 +47,14 @@ namespace Chromaprint
 	template<class Comparator>
 	double Filter0(IntegralImage *image, int x, int y, int w, int h, Comparator cmp)
 	{
+		assert(x >= 0);
+		assert(y >= 0);
+		assert(w >= 1);
+		assert(h >= 1);
+
 		double a = image->Area(x, y, x + w - 1, y + h - 1);
 		double b = 0;
+
 		return cmp(a, b);
 	}
 
@@ -59,10 +65,15 @@ namespace Chromaprint
 	template<class Comparator>
 	double Filter1(IntegralImage *image, int x, int y, int w, int h, Comparator cmp)
 	{
+		assert(x >= 0);
+		assert(y >= 0);
+		assert(w >= 1);
+		assert(h >= 1);
+
 		int h_2 = h / 2;
 
-		double a = image->Area(x, y + h_2, x + w - 1, y + h - 1);
-		double b = image->Area(x, y, x + w - 1, y + h_2 - 1);
+		double a = image->Area(x, y + h_2, x + w - 1, y + h   - 1);
+		double b = image->Area(x, y,       x + w - 1, y + h_2 - 1);
 
 		return cmp(a, b);
 	}
@@ -74,10 +85,15 @@ namespace Chromaprint
 	template<class Comparator>
 	double Filter2(IntegralImage *image, int x, int y, int w, int h, Comparator cmp)
 	{
+		assert(x >= 0);
+		assert(y >= 0);
+		assert(w >= 1);
+		assert(h >= 1);
+
 		int w_2 = w / 2;
 
-		double a = image->Area(x + w_2, y, x + w - 1, y + h - 1);
-		double b = image->Area(x, y, x + w_2 - 1, y + h - 1);
+		double a = image->Area(x + w_2, y, x + w   - 1, y + h - 1);
+		double b = image->Area(x,       y, x + w_2 - 1, y + h - 1);
 
 		return cmp(a, b);
 	}
@@ -89,6 +105,11 @@ namespace Chromaprint
 	template<class Comparator>
 	double Filter3(IntegralImage *image, int x, int y, int w, int h, Comparator cmp)
 	{
+		assert(x >= 0);
+		assert(y >= 0);
+		assert(w >= 1);
+		assert(h >= 1);
+
 		int w_2 = w / 2;
 		int h_2 = h / 2;
 
@@ -106,6 +127,11 @@ namespace Chromaprint
 	template<class Comparator>
 	double Filter4(IntegralImage *image, int x, int y, int w, int h, Comparator cmp)
 	{
+		assert(x >= 0);
+		assert(y >= 0);
+		assert(w >= 1);
+		assert(h >= 1);
+
 		int h_3 = h / 3;
 
 		double a = image->Area(x, y + h_3,     x + w - 1, y + 2 * h_3 - 1);
@@ -122,6 +148,11 @@ namespace Chromaprint
 	template<class Comparator>
 	double Filter5(IntegralImage *image, int x, int y, int w, int h, Comparator cmp)
 	{
+		assert(x >= 0);
+		assert(y >= 0);
+		assert(w >= 1);
+		assert(h >= 1);
+
 		int w_3 = w / 3;
 
 		double a = image->Area(x + w_3,     y, x + 2 * w_3 - 1, y + h - 1);

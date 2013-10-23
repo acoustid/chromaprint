@@ -41,19 +41,23 @@ TEST(FilterUtils, Filter0) {
 
 TEST(FilterUtils, Filter1) {
 	double data[] = {
-		1.0, 2.0, 3.0,
-		3.0, 4.0, 5.0,
-		6.0, 7.0, 8.0,
+		1.0, 2.1, 3.4,
+		3.1, 4.1, 5.1,
+		6.0, 7.1, 8.0,
 	};
 	Image image(3, data, data + 9);
 	IntegralImage integral_image(&image);
 	double res;
 	res = Filter1(&integral_image, 0, 0, 1, 1, Subtract);
-	EXPECT_FLOAT_EQ(1.0, res); // 2 - 1
+	EXPECT_FLOAT_EQ(1.0 - 0.0, res);
+	res = Filter1(&integral_image, 1, 1, 1, 1, Subtract);
+	EXPECT_FLOAT_EQ(4.1 - 0.0, res);
+	res = Filter1(&integral_image, 0, 0, 1, 2, Subtract);
+	EXPECT_FLOAT_EQ(2.1 - 1.0, res);
 	res = Filter1(&integral_image, 0, 0, 2, 2, Subtract);
-	EXPECT_FLOAT_EQ(2.0, res); // 2+4 - 1+3
+	EXPECT_FLOAT_EQ((2.1 + 4.1) - (1.0 + 3.1), res);
 	res = Filter1(&integral_image, 0, 0, 3, 2, Subtract);
-	EXPECT_FLOAT_EQ(3.0, res); // 2+4+7 - 1+3+6
+	EXPECT_FLOAT_EQ((2.1 + 4.1 + 7.1) - (1.0 + 3.1 + 6.0), res);
 }
 
 TEST(FilterUtils, Filter2) {
