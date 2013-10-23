@@ -45,3 +45,32 @@ TEST(BitStringReader, TwoBytesSplit)
 	ASSERT_EQ(2, reader.Read(3));
 	ASSERT_EQ(3, reader.Read(3));
 }
+
+TEST(BitStringReader, AvailableBitsAndEOF)
+{
+	char data[] = { -120, 6 };
+	BitStringReader reader(string(data, 2));
+
+	ASSERT_EQ(16, reader.AvailableBits());
+	ASSERT_FALSE(reader.eof());
+
+	reader.Read(3);
+	ASSERT_EQ(13, reader.AvailableBits());
+	ASSERT_FALSE(reader.eof());
+
+	reader.Read(3);
+	ASSERT_EQ(10, reader.AvailableBits());
+	ASSERT_FALSE(reader.eof());
+
+	reader.Read(3);
+	ASSERT_EQ(7, reader.AvailableBits());
+	ASSERT_FALSE(reader.eof());
+
+	reader.Read(7);
+	ASSERT_EQ(0, reader.AvailableBits());
+	ASSERT_TRUE(reader.eof());
+
+	ASSERT_EQ(0, reader.Read(3));
+	ASSERT_TRUE(reader.eof());
+	ASSERT_EQ(0, reader.AvailableBits());
+}

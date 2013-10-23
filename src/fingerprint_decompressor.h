@@ -36,8 +36,8 @@ namespace Chromaprint
 
 	private:
 
-		void ReadNormalBits(BitStringReader *reader);
-		void ReadExceptionBits(BitStringReader *reader);
+		bool ReadNormalBits(BitStringReader *reader);
+		bool ReadExceptionBits(BitStringReader *reader);
 		void UnpackBits();
 
 		std::vector<int32_t> m_result;

@@ -1,3 +1,8 @@
+Version 1.1 -- TODO
+===================
+
+ - Fixed a potential DoS attack in fingerprint decompression code.
+
 Version 1.0 -- September 7, 2013
 ================================
 
