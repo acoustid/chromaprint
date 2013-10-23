@@ -53,11 +53,6 @@ void FingerprintDecompressor::UnpackBits()
 
 bool FingerprintDecompressor::ReadNormalBits(BitStringReader *reader)
 {
-	if (reader->AvailableBits() < m_result.size() * kNormalBits) {
-		DEBUG() << "FingerprintDecompressor::ReadNormalBits() -- Invalid fingerprint (too short)\n";
-		return false;
-	}
-
 	size_t i = 0;
 	while (i < m_result.size()) {
 		int bit = reader->Read(kNormalBits);
@@ -94,7 +89,7 @@ std::vector<int32_t> FingerprintDecompressor::Decompress(const string &data, int
 		*algorithm = data[0];
 	}
 
-	int length =
+	size_t length =
 		((unsigned char)(data[1]) << 16) |
 		((unsigned char)(data[2]) <<  8) |
 		((unsigned char)(data[3])      );
@@ -104,6 +99,11 @@ std::vector<int32_t> FingerprintDecompressor::Decompress(const string &data, int
 	reader.Read(8);
 	reader.Read(8);
 	reader.Read(8);
+
+	if (reader.AvailableBits() < length * kNormalBits) {
+		DEBUG() << "FingerprintDecompressor::Decompress() -- Invalid fingerprint (too short)\n";
+		return std::vector<int32_t>();
+	}
 
 	m_result = vector<int32_t>(length, -1);
 
