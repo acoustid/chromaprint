@@ -31,6 +31,8 @@ set(tests_SOURCES
 )
 
 add_executable(all_tests ${tests_SOURCES})
+set_target_properties(all_tests PROPERTIES
+	COMPILE_DEFINITIONS CHROMAPRINT_NODLL)
 target_link_libraries(all_tests
 	${GTEST_BOTH_LIBRARIES}
 	${CMAKE_THREAD_LIBS_INIT}
