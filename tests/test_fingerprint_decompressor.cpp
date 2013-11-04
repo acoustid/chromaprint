@@ -77,12 +77,12 @@ TEST(FingerprintDecompressor, TwoItemsNoChange)
 
 TEST(FingerprintDecompressor, Invalid1)
 {
-	int32_t expected[] = { };
+	int32_t expected[] = { 0 };
 	char data[] = { 0, char(255), char(255), char(255) };
 
 	int algorithm = 1;
 	vector<int32_t> value = DecompressFingerprint(string(data, NELEMS(data)), &algorithm);
-	CheckFingerprints(value, expected, NELEMS(expected));
+	CheckFingerprints(value, expected, 0);
 	ASSERT_EQ(0, algorithm);
 }
 

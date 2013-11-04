@@ -1,6 +1,7 @@
 #ifndef CHROMAPRINT_TESTS_UTILS_H_
 #define CHROMAPRINT_TESTS_UTILS_H_
 
+#include <stdint.h>
 #include <vector>
 #include <fstream>
 #include <string>
