@@ -30,7 +30,7 @@ inline void CheckFingerprints(std::vector<int32_t> actual, int32_t *expected, in
 inline std::vector<short> LoadAudioFile(const std::string &file_name)
 {
 	std::string path = TESTS_DIR + file_name;
-	std::ifstream file(path.c_str(), std::ifstream::in);
+	std::ifstream file(path.c_str(), std::ifstream::in | std::ifstream::binary);
 	file.seekg(0, std::ios::end);
 	int length = file.tellg();
 	file.seekg(0, std::ios::beg);
