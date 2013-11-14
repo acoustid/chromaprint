@@ -31,6 +31,8 @@ if(FFMPEG_LIBSWRESAMPLE_FOUND)
 	add_definitions(-DHAVE_SWRESAMPLE)
 	include_directories(${FFMPEG_LIBSWRESAMPLE_INCLUDE_DIRS})
 	target_link_libraries(fpcalc ${FFMPEG_LIBSWRESAMPLE_LIBRARIES})
+else()
+	message(STATUS "Building without audio conversion support, please install FFmpeg with libswresample")
 endif()
 
 install(TARGETS fpcalc
