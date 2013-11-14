@@ -13,6 +13,10 @@
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(54, 28, 0)
+#define avcodec_free_frame av_freep
+#endif
+
 int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name, int max_length, int *duration)
 {
 	int ok = 0, remaining, length, consumed, codec_ctx_opened = 0, got_frame, stream_index;
