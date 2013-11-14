@@ -124,7 +124,7 @@ inline bool Decoder::Open()
 		return false;
 	}
 
-	if (avcodec_open(m_codec_ctx, codec) < 0) {
+	if (avcodec_open2(m_codec_ctx, codec, NULL) < 0) {
 		m_error = "Couldn't open the codec.";
 		return false;
 	}
