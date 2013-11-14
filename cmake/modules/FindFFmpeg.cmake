@@ -105,6 +105,10 @@ FFMPEG_FIND(LIBAVUTIL   avutil   avutil.h)
 FFMPEG_FIND(LIBSWSCALE  swscale  swscale.h)  # not sure about the header to look for here.
 FFMPEG_FIND(LIBSWRESAMPLE  swresample  swresample.h)  # not sure about the header to look for here.
 
+IF(NOT FFMPEG_LIBSWRESAMPLE_FOUND)
+	FFMPEG_FIND(LIBAVRESAMPLE  avresample  avresample.h)
+ENDIF()
+
 SET(FFMPEG_FOUND "NO")
 # Note we don't check FFMPEG_LIBSWSCALE_FOUND here, it's optional.
 IF   (FFMPEG_LIBAVFORMAT_FOUND AND FFMPEG_LIBAVDEVICE_FOUND AND FFMPEG_LIBAVCODEC_FOUND AND FFMPEG_LIBAVUTIL_FOUND AND FFMPEG_STDINT_INCLUDE_DIR)
