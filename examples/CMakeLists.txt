@@ -27,7 +27,7 @@ target_link_libraries(fpcalc chromaprint
 	${FFMPEG_LIBAVUTIL_LIBRARIES}
 	${EXTRA_LIBS})
 
-if(FFMPEG_LIBSWRESAMPLE_LIBRARIES)
+if(FFMPEG_LIBSWRESAMPLE_FOUND)
 	add_definitions(-DHAVE_SWRESAMPLE)
 	include_directories(${FFMPEG_LIBSWRESAMPLE_INCLUDE_DIRS})
 	target_link_libraries(fpcalc ${FFMPEG_LIBSWRESAMPLE_LIBRARIES})
