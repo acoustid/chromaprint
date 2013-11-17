@@ -157,7 +157,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 #if defined(HAVE_SWRESAMPLE)
 					if (swr_convert(convert_ctx, dst_data, frame->nb_samples, (const uint8_t **)frame->data, frame->nb_samples) < 0) {
 #elif defined(HAVE_AVRESAMPLE)
-					if (avresample_convert(convert_ctx, dst_data, 0, frame->nb_samples, (const uint8_t **)frame->data, 0, frame->nb_samples) < 0) {
+					if (avresample_convert(convert_ctx, dst_data, 0, frame->nb_samples, (uint8_t **)frame->data, 0, frame->nb_samples) < 0) {
 #endif
 						fprintf(stderr, "ERROR: couldn't convert the audio\n");
 						goto done;
