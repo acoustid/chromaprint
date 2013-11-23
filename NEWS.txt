@@ -1,7 +1,10 @@
-Version 1.1 -- TODO
-===================
+Version 1.1 -- November 23, 2013
+================================
 
- - Fixed a potential DoS attack in fingerprint decompression code.
+ - Fixed potential DoS attack in fingerprint decompression code. (#6)
+ - Fixed invalid memory read with some fingerprinter configurations. (#5)
+ - Fixed compilation with clang on OS X 10.9 (#7, #9)
+ - Added support for audio format conversion with libav. (#2, Gordon Pettey)
 
 Version 1.0 -- September 7, 2013
 ================================
