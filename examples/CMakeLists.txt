@@ -19,25 +19,30 @@ include_directories(
 	${FFMPEG_LIBAVUTIL_INCLUDE_DIRS}
 )
 
-add_executable(fpcalc fpcalc.c)
-
-target_link_libraries(fpcalc chromaprint
+set(fpcalc_LIBS
+	chromaprint
 	${FFMPEG_LIBAVFORMAT_LIBRARIES}
-	${FFMPEG_LIBAVCODEC_LIBRARIES}
-	${FFMPEG_LIBAVUTIL_LIBRARIES}
-	${EXTRA_LIBS})
+	${FFMPEG_LIBAVCODEC_LIBRARIES})
 
 if(FFMPEG_LIBSWRESAMPLE_FOUND)
 	add_definitions(-DHAVE_SWRESAMPLE)
 	include_directories(${FFMPEG_LIBSWRESAMPLE_INCLUDE_DIRS})
-	target_link_libraries(fpcalc ${FFMPEG_LIBSWRESAMPLE_LIBRARIES})
+	set(fpcalc_LIBS ${fpcalc_LIBS} ${FFMPEG_LIBSWRESAMPLE_LIBRARIES})
 elseif(FFMPEG_LIBAVRESAMPLE_FOUND)
 	add_definitions(-DHAVE_AVRESAMPLE)
 	include_directories(${FFMPEG_LIBAVRESAMPLE_INCLUDE_DIRS})
-	target_link_libraries(fpcalc ${FFMPEG_LIBAVRESAMPLE_LIBRARIES})
+	set(fpcalc_LIBS ${fpcalc_LIBS} ${FFMPEG_LIBAVRESAMPLE_LIBRARIES})
 else()
 	message(STATUS "Building without audio conversion support, please install FFmpeg with libswresample")
 endif()
+
+set(fpcalc_LIBS ${fpcalc_LIBS}
+	${FFMPEG_LIBAVUTIL_LIBRARIES}
+	${EXTRA_LIBS})
+
+add_executable(fpcalc fpcalc.c)
+
+target_link_libraries(fpcalc ${fpcalc_LIBS})
 
 install(TARGETS fpcalc
 	RUNTIME DESTINATION ${BIN_INSTALL_DIR}
