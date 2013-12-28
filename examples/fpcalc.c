@@ -33,6 +33,8 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 	SwrContext *convert_ctx = NULL;
 #elif defined(HAVE_AVRESAMPLE)
 	AVAudioResampleContext *convert_ctx = NULL;
+#else
+	void *convert_ctx = NULL;
 #endif
 	int max_dst_nb_samples = 0, dst_linsize = 0;
 	uint8_t *dst_data[1] = { NULL };
@@ -75,6 +77,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 		goto done;
 	}
 
+#if defined(HAVE_SWRESAMPLE) || defined(HAVE_AVRESAMPLE)
 	if (codec_ctx->sample_fmt != AV_SAMPLE_FMT_S16) {
 		int64_t channel_layout = codec_ctx->channel_layout;
 		if (!channel_layout) {
@@ -111,6 +114,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 		}
 #endif
 	}
+#endif
 
 	if (stream->duration != AV_NOPTS_VALUE) {
 		*duration = stream->time_base.num * stream->duration / stream->time_base.den;
@@ -155,10 +159,11 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 						max_dst_nb_samples = frame->nb_samples;
 					}
 #if defined(HAVE_SWRESAMPLE)
-					if (swr_convert(convert_ctx, dst_data, frame->nb_samples, (const uint8_t **)frame->data, frame->nb_samples) < 0) {
+					if (swr_convert(convert_ctx, dst_data, frame->nb_samples, (const uint8_t **)frame->data, frame->nb_samples) < 0)
 #elif defined(HAVE_AVRESAMPLE)
-					if (avresample_convert(convert_ctx, dst_data, 0, frame->nb_samples, (uint8_t **)frame->data, 0, frame->nb_samples) < 0) {
+					if (avresample_convert(convert_ctx, dst_data, 0, frame->nb_samples, (uint8_t **)frame->data, 0, frame->nb_samples) < 0)
 #endif
+					{
 						fprintf(stderr, "ERROR: couldn't convert the audio\n");
 						goto done;
 					}
