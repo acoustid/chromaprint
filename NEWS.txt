@@ -1,3 +1,9 @@
+Version 1.2 -- TODO
+================================
+
+ - Fixed compilation with neither libswresample nor libavresample (#11)
+ - Fixed compilation with static libav (#10)
+
 Version 1.1 -- November 23, 2013
 ================================
 
