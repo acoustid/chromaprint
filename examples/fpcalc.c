@@ -77,7 +77,6 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 		goto done;
 	}
 
-#if defined(HAVE_SWRESAMPLE) || defined(HAVE_AVRESAMPLE)
 	if (codec_ctx->sample_fmt != AV_SAMPLE_FMT_S16) {
 		int64_t channel_layout = codec_ctx->channel_layout;
 		if (!channel_layout) {
@@ -112,9 +111,11 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 			fprintf(stderr, "ERROR: couldn't initialize the audio converter\n");
 			goto done;
 		}
+#else
+		fprintf(stderr, "ERROR: unsupported audio format (please build fpcalc with libswresample)\n");
+		goto done;
 #endif
 	}
-#endif
 
 	if (stream->duration != AV_NOPTS_VALUE) {
 		*duration = stream->time_base.num * stream->duration / stream->time_base.den;
