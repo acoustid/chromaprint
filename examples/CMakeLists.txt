@@ -3,7 +3,7 @@ if(APPLE)
     set(EXTRA_LIBS ${EXTRA_LIBS} -lz)
 endif()
 if(UNIX)
-    set(EXTRA_LIBS ${EXTRA_LIBS} -lpthread)
+    set(EXTRA_LIBS ${EXTRA_LIBS} -lpthread -lm)
 endif()
 
 set(CMAKE_REQUIRED_LIBRARIES
