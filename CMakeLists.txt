@@ -47,8 +47,6 @@ endif()
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(BUILD_EXAMPLES "Build the examples" OFF)
 option(BUILD_TESTS "Build the test suite" OFF)
-option(BUILD_TOOLS "Build standard tools" OFF)
-option(BUILD_EXTRA_TOOLS "Build extra tools (only useful for development of this library)" OFF)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
@@ -128,23 +126,14 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DI
 
 add_subdirectory(src)
 
-if(BUILD_TOOLS_EXTRA)
-	find_package(PNG REQUIRED)
-endif(BUILD_TOOLS_EXTRA)
-
 find_package(Boost COMPONENTS system filesystem)
-if(BUILD_TOOLS OR BUILD_TOOLS_EXTRA OR BUILD_EXAMPLES)
+if(BUILD_EXAMPLES)
 	find_package(FFmpeg REQUIRED)
 endif()
 
 if(BUILD_EXAMPLES)
 	add_subdirectory(examples)
 endif()
-
-if(BUILD_TOOLS OR BUILD_TOOLS_EXTRA)
-	find_package(Taglib REQUIRED)
-	add_subdirectory(tools)
-endif(BUILD_TOOLS OR BUILD_TOOLS_EXTRA)
 
 if(BUILD_TESTS)
 	find_package(Threads)
