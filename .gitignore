@@ -2,6 +2,7 @@ CMakeFiles
 CMakeCache.txt
 Makefile
 cmake_install.cmake
+cmake_uninstall.cmake
 config.h
 tests/all_tests
 tools/fpgen
