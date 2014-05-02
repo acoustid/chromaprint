@@ -74,11 +74,13 @@ Related Projects
  * [pyacoustid][]
  * [node-acoustid][] and [node-fpcalc][]
  * [chromaprint component in gst-plugins-bad][gst]
+ * [AcoustID.NET][]
  
 [pyacoustid]: https://github.com/sampsyo/pyacoustid
 [gst]: http://cgit.freedesktop.org/gstreamer/gst-plugins-bad/tree/ext/chromaprint
 [node-acoustid]: https://github.com/parshap/node-acoustid
 [node-fpcalc]: https://github.com/parshap/node-fpcalc
+[AcoustID.NET]: https://github.com/wo80/AcoustID.NET
 
 Standing on the Shoulder of Giants
 ----------------------------------
