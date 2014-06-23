@@ -39,7 +39,7 @@ SilenceRemover::SilenceRemover(AudioConsumer *consumer, int threshold)
 bool SilenceRemover::Reset(int sample_rate, int num_channels)
 {
 	if (num_channels != 1) {
-		DEBUG() << "Chromaprint::SilenceRemover::Reset() -- Expecting mono audio signal.\n";
+		DEBUG("Chromaprint::SilenceRemover::Reset() -- Expecting mono audio signal.");
 		return false;
 	}
 	m_start = true;

@@ -41,9 +41,9 @@ vector<int32_t> FingerprintCalculator::Calculate(Image *image)
 {
 	int length = image->NumRows() - m_max_filter_width + 1;
 	if (length <= 0) {
-		DEBUG() << "Chromaprint::FingerprintCalculator::Calculate() -- Not "
-				<< "enough data. Image has " << image->NumRows() << " rows, "
-				<< "needs at least " << m_max_filter_width << " rows.\n";
+		DEBUG("Chromaprint::FingerprintCalculator::Calculate() -- Not "
+		      << "enough data. Image has " << image->NumRows() << " rows, "
+	          << "needs at least " << m_max_filter_width << " rows.");
 		return vector<int32_t>();
 	}
 	IntegralImage integral_image(image);

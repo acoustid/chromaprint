@@ -47,11 +47,11 @@ namespace Chromaprint
 
 		void AddValue(const T &x)
 		{
-			DEBUG() << "offset is " << m_offset << "\n";
+			DEBUG("offset is " << m_offset);
 			m_sum += x;
-			DEBUG() << "adding " << x << " sum is " << m_sum << "\n";
+			DEBUG("adding " << x << " sum is " << m_sum);
 			m_sum -= m_buffer[m_offset];
-			DEBUG() << "subtracting " << m_buffer[m_offset] << " sum is " << m_sum << "\n";
+			DEBUG("subtracting " << m_buffer[m_offset] << " sum is " << m_sum);
 			if (m_count < m_size) {
 				m_count++;
 			}

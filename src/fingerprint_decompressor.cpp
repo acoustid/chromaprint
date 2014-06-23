@@ -69,7 +69,7 @@ bool FingerprintDecompressor::ReadExceptionBits(BitStringReader *reader)
 	for (size_t i = 0; i < m_bits.size(); i++) {
 		if (m_bits[i] == kMaxNormalValue) {
 			if (reader->eof()) {
-				DEBUG() << "FingerprintDecompressor::ReadExceptionBits() -- Invalid fingerprint (reached EOF while reading exception bits)\n";
+				DEBUG("FingerprintDecompressor::ReadExceptionBits() -- Invalid fingerprint (reached EOF while reading exception bits)");
 				return false;
 			}
 			m_bits[i] += reader->Read(kExceptionBits);
@@ -81,7 +81,7 @@ bool FingerprintDecompressor::ReadExceptionBits(BitStringReader *reader)
 std::vector<int32_t> FingerprintDecompressor::Decompress(const string &data, int *algorithm)
 {
 	if (data.size() < 4) {
-		DEBUG() << "FingerprintDecompressor::Decompress() -- Invalid fingerprint (shorter than 4 bytes)\n";
+		DEBUG("FingerprintDecompressor::Decompress() -- Invalid fingerprint (shorter than 4 bytes)");
 		return std::vector<int32_t>();
 	}
 
@@ -101,7 +101,7 @@ std::vector<int32_t> FingerprintDecompressor::Decompress(const string &data, int
 	reader.Read(8);
 
 	if (reader.AvailableBits() < length * kNormalBits) {
-		DEBUG() << "FingerprintDecompressor::Decompress() -- Invalid fingerprint (too short)\n";
+		DEBUG("FingerprintDecompressor::Decompress() -- Invalid fingerprint (too short)");
 		return std::vector<int32_t>();
 	}
 

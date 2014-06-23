@@ -31,10 +31,9 @@ namespace Chromaprint
 {
 
 #ifdef NDEBUG
-extern std::ostream noop_ostream;
-#define DEBUG() if (true) {} else noop_ostream
+#define DEBUG()
 #else
-#define DEBUG() std::cerr
+#define DEBUG(x) std::cerr << x << std::endl
 #endif
 
 };
