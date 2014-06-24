@@ -31,7 +31,7 @@ namespace Chromaprint
 {
 
 #ifdef NDEBUG
-#define DEBUG()
+#define DEBUG(x)
 #else
 #define DEBUG(x) std::cerr << x << std::endl
 #endif
