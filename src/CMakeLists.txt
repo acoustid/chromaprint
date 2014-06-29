@@ -52,6 +52,11 @@ if(WITH_VDSP)
 	set(chromaprint_LINK_LIBS ${ACCELERATE_LIBRARIES})
 endif()
 
+if(WITH_KISSFFT)
+	set(chromaprint_SRCS fft_lib_kissfft.cpp ${chromaprint_SRCS} ${KISSFFT_SOURCES})
+	include_directories(${KISSFFT_INCLUDE_DIRS})
+endif()
+
 add_library(chromaprint_p STATIC ${chromaprint_SRCS})
 set_target_properties(chromaprint_p PROPERTIES
 	COMPILE_DEFINITIONS CHROMAPRINT_NODLL)
