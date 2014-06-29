@@ -18,8 +18,8 @@
  * USA
  */
 
-#ifndef CHROMAPRINT_FFT_LIB_FFTW3_H_
-#define CHROMAPRINT_FFT_LIB_FFTW3_H_
+#ifndef CHROMAPRINT_FFT_LIB_KISSFFT_H_
+#define CHROMAPRINT_FFT_LIB_KISSFFT_H_
 
 #include <math.h>
 #include <tools/kiss_fftr.h>
