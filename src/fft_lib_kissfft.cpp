@@ -46,14 +46,8 @@ void FFTLib::ComputeFrame(CombinedBuffer<short>::Iterator input, double *output)
 	kiss_fftr(cfg, m_input, m_output);
 
 	const kiss_fft_cpx *in_ptr = m_output;
-	const kiss_fft_cpx *rev_in_ptr = m_output + m_frame_size - 1;
-	output[0] = in_ptr[0].r * in_ptr[0].r;
-	output[m_frame_size / 2] = in_ptr[m_frame_size / 2].r * in_ptr[m_frame_size / 2].r;
-	in_ptr += 1;
-	output += 1;
-	for (int i = 1; i < m_frame_size / 2; i++) {
-		*output++ = in_ptr[0].r * in_ptr[0].r + rev_in_ptr[0].r * rev_in_ptr[0].r;
+	for (int i = 0; i <= m_frame_size / 2; i++) {
+		*output++ = in_ptr[0].r * in_ptr[0].r + in_ptr[0].i * in_ptr[0].i;
 		in_ptr++;
-		rev_in_ptr--;
 	}
 }
