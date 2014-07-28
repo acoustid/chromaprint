@@ -119,9 +119,9 @@ int chromaprint_get_raw_fingerprint(ChromaprintContext *c, void **data, int *siz
 	return 1;
 }
 
-int chromaprint_encode_fingerprint(void *fp, int size, int algorithm, void **encoded_fp, int *encoded_size, int base64)
+int chromaprint_encode_fingerprint(const void *fp, int size, int algorithm, void **encoded_fp, int *encoded_size, int base64)
 {
-	vector<int32_t> uncompressed = vector<int32_t>((int32_t *)fp, (int32_t *)fp + size);
+	vector<int32_t> uncompressed = vector<int32_t>((const int32_t *)fp, (const int32_t *)fp + size);
 	string compressed = Chromaprint::CompressFingerprint(uncompressed, algorithm);
 	if (!base64) {
 		*encoded_fp = malloc(compressed.size());
@@ -137,9 +137,9 @@ int chromaprint_encode_fingerprint(void *fp, int size, int algorithm, void **enc
 	return 1;
 }
 
-int chromaprint_decode_fingerprint(void *encoded_fp, int encoded_size, void **fp, int *size, int *algorithm, int base64)
+int chromaprint_decode_fingerprint(const void *encoded_fp, int encoded_size, void **fp, int *size, int *algorithm, int base64)
 {
-	string encoded = string((char *)encoded_fp, encoded_size);
+	string encoded = string((const char *)encoded_fp, encoded_size);
 	string compressed = base64 ? Chromaprint::Base64Decode(encoded) : encoded;
 	vector<int32_t> uncompressed = Chromaprint::DecompressFingerprint(compressed, algorithm);
 	*fp = malloc(sizeof(int32_t) * uncompressed.size());
