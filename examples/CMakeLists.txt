@@ -1,7 +1,7 @@
 set(EXTRA_LIBS)
 if(APPLE)
     set(EXTRA_LIBS ${EXTRA_LIBS} -lz)
-    SET(CMAKE_EXE_LINKER_FLAGS "-sectcreate __TEXT __info_plist ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist")
+    set(CMAKE_EXE_LINKER_FLAGS "-sectcreate __TEXT __info_plist ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist")
 endif()
 if(UNIX)
     set(EXTRA_LIBS ${EXTRA_LIBS} -lpthread -lm)
