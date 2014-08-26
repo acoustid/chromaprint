@@ -1,8 +1,13 @@
-Version 1.2 -- TODO
-================================
+Version 1.2 -- August 26, 2014
+==============================
 
  - Fixed compilation with neither libswresample nor libavresample (#11)
  - Fixed compilation with static libav (#10)
+ - Functions chromaprint_encode_fingerprint and chromaprint_decode_fingerprint
+   are changed to accept const pointer as input
+ - Added support for using the Kiss FFT library (should make Android port easier)
+ - Removed obsolete dev tools from the package
+ - More compatible DEBUG() macro
 
 Version 1.1 -- November 23, 2013
 ================================
