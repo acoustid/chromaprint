@@ -66,7 +66,11 @@ namespace Chromaprint
 
 		bool operator==(const _CombinedBufferIterator<T> &rhs) const
 		{
-			return (m_ptr == rhs.m_ptr) && (m_buffer == rhs.m_buffer);
+      // It is possible for the second buffer to be immediately before
+      // the first one, in this situation if we did not compare the m_ptr_end
+      // we would have buffer.End() == buffer.Begin() for non empty buffers.
+			return (m_ptr == rhs.m_ptr) && (m_buffer == rhs.m_buffer) &&
+         (m_ptr_end == rhs.m_ptr_end);
 		}
 
 		bool operator!=(const _CombinedBufferIterator<T> &rhs) const
@@ -84,7 +88,7 @@ namespace Chromaprint
 				}
 			}
 		}
-	
+
 		void operator++(int)
 		{
 			++(*this);
