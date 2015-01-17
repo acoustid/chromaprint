@@ -19,6 +19,8 @@ set(chromaprint_SRCS
 	fingerprinter.cpp
 	image_builder.cpp
 	lloyds.cpp
+	simhash.h
+	simhash.cpp
 	silence_remover.cpp
 	fingerprint_calculator.cpp
 	fingerprint_compressor.cpp

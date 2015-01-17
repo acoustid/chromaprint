@@ -89,3 +89,25 @@ TEST(Utils, IsNaN) {
     EXPECT_FALSE(IsNaN(0.0));
     EXPECT_TRUE(IsNaN(sqrt(-1.0)));
 }
+
+TEST(Utils, CountSetBits32) {
+    EXPECT_EQ(0, CountSetBits(0x00U));
+    EXPECT_EQ(8, CountSetBits(0xFFU));
+    EXPECT_EQ(16, CountSetBits(0xFFFFU));
+    EXPECT_EQ(24, CountSetBits(0xFFFFFFU));
+    EXPECT_EQ(32, CountSetBits(0xFFFFFFFFU));
+    EXPECT_EQ(4, CountSetBits(0x01010101U));
+}
+
+TEST(Utils, CountSetBits64) {
+    EXPECT_EQ(0, CountSetBits(0x00U));
+    EXPECT_EQ(8, CountSetBits(0xFFU));
+    EXPECT_EQ(16, CountSetBits(0xFFFFU));
+    EXPECT_EQ(24, CountSetBits(0xFFFFFFU));
+    EXPECT_EQ(32, CountSetBits(0xFFFFFFFFU));
+    EXPECT_EQ(40, CountSetBits(0xFFFFFFFFFFU));
+    EXPECT_EQ(48, CountSetBits(0xFFFFFFFFFFFFU));
+    EXPECT_EQ(56, CountSetBits(0xFFFFFFFFFFFFFFU));
+    EXPECT_EQ(64, CountSetBits(0xFFFFFFFFFFFFFFFFU));
+    EXPECT_EQ(8, CountSetBits(0x0101010101010101U));
+}

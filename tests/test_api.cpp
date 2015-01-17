@@ -98,3 +98,15 @@ TEST(API, TestDecodeFingerprint)
 	ASSERT_EQ(0, fingerprint[1]);
 }
 
+TEST(API, TestHashFingerprint)
+{
+	int32_t fingerprint[] = { 19681, 22345, 312312, 453425 };
+    int32_t hash;
+
+    ASSERT_EQ(0, chromaprint_hash_fingerprint(NULL, 4, &hash));
+    ASSERT_EQ(0, chromaprint_hash_fingerprint(fingerprint, -1, &hash));
+    ASSERT_EQ(0, chromaprint_hash_fingerprint(fingerprint, 4, NULL));
+
+    ASSERT_EQ(1, chromaprint_hash_fingerprint(fingerprint, 4, &hash));
+    ASSERT_EQ(17249, hash);
+}

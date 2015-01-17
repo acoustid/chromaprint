@@ -27,6 +27,7 @@
 #include "fingerprint_decompressor.h"
 #include "fingerprinter_configuration.h"
 #include "base64.h"
+#include "simhash.h"
 
 using namespace std;
 using namespace Chromaprint;
@@ -146,6 +147,15 @@ int chromaprint_decode_fingerprint(const void *encoded_fp, int encoded_size, voi
 	*size = uncompressed.size();	
 	copy(uncompressed.begin(), uncompressed.end(), (int32_t *)*fp);
 	return 1;
+}
+
+int chromaprint_hash_fingerprint(const void *fp, int size, void *hash)
+{
+    if (fp == NULL || size < 0 || hash == NULL) {
+        return 0;
+    }
+    *((int32_t *)hash) = SimHash((const int32_t *)fp, size);
+    return 1;
 }
 
 void chromaprint_dealloc(void *ptr)
