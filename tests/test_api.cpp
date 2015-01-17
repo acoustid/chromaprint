@@ -20,12 +20,15 @@ TEST(API, Test2SilenceFp)
 	}
 
 	char *fp;
+	int32_t fp_hash;
 
 	chromaprint_finish(ctx);
 	chromaprint_get_fingerprint(ctx, &fp);
+	chromaprint_get_fingerprint_hash(ctx, &fp_hash);
 
 	ASSERT_EQ(18, strlen(fp));
 	EXPECT_EQ(string("AQAAA0mUaEkSRZEGAA"), string(fp));
+	ASSERT_EQ(627964279, fp_hash);
 }
 
 TEST(API, Test2SilenceRawFp)

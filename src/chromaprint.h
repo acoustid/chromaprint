@@ -188,6 +188,20 @@ CHROMAPRINT_API int chromaprint_get_fingerprint(ChromaprintContext *ctx, char **
 CHROMAPRINT_API int chromaprint_get_raw_fingerprint(ChromaprintContext *ctx, void **fingerprint, int *size);
 
 /**
+ * Return 32-bit hash of the calculated fingerprint.
+ *
+ * See chromaprint_hash_fingerprint() for details on how to use the hash.
+ *
+ * Parameters:
+ *  - ctx: Chromaprint context pointer
+ *  - hash: pointer to a 32-bit integer where the hash will be stored
+ *
+ * Returns:
+ *  - 0 on error, 1 on success
+ */
+CHROMAPRINT_API int chromaprint_get_fingerprint_hash(ChromaprintContext *ctx, void *hash);
+
+/**
  * Compress and optionally base64-encode a raw fingerprint
  *
  * The caller is responsible for freeing the returned pointer using

@@ -21,6 +21,25 @@
 #define avcodec_free_frame av_freep
 #endif
 
+int64_t get_default_channel_layout(int nb_channels)
+{
+/* 51.8.0 for FFmpeg, 51.26.0 for libav. I don't know how to identify them,
+   so let's use the higher one. I really wish Ubuntu would stop being
+   stupid and just drop libav. */
+#if LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(51, 26, 0)
+	return av_get_default_channel_layout(nb_channels);
+#else
+	switch (nb_channels) {
+		case 1:
+			return AV_CH_LAYOUT_MONO;
+		case 2:
+			return AV_CH_LAYOUT_STEREO;
+		default:
+			return 0;
+	}
+#endif
+}
+
 int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name, int max_length, int *duration)
 {
 	int ok = 0, remaining, length, consumed, codec_ctx_opened = 0, got_frame, stream_index;
@@ -80,7 +99,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 	if (codec_ctx->sample_fmt != AV_SAMPLE_FMT_S16) {
 		int64_t channel_layout = codec_ctx->channel_layout;
 		if (!channel_layout) {
-			channel_layout = av_get_default_channel_layout(codec_ctx->channels);
+			channel_layout = get_default_channel_layout(codec_ctx->channels);
 		}
 #if defined(HAVE_SWRESAMPLE)
 		convert_ctx = swr_alloc_set_opts(NULL,
@@ -223,7 +242,7 @@ int fpcalc_main(int argc, char **argv)
 	int32_t *raw_fingerprint;
 	char *file_name, *fingerprint, **file_names;
 	ChromaprintContext *chromaprint_ctx;
-	int algo = CHROMAPRINT_ALGORITHM_DEFAULT, num_failed = 0;
+	int algo = CHROMAPRINT_ALGORITHM_DEFAULT, num_failed = 0, do_hash = 0;
 
 	file_names = malloc(argc * sizeof(char *));
 	for (i = 1; i < argc; i++) {
@@ -237,6 +256,9 @@ int fpcalc_main(int argc, char **argv)
 		}
 		else if (!strcmp(arg, "-raw")) {
 			raw = 1;
+		}
+		else if (!strcmp(arg, "-hash")) {
+			do_hash = 1;
 		}
 		else if (!strcmp(arg, "-algo") && i + 1 < argc) {
 			const char *v = argv[++i];
@@ -263,6 +285,7 @@ int fpcalc_main(int argc, char **argv)
 		printf("  -length SECS  length of the audio data used for fingerprint calculation (default 120)\n");
 		printf("  -raw          output the raw uncompressed fingerprint\n");
 		printf("  -algo NAME    version of the fingerprint algorithm\n");
+		printf("  -hash         calculate also the fingerprint hash\n");
 		return 2;
 	}
 
@@ -317,6 +340,11 @@ int fpcalc_main(int argc, char **argv)
 			printf("FINGERPRINT=%s\n", fingerprint);
 			chromaprint_dealloc(fingerprint);
 		}
+        if (do_hash) {
+            int32_t hash = 0;
+            chromaprint_get_fingerprint_hash(chromaprint_ctx, &hash);
+            printf("HASH=%d\n", hash);
+        }
 	}
 
 	chromaprint_free(chromaprint_ctx);

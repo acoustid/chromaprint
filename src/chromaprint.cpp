@@ -35,6 +35,7 @@ using namespace Chromaprint;
 extern "C" {
 
 struct ChromaprintContextPrivate {
+	bool finished;
 	int algorithm;
 	Fingerprinter *fingerprinter;
 	vector<int32_t> fingerprint;
@@ -57,6 +58,7 @@ const char *chromaprint_get_version(void)
 ChromaprintContext *chromaprint_new(int algorithm)
 {
 	ChromaprintContextPrivate *ctx = new ChromaprintContextPrivate();
+	ctx->finished = false;
 	ctx->algorithm = algorithm;
 	ctx->fingerprinter = new Fingerprinter(CreateFingerprinterConfiguration(algorithm));
 	return (ChromaprintContext *)ctx;
@@ -78,6 +80,7 @@ int chromaprint_set_option(ChromaprintContext *c, const char *name, int value)
 int chromaprint_start(ChromaprintContext *c, int sample_rate, int num_channels)
 {
 	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *)c;
+	ctx->finished = false;
 	return ctx->fingerprinter->Start(sample_rate, num_channels) ? 1 : 0;
 }
 
@@ -92,12 +95,16 @@ int chromaprint_finish(ChromaprintContext *c)
 {
 	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *)c;
 	ctx->fingerprint = ctx->fingerprinter->Finish();
+	ctx->finished = true;
 	return 1;
 }
 
 int chromaprint_get_fingerprint(ChromaprintContext *c, char **data)
 {
 	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *)c;
+	if (!ctx->finished) {
+		return 0;
+	}
 	string fp = Chromaprint::Base64Encode(Chromaprint::CompressFingerprint(ctx->fingerprint, ctx->algorithm));
 	*data = (char *)malloc(fp.size() + 1);
 	if (!*data) {
@@ -111,12 +118,25 @@ int chromaprint_get_fingerprint(ChromaprintContext *c, char **data)
 int chromaprint_get_raw_fingerprint(ChromaprintContext *c, void **data, int *size)
 {
 	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *)c;
+	if (!ctx->finished) {
+		return 0;
+	}
 	*data = malloc(sizeof(int32_t) * ctx->fingerprint.size());
 	if (!*data) {
 		return 0;
 	}
 	*size = ctx->fingerprint.size();
 	copy(ctx->fingerprint.begin(), ctx->fingerprint.end(), *((int32_t **)data));
+	return 1;
+}
+
+int chromaprint_get_fingerprint_hash(ChromaprintContext *c, void *hash)
+{
+	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *)c;
+	if (!ctx->finished) {
+		return 0;
+	}
+	*((int32_t *)hash) = SimHash(ctx->fingerprint);
 	return 1;
 }
 
@@ -151,11 +171,11 @@ int chromaprint_decode_fingerprint(const void *encoded_fp, int encoded_size, voi
 
 int chromaprint_hash_fingerprint(const void *fp, int size, void *hash)
 {
-    if (fp == NULL || size < 0 || hash == NULL) {
-        return 0;
-    }
-    *((int32_t *)hash) = SimHash((const int32_t *)fp, size);
-    return 1;
+	if (fp == NULL || size < 0 || hash == NULL) {
+		return 0;
+	}
+	*((int32_t *)hash) = SimHash((const int32_t *)fp, size);
+	return 1;
 }
 
 void chromaprint_dealloc(void *ptr)
