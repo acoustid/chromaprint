@@ -155,43 +155,56 @@ namespace Chromaprint
 		return z;
 	}
 
-    template<typename T>
-    inline unsigned int CountSetBits(T v) {
-        return T::not_implemented;
-    }
+	// https://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
+	#define CHROMAPRINT_POPCNT_IMPL(T) \
+		v = v - ((v >> 1) & (T)~(T)0/3);                           \
+		v = (v & (T)~(T)0/15*3) + ((v >> 2) & (T)~(T)0/15*3);      \
+		v = (v + (v >> 4)) & (T)~(T)0/255*15;                      \
+		c = (T)(v * ((T)~(T)0/255)) >> (sizeof(T) - 1) * CHAR_BIT; \
 
-    // https://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
-    #define CHROMAPRINT_POPCNT_IMPL(T) \
-        v = v - ((v >> 1) & (T)~(T)0/3);                           \
-        v = (v & (T)~(T)0/15*3) + ((v >> 2) & (T)~(T)0/15*3);      \
-        v = (v + (v >> 4)) & (T)~(T)0/255*15;                      \
-        c = (T)(v * ((T)~(T)0/255)) >> (sizeof(T) - 1) * CHAR_BIT; \
+	template<typename T, int Size, bool IsSigned>
+	struct _CountSetBits_Impl {
+		static unsigned int Do(T v) {
+			return T::not_implemented;
+		}
+	};
 
-    template<>
-    inline unsigned int CountSetBits<uint32_t>(uint32_t v) {
-        unsigned int c;
-        CHROMAPRINT_POPCNT_IMPL(uint32_t);
-        return c;
-    }
+	template<typename T>
+	inline unsigned int CountSetBits(T v) {
+		return _CountSetBits_Impl<T, sizeof(T), std::numeric_limits<T>::is_signed>::Do(v);
+	}
 
-    template<>
-    inline unsigned int CountSetBits<uint64_t>(uint64_t v) {
-        unsigned int c;
-        CHROMAPRINT_POPCNT_IMPL(uint64_t);
-        return c;
-    }
+	template<typename T, int Size>
+	struct _CountSetBits_Impl<T, Size, true> {
+		static unsigned int Do(T v) {
+			return CountSetBits(SignedToUnsigned(v));
+		}
+	};
 
-    #undef CHROMAPRINT_POPCNT_IMPL
+	template<typename T>
+	struct _CountSetBits_Impl<T, 4, false> {
+		static unsigned int Do(T v) {
+			unsigned int c;
+			CHROMAPRINT_POPCNT_IMPL(uint32_t);
+			return c;
+		}
+	};
 
-    template<>
-    inline unsigned int CountSetBits<int32_t>(int32_t v) {
-        return CountSetBits(SignedToUnsigned(v));
-    }
+	template<typename T>
+	struct _CountSetBits_Impl<T, 8, false> {
+		static unsigned int Do(T v) {
+			unsigned int c;
+			CHROMAPRINT_POPCNT_IMPL(uint64_t);
+			return c;
+		}
+	};
 
-    template<typename T>
-    inline unsigned int HammingDistance(T a, T b) {
-        return CountSetBits(a ^ b);
-    }
+	#undef CHROMAPRINT_POPCNT_IMPL
+
+	template<typename T>
+	inline unsigned int HammingDistance(T a, T b) {
+		return CountSetBits(a ^ b);
+	}
 
 };
 

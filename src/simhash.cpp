@@ -49,7 +49,7 @@ namespace Chromaprint {
 
     int32_t SimHash(const std::vector<int32_t> &data)
     {
-        return SimHash(data.data(), data.size());
+        return SimHash(&data[0], data.size());
     }
 
 }
