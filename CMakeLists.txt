@@ -132,7 +132,7 @@ if(WITH_KISSFFT)
 	message(STATUS "Using KissFFT for FFT calculations")
 endif()
 
-if(NOT APPLE AND NOT BUILD_FRAMEWORK)
+if(NOT BUILD_FRAMEWORK)
 	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libchromaprint.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/libchromaprint.pc)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libchromaprint.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
 endif()
