@@ -90,7 +90,7 @@ namespace Chromaprint
 			++(*this);
 		}
 
-		short &operator*()
+		T &operator*()
 		{
 			assert(m_ptr);
 			return *m_ptr;
