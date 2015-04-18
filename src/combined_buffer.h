@@ -24,6 +24,7 @@
 #include <math.h>
 #include <assert.h>
 #include <algorithm>
+#include <iterator>
 
 namespace Chromaprint
 {
@@ -32,14 +33,9 @@ namespace Chromaprint
 	class CombinedBuffer;
 
 	template<class T>
-	class _CombinedBufferIterator
+	class _CombinedBufferIterator : public std::iterator<std::forward_iterator_tag, T>
 	{
 	public:
-		typedef std::input_iterator_tag iterator_category;
-		typedef T value_type;
-		typedef int difference_type;
-		typedef T* pointer;
-		typedef T& reference;
 
 		_CombinedBufferIterator(CombinedBuffer<T> *buffer = 0, int pos = 0)
 			: m_buffer(buffer)
@@ -66,7 +62,7 @@ namespace Chromaprint
 
 		bool operator==(const _CombinedBufferIterator<T> &rhs) const
 		{
-			return (m_ptr == rhs.m_ptr) && (m_buffer == rhs.m_buffer);
+			return (m_ptr == rhs.m_ptr) && (m_ptr_end == rhs.m_ptr_end) && (m_buffer == rhs.m_buffer);
 		}
 
 		bool operator!=(const _CombinedBufferIterator<T> &rhs) const
@@ -76,6 +72,7 @@ namespace Chromaprint
 
 		void operator++()
 		{
+			assert(m_ptr < m_ptr_end);
 			++m_ptr;
 			if (m_ptr >= m_ptr_end) {
 				if (m_ptr_end == m_buffer->Buffer(0) + m_buffer->BufferSize(0)) {
