@@ -17,10 +17,6 @@
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
-#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(54, 28, 0)
-#define avcodec_free_frame av_freep
-#endif
-
 int64_t get_default_channel_layout(int nb_channels)
 {
 /* 51.8.0 for FFmpeg, 51.26.0 for libav. I don't know how to identify them,
@@ -150,7 +146,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 	remaining = max_length * codec_ctx->channels * codec_ctx->sample_rate;
 	chromaprint_start(chromaprint_ctx, codec_ctx->sample_rate, codec_ctx->channels);
 
-	frame = avcodec_alloc_frame();
+	frame = av_frame_alloc();
 
 	while (1) {
 		if (av_read_frame(format_ctx, &packet) < 0) {
@@ -158,7 +154,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 		}
 
 		if (packet.stream_index == stream_index) {
-			avcodec_get_frame_defaults(frame);
+			av_frame_unref(frame);
 
 			got_frame = 0;
 			consumed = avcodec_decode_audio4(codec_ctx, frame, &got_frame, &packet);
@@ -215,7 +211,7 @@ finish:
 
 done:
 	if (frame) {
-		avcodec_free_frame(&frame);
+		av_frame_free(&frame);
 	}
 	if (dst_data[0]) {
 		av_freep(&dst_data[0]);
