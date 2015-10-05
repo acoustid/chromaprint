@@ -81,7 +81,7 @@ namespace Chromaprint
 				}
 			}
 		}
-	
+
 		void operator++(int)
 		{
 			++(*this);

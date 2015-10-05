@@ -56,6 +56,15 @@ TEST(CombinedBuffer, AccessElementsViaIteratorAfterShift) {
 	EXPECT_TRUE(buffer.End() == iter);
 }
 
+TEST(CombinedBuffer, SecondBufferBeforeFirst) {
+  short buffer[] = {4, 5, 1, 2, 3};
+	CombinedBuffer<short> combined(buffer + 2, 3, buffer, 2);
+	for (int i = 0; i < 5; i++) {
+		EXPECT_EQ(i + 1, combined[i]);
+	}
+  EXPECT_FALSE(combined.Begin() == combined.End());
+}
+
 TEST(CombinedBuffer, CopyUsingStlAlgorithms) {
 	short buffer1[] = { 1, 2, 3, 4, 5 };
 	short buffer2[] = { 6, 7, 8 };
@@ -92,4 +101,3 @@ TEST(CombinedBuffer, CopyUsingStlAlgorithmsAfterShift) {
 		EXPECT_EQ(0, tmp[i]);
 	}
 }
-
