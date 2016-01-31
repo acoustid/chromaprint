@@ -72,7 +72,8 @@ bool FingerprintDecompressor::ReadExceptionBits(BitStringReader *reader)
 				DEBUG("FingerprintDecompressor::ReadExceptionBits() -- Invalid fingerprint (reached EOF while reading exception bits)");
 				return false;
 			}
-			m_bits[i] += reader->Read(kExceptionBits);
+			int bit = reader->Read(kExceptionBits);
+			m_bits[i] += bit;
 		}
 	}
 	return true;
