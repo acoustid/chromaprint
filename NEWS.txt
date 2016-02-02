@@ -1,3 +1,13 @@
+Version 1.3 -- February 2, 2016
+===============================
+
+ - New function chromaprint_get_fingerprint_hash for calculating
+   SimHash from the fingerprint data
+ - Added info section to the fpcalc executable on Mac OS X
+ - Generate .pc (pkg-config) file on Mac OS X when not building a framework
+ - Removed use of some long deprecated FFmpeg APIs
+ - Some smaller bug fixes
+
 Version 1.2 -- August 26, 2014
 ==============================
 
