@@ -1,6 +1,7 @@
 Version 1.3 -- February 2, 2016
 ===============================
 
+ - You can use use "-length 0" in fpcalc to get the full fingerprint
  - New function chromaprint_get_fingerprint_hash for calculating
    SimHash from the fingerprint data
  - Added info section to the fpcalc executable on Mac OS X

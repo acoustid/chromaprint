@@ -38,7 +38,8 @@ int64_t get_default_channel_layout(int nb_channels)
 
 int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name, int max_length, int *duration)
 {
-	int ok = 0, remaining, length, consumed, codec_ctx_opened = 0, got_frame, stream_index;
+	int ok = 0, length, consumed, codec_ctx_opened = 0, got_frame, stream_index, last_chunk = 0;
+	unsigned long long remaining;
 	AVFormatContext *format_ctx = NULL;
 	AVCodecContext *codec_ctx = NULL;
 	AVCodec *codec = NULL;
@@ -185,16 +186,21 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 					}
 					data = dst_data;
 				}
-				length = MIN(remaining, frame->nb_samples * codec_ctx->channels);
+
+				length = frame->nb_samples * codec_ctx->channels;
+				if (max_length > 0) {
+					if (remaining < length) {
+						length = remaining;
+						last_chunk = 1;
+					}
+				}
+
 				if (!chromaprint_feed(chromaprint_ctx, data[0], length)) {
 					goto done;
 				}
 
-				if (max_length) {
-					remaining -= length;
-					if (remaining <= 0) {
-						goto finish;
-					}
+				if (last_chunk) {
+					goto finish;
 				}
 			}
 		}
