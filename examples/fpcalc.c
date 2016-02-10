@@ -194,6 +194,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 						last_chunk = 1;
 					}
 				}
+				remaining -= length;
 
 				if (!chromaprint_feed(chromaprint_ctx, data[0], length)) {
 					goto done;
