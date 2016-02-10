@@ -46,8 +46,8 @@ extern "C" {
 typedef void *ChromaprintContext;
 
 #define CHROMAPRINT_VERSION_MAJOR 1
-#define CHROMAPRINT_VERSION_MINOR 2
-#define CHROMAPRINT_VERSION_PATCH 0
+#define CHROMAPRINT_VERSION_MINOR 3
+#define CHROMAPRINT_VERSION_PATCH 1
 
 enum ChromaprintAlgorithm {
 	CHROMAPRINT_ALGORITHM_TEST1 = 0,
