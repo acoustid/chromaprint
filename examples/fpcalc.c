@@ -269,6 +269,7 @@ int fpcalc_main(int argc, char **argv)
 			else if (!strcmp(v, "test2")) { algo = CHROMAPRINT_ALGORITHM_TEST2; }
 			else if (!strcmp(v, "test3")) { algo = CHROMAPRINT_ALGORITHM_TEST3; }
 			else if (!strcmp(v, "test4")) { algo = CHROMAPRINT_ALGORITHM_TEST4; }
+			else if (!strcmp(v, "test5")) { algo = CHROMAPRINT_ALGORITHM_TEST5; }
 			else {
 				fprintf(stderr, "WARNING: unknown algorithm, using the default\n");
 			}

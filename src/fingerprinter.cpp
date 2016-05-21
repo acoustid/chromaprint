@@ -37,8 +37,6 @@ using namespace std;
 using namespace Chromaprint;
 
 static const int SAMPLE_RATE = 11025;
-static const int FRAME_SIZE = 4096;
-static const int OVERLAP = FRAME_SIZE - FRAME_SIZE / 3;
 static const int MIN_FREQ = 28;
 static const int MAX_FREQ = 3520;
 
@@ -51,9 +49,9 @@ Fingerprinter::Fingerprinter(FingerprinterConfiguration *config)
 	m_image_builder = new ImageBuilder(&m_image);
 	m_chroma_normalizer = new ChromaNormalizer(m_image_builder);
 	m_chroma_filter = new ChromaFilter(config->filter_coefficients(), config->num_filter_coefficients(), m_chroma_normalizer);
-	m_chroma = new Chroma(MIN_FREQ, MAX_FREQ, FRAME_SIZE, SAMPLE_RATE, m_chroma_filter);
+	m_chroma = new Chroma(MIN_FREQ, MAX_FREQ, config->frame_size(), SAMPLE_RATE, m_chroma_filter);
 	//m_chroma->set_interpolate(true);
-	m_fft = new FFT(FRAME_SIZE, OVERLAP, m_chroma);
+	m_fft = new FFT(config->frame_size(), config->frame_overlap(), m_chroma);
 	if (config->remove_silence()) {
 		m_silence_remover = new SilenceRemover(m_fft);
 		m_silence_remover->set_threshold(config->silence_threshold());

@@ -31,7 +31,7 @@ namespace Chromaprint
 	public:	
 
 		FingerprinterConfiguration()
-			: m_num_classifiers(0), m_classifiers(0), m_remove_silence(false), m_silence_threshold(0)
+			: m_num_classifiers(0), m_classifiers(0), m_remove_silence(false), m_silence_threshold(0), m_frame_size(0), m_frame_overlap(0)
 		{
 		}
 
@@ -97,6 +97,26 @@ namespace Chromaprint
 			m_silence_threshold = value;
 		}
 
+		int frame_size() const
+		{
+			return m_frame_size;
+		}
+
+		void set_frame_size(int value)
+		{
+			m_frame_size = value;
+		}
+
+		int frame_overlap() const
+		{
+			return m_frame_overlap;
+		}
+
+		void set_frame_overlap(int value)
+		{
+			m_frame_overlap = value;
+		}
+
 	private:
 		int m_num_classifiers;
 		const Classifier *m_classifiers;
@@ -105,6 +125,8 @@ namespace Chromaprint
 		bool m_interpolate;
 		bool m_remove_silence;
 		int m_silence_threshold;
+		int m_frame_size;
+		int m_frame_overlap;
 	};
 
 	// Used for http://oxygene.sk/lukas/2010/07/introducing-chromaprint/
@@ -136,6 +158,13 @@ namespace Chromaprint
 		FingerprinterConfigurationTest4();
 	};
 
+	// Same as v2, but with 2x more precise sampling
+	class FingerprinterConfigurationTest5 : public FingerprinterConfigurationTest2
+	{
+	public:
+		FingerprinterConfigurationTest5();
+	};
+
 	inline FingerprinterConfiguration *CreateFingerprinterConfiguration(int algorithm)
 	{
 		switch (algorithm) {
@@ -147,6 +176,8 @@ namespace Chromaprint
 			return new FingerprinterConfigurationTest3();
 		case CHROMAPRINT_ALGORITHM_TEST4:
 			return new FingerprinterConfigurationTest4();
+		case CHROMAPRINT_ALGORITHM_TEST5:
+			return new FingerprinterConfigurationTest5();
 		}
 		return 0;
 	}
