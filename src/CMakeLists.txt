@@ -27,6 +27,7 @@ set(chromaprint_SRCS
 	fingerprint_decompressor.cpp
 	fingerprinter_configuration.cpp
 	base64.cpp
+	utils/gradient.h
 	avresample/resample2.c
 )
 

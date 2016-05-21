@@ -29,6 +29,7 @@ set(tests_SOURCES
 	test_silence_remover.cpp
 	test_base64.cpp
 	test_moving_average.cpp
+	test_utils_gradient.cpp
 )
 
 add_executable(all_tests ${tests_SOURCES})
