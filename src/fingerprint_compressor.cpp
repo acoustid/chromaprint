@@ -24,7 +24,6 @@
 #include "debug.h"
 #include "utils.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 static const int kMaxNormalValue = 7;
@@ -53,7 +52,7 @@ void FingerprintCompressor::WriteNormalBits()
 {
 	BitStringWriter writer;
 	for (size_t i = 0; i < m_bits.size(); i++) {
-		writer.Write(min(int(m_bits[i]), kMaxNormalValue), kNormalBits);
+		writer.Write(std::min(int(m_bits[i]), kMaxNormalValue), kNormalBits);
 	}
 	writer.Flush();
 	m_result += writer.value();

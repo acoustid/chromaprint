@@ -3,7 +3,6 @@
 #include "image_builder.h"
 #include "chroma_filter.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 TEST(ChromaFilter, Blur2) {

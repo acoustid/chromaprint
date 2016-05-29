@@ -9,13 +9,12 @@
 #include "utils.h"
 #include "test_utils.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 TEST(BitStringReader, OneByte)
 {
 	char data[] = { -28 };
-	BitStringReader reader(string(data, 1));
+	BitStringReader reader(std::string(data, 1));
 
 	ASSERT_EQ(0, reader.Read(2));
 	ASSERT_EQ(1, reader.Read(2));
@@ -26,7 +25,7 @@ TEST(BitStringReader, OneByte)
 TEST(BitStringReader, TwoBytesIncomplete)
 {
 	char data[] = { -28, 1 };
-	BitStringReader reader(string(data, 2));
+	BitStringReader reader(std::string(data, 2));
 
 	ASSERT_EQ(0, reader.Read(2));
 	ASSERT_EQ(1, reader.Read(2));
@@ -38,7 +37,7 @@ TEST(BitStringReader, TwoBytesIncomplete)
 TEST(BitStringReader, TwoBytesSplit)
 {
 	char data[] = { -120, 6 };
-	BitStringReader reader(string(data, 2));
+	BitStringReader reader(std::string(data, 2));
 
 	ASSERT_EQ(0, reader.Read(3));
 	ASSERT_EQ(1, reader.Read(3));
@@ -49,7 +48,7 @@ TEST(BitStringReader, TwoBytesSplit)
 TEST(BitStringReader, AvailableBitsAndEOF)
 {
 	char data[] = { -120, 6 };
-	BitStringReader reader(string(data, 2));
+	BitStringReader reader(std::string(data, 2));
 
 	ASSERT_EQ(16, reader.AvailableBits());
 	ASSERT_FALSE(reader.eof());

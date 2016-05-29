@@ -8,12 +8,11 @@
 #include "audio_buffer.h"
 #include "utils.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 TEST(AudioProcessor, Accessors)
 {
-	vector<short> data = LoadAudioFile("data/test_mono_44100.raw");
+	std::vector<short> data = LoadAudioFile("data/test_mono_44100.raw");
 
 	boost::scoped_ptr<AudioBuffer> buffer(new AudioBuffer());
 	boost::scoped_ptr<AudioBuffer> buffer2(new AudioBuffer());
@@ -31,7 +30,7 @@ TEST(AudioProcessor, Accessors)
 
 TEST(AudioProcessor, PassThrough)
 {
-	vector<short> data = LoadAudioFile("data/test_mono_44100.raw");
+	std::vector<short> data = LoadAudioFile("data/test_mono_44100.raw");
 
 	boost::scoped_ptr<AudioBuffer> buffer(new AudioBuffer());
 	boost::scoped_ptr<AudioProcessor> processor(new AudioProcessor(44100, buffer.get()));
@@ -47,8 +46,8 @@ TEST(AudioProcessor, PassThrough)
 
 TEST(AudioProcessor, StereoToMono)
 {
-	vector<short> data1 = LoadAudioFile("data/test_stereo_44100.raw");
-	vector<short> data2 = LoadAudioFile("data/test_mono_44100.raw");
+	std::vector<short> data1 = LoadAudioFile("data/test_stereo_44100.raw");
+	std::vector<short> data2 = LoadAudioFile("data/test_mono_44100.raw");
 
 	boost::scoped_ptr<AudioBuffer> buffer(new AudioBuffer());
 	boost::scoped_ptr<AudioProcessor> processor(new AudioProcessor(44100, buffer.get()));
@@ -64,8 +63,8 @@ TEST(AudioProcessor, StereoToMono)
 
 TEST(AudioProcessor, ResampleMono)
 {
-	vector<short> data1 = LoadAudioFile("data/test_mono_44100.raw");
-	vector<short> data2 = LoadAudioFile("data/test_mono_11025.raw");
+	std::vector<short> data1 = LoadAudioFile("data/test_mono_44100.raw");
+	std::vector<short> data2 = LoadAudioFile("data/test_mono_11025.raw");
 
 	boost::scoped_ptr<AudioBuffer> buffer(new AudioBuffer());
 	boost::scoped_ptr<AudioProcessor> processor(new AudioProcessor(11025, buffer.get()));
@@ -81,8 +80,8 @@ TEST(AudioProcessor, ResampleMono)
 
 TEST(AudioProcessor, ResampleMonoNonInteger)
 {
-	vector<short> data1 = LoadAudioFile("data/test_mono_44100.raw");
-	vector<short> data2 = LoadAudioFile("data/test_mono_8000.raw");
+	std::vector<short> data1 = LoadAudioFile("data/test_mono_44100.raw");
+	std::vector<short> data2 = LoadAudioFile("data/test_mono_8000.raw");
 
 	boost::scoped_ptr<AudioBuffer> buffer(new AudioBuffer());
 	boost::scoped_ptr<AudioProcessor> processor(new AudioProcessor(8000, buffer.get()));
@@ -98,8 +97,8 @@ TEST(AudioProcessor, ResampleMonoNonInteger)
 
 TEST(AudioProcessor, StereoToMonoAndResample)
 {
-	vector<short> data1 = LoadAudioFile("data/test_stereo_44100.raw");
-	vector<short> data2 = LoadAudioFile("data/test_mono_11025.raw");
+	std::vector<short> data1 = LoadAudioFile("data/test_stereo_44100.raw");
+	std::vector<short> data2 = LoadAudioFile("data/test_mono_11025.raw");
 
 	boost::scoped_ptr<AudioBuffer> buffer(new AudioBuffer());
 	boost::scoped_ptr<AudioProcessor> processor(new AudioProcessor(11025, buffer.get()));

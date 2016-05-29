@@ -2,8 +2,6 @@
 #include <limits>
 #include "sox_audio_source.h"
 
-using namespace std;
-
 static const size_t kBufferSize = 2 * 4096;
 bool SoxAudioSource::initialized_ = false;
 

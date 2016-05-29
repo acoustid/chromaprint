@@ -8,7 +8,6 @@
 #include "fingerprint_calculator.h"
 #include "utils.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 TEST(FingerprintCalculator, CalculateSubfingerprint)
@@ -44,7 +43,7 @@ TEST(FingerprintCalculator, Calculate)
 	};
 	FingerprintCalculator calculator(classifiers, 1);
 
-	vector<uint32_t> fp = calculator.Calculate(&image);
+	std::vector<uint32_t> fp = calculator.Calculate(&image);
 	ASSERT_EQ(3, fp.size());
 	EXPECT_EQ(GrayCode(0), fp[0]);
 	EXPECT_EQ(GrayCode(2), fp[1]);

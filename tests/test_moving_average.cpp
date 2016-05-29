@@ -2,7 +2,6 @@
 #include <algorithm>
 #include "moving_average.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 TEST(MovingAverage, Empty) {

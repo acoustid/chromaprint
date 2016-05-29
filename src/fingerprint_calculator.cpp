@@ -23,7 +23,6 @@
 #include "debug.h"
 #include "utils.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 FingerprintCalculator::FingerprintCalculator(const Classifier *classifiers, int num_classifiers)
@@ -31,7 +30,7 @@ FingerprintCalculator::FingerprintCalculator(const Classifier *classifiers, int 
 {
 	m_max_filter_width = 0;
 	for (int i = 0; i < num_classifiers; i++) {
-		m_max_filter_width = max(m_max_filter_width, classifiers[i].filter().width());
+		m_max_filter_width = std::max(m_max_filter_width, classifiers[i].filter().width());
 	}
 	assert(m_max_filter_width > 0);
 }

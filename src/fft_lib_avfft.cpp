@@ -21,7 +21,6 @@
 #include "utils.h"
 #include "fft_lib_avfft.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 FFTLib::FFTLib(int frame_size, double *window)

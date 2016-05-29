@@ -3,7 +3,6 @@
 #include "image_builder.h"
 #include "chroma_resampler.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 TEST(ChromaResampler, Test1) {

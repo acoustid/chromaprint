@@ -24,7 +24,6 @@
 #include "fft.h"
 #include "debug.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 FFT::FFT(int frame_size, int overlap, FFTFrameConsumer *consumer)
@@ -38,7 +37,7 @@ FFT::FFT(int frame_size, int overlap, FFTFrameConsumer *consumer)
 {
 	PrepareHammingWindow(m_window, m_window + frame_size);
 	for (int i = 0; i < frame_size; i++) {
-		m_window[i] /= numeric_limits<short>::max();
+		m_window[i] /= std::numeric_limits<short>::max();
 	}
 	m_lib = new FFTLib(frame_size, m_window);
 }
@@ -59,7 +58,7 @@ void FFT::Consume(short *input, int length)
 {
 	// Special case, just pre-filling the buffer
 	if (m_buffer_offset + length < m_frame_size) {
-		copy(input, input + length, m_buffer + m_buffer_offset);
+		std::copy(input, input + length, m_buffer + m_buffer_offset);
 		m_buffer_offset += length;
 		return;
 	}
@@ -71,7 +70,7 @@ void FFT::Consume(short *input, int length)
 		combined_buffer.Shift(m_increment);
 	}
 	// Copy the remaining input data to the internal buffer
-	copy(combined_buffer.Begin(), combined_buffer.End(), m_buffer);
+	std::copy(combined_buffer.Begin(), combined_buffer.End(), m_buffer);
 	m_buffer_offset = combined_buffer.Size();
 }
 

@@ -3,10 +3,8 @@
 #include <limits>
 #include "lloyds.h"
 
-using namespace std;
-
 template<class T>
-ostream &operator<<(ostream &stream, const vector<T> &vec)
+std::ostream &operator<<(std::ostream &stream, const std::vector<T> &vec)
 {
 	for (int i = 0; i < vec.size(); i++) {
 		if (i != 0)
@@ -38,8 +36,8 @@ TEST(LLoyds, Lloyds1) {
 		1.0, 1.1, 1.2,
 		3.0, 3.1, 3.2,
 	};
-	vector<double> sig(data, data + 6);
-	vector<double> table = lloyds(sig, 2);
+	std::vector<double> sig(data, data + 6);
+	std::vector<double> table = lloyds(sig, 2);
 	EXPECT_EQ(1, table.size());
 	EXPECT_FLOAT_EQ(2.1, table[0]);
 }
@@ -48,8 +46,8 @@ TEST(LLoyds, Lloyds2) {
 	double data[] = {
 		1.0, 1.1, 1.2,
 	};
-	vector<double> sig(data, data + 3);
-	vector<double> table = lloyds(sig, 2);
+	std::vector<double> sig(data, data + 3);
+	std::vector<double> table = lloyds(sig, 2);
 	EXPECT_EQ(1, table.size());
 	EXPECT_FLOAT_EQ(1.075, table[0]);
 }
@@ -58,8 +56,8 @@ TEST(LLoyds, Lloyds3) {
 	double data[] = {
 		1.0, 1.1, 1.2,
 	};
-	vector<double> sig(data, data + 3);
-	vector<double> table = lloyds(sig, 3);
+	std::vector<double> sig(data, data + 3);
+	std::vector<double> table = lloyds(sig, 3);
 	EXPECT_EQ(2, table.size());
 	EXPECT_FLOAT_EQ(1.05, table[0]);
 	EXPECT_FLOAT_EQ(1.15, table[1]);
@@ -69,8 +67,8 @@ TEST(LLoyds, Lloyds4) {
 	double data[] = {
 		435,219,891,906,184,572,301,892,875,121,245,146,640,137,938,25,668,288,848,790,141,890,528,145,289,861,339,769,293,757
 	};
-	vector<double> sig(data, data + 30);
-	vector<double> table = lloyds(sig, 4);
+	std::vector<double> sig(data, data + 30);
+	std::vector<double> table = lloyds(sig, 4);
 	EXPECT_EQ(3, table.size());
 	EXPECT_FLOAT_EQ(214.77678, table[0]);
 	EXPECT_FLOAT_EQ(451.5625, table[1]);

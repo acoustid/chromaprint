@@ -33,7 +33,6 @@
 #include "utils.h"
 #include "debug.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 static const int MIN_FREQ = 28;

@@ -2,7 +2,6 @@
 #include <algorithm>
 #include "combined_buffer.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 TEST(CombinedBuffer, Size) {
@@ -70,7 +69,7 @@ TEST(CombinedBuffer, CopyUsingStlAlgorithms) {
 	short buffer2[] = { 6, 7, 8 };
 	short tmp[10];
 	CombinedBuffer<short> buffer(buffer1, 5, buffer2, 3);
-	fill(tmp, tmp + 10, 0);
+	std::fill(tmp, tmp + 10, 0);
 	for (int i = 0; i < 10; i++) {
 		EXPECT_EQ(0, tmp[i]);
 	}
@@ -89,7 +88,7 @@ TEST(CombinedBuffer, CopyUsingStlAlgorithmsAfterShift) {
 	short tmp[10];
 	CombinedBuffer<short> buffer(buffer1, 5, buffer2, 3);
 	buffer.Shift(6);
-	fill(tmp, tmp + 10, 0);
+	std::fill(tmp, tmp + 10, 0);
 	for (int i = 0; i < 10; i++) {
 		EXPECT_EQ(0, tmp[i]);
 	}

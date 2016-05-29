@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include "quantizer.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 TEST(Quantizer, Quantize) {

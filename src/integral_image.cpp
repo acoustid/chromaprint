@@ -20,7 +20,6 @@
 
 #include "integral_image.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 void IntegralImage::Transform()

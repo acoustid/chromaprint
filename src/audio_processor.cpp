@@ -27,7 +27,6 @@ extern "C" {
 #include "debug.h"
 #include "audio_processor.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 static const int kMinSampleRate = 1000;
@@ -93,7 +92,7 @@ int AudioProcessor::Load(short *input, int length)
 {
 	assert(length >= 0);
 	assert(m_buffer_offset <= m_buffer_size);
-	length = min(length, m_buffer_size - m_buffer_offset);
+	length = std::min(length, m_buffer_size - m_buffer_offset);
 	switch (m_num_channels) {
 	case 1:
 		LoadMono(input, length);
@@ -125,7 +124,7 @@ void AudioProcessor::Resample()
 	m_consumer->Consume(m_resample_buffer, length);
 	int remaining = m_buffer_offset - consumed;
 	if (remaining > 0) {
-		copy(m_buffer + consumed, m_buffer + m_buffer_offset, m_buffer);
+		std::copy(m_buffer + consumed, m_buffer + m_buffer_offset, m_buffer);
 	}
 	else if (remaining < 0) {
 		DEBUG("Chromaprint::AudioProcessor::Resample() -- Resampling overread input buffer.");

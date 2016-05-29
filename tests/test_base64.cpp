@@ -2,7 +2,6 @@
 #include "base64.h"
 #include "test_utils.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 TEST(Base64, Base64Encode)
@@ -37,9 +36,7 @@ TEST(Base64, Base64EncodeLong)
 		199, 133, 255, 240, 113, 101, 67, 199, 23, 225, 181, 160, 121, 140, 67, 123,
 		161, 229, 184, 137, 30, 205, 135, 119, 70, 94, 252, 71, 120, 150
 	};
-	string original;
-	original.resize(NELEMS(data));
-	copy(data, data + NELEMS(data), original.begin());
+	std::string original(data, data + NELEMS(data));
 
 	char encoded[] = "AQABzxG1JBITJUEPH8WVoT8hFjyNG8ojuC_-44eHCzqL0EF_NKfxH2O2GZ9gRkeg-6hLhLlw5sGF_Cp-Qlt5PIdPGLnSHMeF__BxZUPHF-G1oHmMQ3uh5biJHs2Hd0Ze_Ed4lg";
 	ASSERT_EQ(encoded, Base64Encode(original));
@@ -55,10 +52,8 @@ TEST(Base64, Base64DecodeLong)
 		199, 133, 255, 240, 113, 101, 67, 199, 23, 225, 181, 160, 121, 140, 67, 123,
 		161, 229, 184, 137, 30, 205, 135, 119, 70, 94, 252, 71, 120, 150
 	};
-	string original;
-	original.resize(NELEMS(data));
-	copy(data, data + NELEMS(data), original.begin());
+	std::string original(data, data + NELEMS(data));
 
 	char encoded[] = "AQABzxG1JBITJUEPH8WVoT8hFjyNG8ojuC_-44eHCzqL0EF_NKfxH2O2GZ9gRkeg-6hLhLlw5sGF_Cp-Qlt5PIdPGLnSHMeF__BxZUPHF-G1oHmMQ3uh5biJHs2Hd0Ze_Ed4lg";
-	ASSERT_EQ(original, Base64Decode(string(encoded)));
+	ASSERT_EQ(original, Base64Decode(encoded));
 }

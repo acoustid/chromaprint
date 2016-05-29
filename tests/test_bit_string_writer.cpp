@@ -9,7 +9,6 @@
 #include "utils.h"
 #include "test_utils.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 TEST(BitStringWriter, OneByte)

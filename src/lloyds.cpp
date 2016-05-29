@@ -5,10 +5,8 @@
 #include "lloyds.h"
 #include <limits>
 
-using namespace std;
-
 template <typename T>
-T min(const vector<T> &array)
+T min(const std::vector<T> &array)
 {
 	T m = array.size() ? array[0] : 0;
 	for (int i = 1; i < array.size(); i++) {
@@ -20,7 +18,7 @@ T min(const vector<T> &array)
 }
 
 template <typename T>
-T max(const vector<T> &array)
+T max(const std::vector<T> &array)
 {
 	T m = array.size() ? array[0] : 0;
 	for (int i = 1; i < array.size(); i++) {
@@ -47,12 +45,12 @@ ostream &operator<<(ostream &stream, const vector<T> &vec)
 	return stream;
 }*/
 
-vector<double> lloyds(vector<double> &sig, int len)
+std::vector<double> lloyds(std::vector<double> &sig, int len)
 {
-	vector<double> x(len-1);
-	vector<double> q(len);
+	std::vector<double> x(len-1);
+	std::vector<double> q(len);
 
-	sort(sig.begin(), sig.end());
+	std::sort(sig.begin(), sig.end());
 
 	// Set initial endpoints
 	double sig_min = sig[0];
@@ -67,7 +65,7 @@ vector<double> lloyds(vector<double> &sig, int len)
 	}
 
 	double reldist = 1.0, dist = 1.0;
-	double stop_criteria = max(numeric_limits<double>::epsilon() * fabs(sig_max), 1e-7);
+	double stop_criteria = std::max(std::numeric_limits<double>::epsilon() * fabs(sig_max), 1e-7);
 	double iteration = 0;
 	while (reldist > stop_criteria) {
 		iteration++;

@@ -23,7 +23,6 @@
 #include "debug.h"
 #include "silence_remover.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 const short kSilenceWindow = 55; // 5 ms as 11025 Hz

@@ -23,7 +23,6 @@
 #include <math.h>
 #include "image_builder.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 ImageBuilder::ImageBuilder(Image *image)

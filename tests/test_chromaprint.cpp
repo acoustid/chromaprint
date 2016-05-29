@@ -15,7 +15,6 @@
 #include "image_builder.h"
 #include "utils.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 static const int SAMPLE_RATE = 11025;
@@ -27,7 +26,7 @@ static const int MAX_FILTER_WIDTH = 20;
 
 TEST(Chromaprint, BasicImage)
 {
-	vector<short> data = LoadAudioFile("data/test_stereo_44100.raw");
+	std::vector<short> data = LoadAudioFile("data/test_stereo_44100.raw");
 
 	Chromaprint::Image image(12);
 	Chromaprint::ImageBuilder image_builder(&image);

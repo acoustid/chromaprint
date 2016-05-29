@@ -22,7 +22,6 @@
 #include "debug.h"
 #include "utils.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 static const int kMaxNormalValue = 7;
@@ -79,7 +78,7 @@ bool FingerprintDecompressor::ReadExceptionBits(BitStringReader *reader)
 	return true;
 }
 
-std::vector<uint32_t> FingerprintDecompressor::Decompress(const string &data, int *algorithm)
+std::vector<uint32_t> FingerprintDecompressor::Decompress(const std::string &data, int *algorithm)
 {
 	if (data.size() < 4) {
 		DEBUG("FingerprintDecompressor::Decompress() -- Invalid fingerprint (shorter than 4 bytes)");

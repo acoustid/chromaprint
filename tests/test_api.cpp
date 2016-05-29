@@ -6,12 +6,10 @@
 #include <fstream>
 #include "chromaprint.h"
 
-using namespace std;
-
 TEST(API, Test2SilenceFp)
 {
 	short zeroes[1024];
-	fill(zeroes, zeroes + 1024, 0);
+	std::fill(zeroes, zeroes + 1024, 0);
 
 	ChromaprintContext *ctx = chromaprint_new(CHROMAPRINT_ALGORITHM_TEST2);
 	chromaprint_start(ctx, 44100, 1);
@@ -27,14 +25,14 @@ TEST(API, Test2SilenceFp)
 	chromaprint_get_fingerprint_hash(ctx, &fp_hash);
 
 	ASSERT_EQ(18, strlen(fp));
-	EXPECT_EQ(string("AQAAA0mUaEkSRZEGAA"), string(fp));
+	EXPECT_EQ(std::string("AQAAA0mUaEkSRZEGAA"), std::string(fp));
 	ASSERT_EQ(627964279, fp_hash);
 }
 
 TEST(API, Test2SilenceRawFp)
 {
 	short zeroes[1024];
-	fill(zeroes, zeroes + 1024, 0);
+	std::fill(zeroes, zeroes + 1024, 0);
 
 	ChromaprintContext *ctx = chromaprint_new(CHROMAPRINT_ALGORITHM_TEST2);
 	chromaprint_start(ctx, 44100, 1);

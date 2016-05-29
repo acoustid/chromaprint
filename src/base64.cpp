@@ -24,7 +24,6 @@
 #include "bit_string_writer.h"
 #include "debug.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 static const char kBase64Chars[65] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
@@ -37,13 +36,13 @@ static const char kBase64CharsReversed[128] = {
 	38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 0, 0, 0, 0, 0
 };
 
-string Chromaprint::Base64Encode(const string &orig)
+std::string Chromaprint::Base64Encode(const std::string &orig)
 {
 	int size = orig.size();
 	int encoded_size = (size * 4 + 2) / 3;
-	string encoded(encoded_size, '\x00');
-	const unsigned char *src = (unsigned char *)orig.data();
-	string::iterator dest = encoded.begin();
+	std::string encoded(encoded_size, '\x00');
+	const unsigned char *src = (unsigned char *) orig.data();
+	auto dest = encoded.begin();
 	while (size > 0) {
 		*dest++ = kBase64Chars[(src[0] >> 2)];
 		*dest++ = kBase64Chars[((src[0] << 4) | (--size ? (src[1] >> 4) : 0)) & 63];
@@ -59,12 +58,12 @@ string Chromaprint::Base64Encode(const string &orig)
 	return encoded;
 }
 
-string Chromaprint::Base64Decode(const string &encoded)
+std::string Chromaprint::Base64Decode(const std::string &encoded)
 {
-	string str((3 * encoded.size()) / 4, '\x00');
+	std::string str((3 * encoded.size()) / 4, '\x00');
 	const unsigned char *src = (const unsigned char *)encoded.data();
 	int size = encoded.size();
-	string::iterator dest = str.begin();
+	auto dest = str.begin();
 	while (size > 0) {
 		int b0 = kBase64CharsReversed[*src++];
 		if (--size) {

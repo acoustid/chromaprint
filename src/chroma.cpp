@@ -25,7 +25,6 @@
 #include "chroma.h"
 #include "debug.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 static const int NUM_BANDS = 12;
@@ -51,8 +50,8 @@ Chroma::~Chroma()
 
 void Chroma::PrepareNotes(int min_freq, int max_freq, int frame_size, int sample_rate)
 {
-	m_min_index = max(1, FreqToIndex(min_freq, frame_size, sample_rate));
-	m_max_index = min(frame_size / 2, FreqToIndex(max_freq, frame_size, sample_rate));
+	m_min_index = std::max(1, FreqToIndex(min_freq, frame_size, sample_rate));
+	m_max_index = std::min(frame_size / 2, FreqToIndex(max_freq, frame_size, sample_rate));
 	for (int i = m_min_index; i < m_max_index; i++) {
 		double freq = IndexToFreq(i, frame_size, sample_rate);
 		double octave = FreqToOctave(freq);

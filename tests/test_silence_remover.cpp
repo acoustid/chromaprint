@@ -8,13 +8,12 @@
 #include "audio_buffer.h"
 #include "utils.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 TEST(SilenceRemover, PassThrough)
 {
 	short samples[] = { 1000, 2000, 3000, 4000, 5000, 6000 };
-	vector<short> data(samples, samples + 6);
+	std::vector<short> data(samples, samples + NELEMS(samples));
 
 	boost::scoped_ptr<AudioBuffer> buffer(new AudioBuffer());
 	boost::scoped_ptr<SilenceRemover> processor(new SilenceRemover(buffer.get()));
@@ -31,10 +30,10 @@ TEST(SilenceRemover, PassThrough)
 TEST(SilenceRemover, RemoveLeadingSilence)
 {
 	short samples1[] = { 0, 60, 0, 1000, 2000, 0, 4000, 5000, 0 };
-	vector<short> data1(samples1, samples1 + 9);
+	std::vector<short> data1(samples1, samples1 + NELEMS(samples1));
 
 	short samples2[] = { 1000, 2000, 0, 4000, 5000, 0 };
-	vector<short> data2(samples2, samples2 + 6);
+	std::vector<short> data2(samples2, samples2 + NELEMS(samples2));
 
 	boost::scoped_ptr<AudioBuffer> buffer(new AudioBuffer());
 	boost::scoped_ptr<SilenceRemover> processor(new SilenceRemover(buffer.get(), 100));

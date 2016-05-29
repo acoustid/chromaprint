@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include "integral_image.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 TEST(IntegralImage, Basic2D) {

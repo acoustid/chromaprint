@@ -3,7 +3,6 @@
 #include <limits>
 #include "utils.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 TEST(Utils, PrepareHammingWindow) {
@@ -21,8 +20,8 @@ TEST(Utils, ApplyWindow1) {
 	short input[10];
 	double output[10];
 	PrepareHammingWindow(window, window + 10);
-	fill(input, input + 10, numeric_limits<short>::max());
-	double scale = 1.0 / numeric_limits<short>::max();
+	std::fill(input, input + 10, std::numeric_limits<short>::max());
+	double scale = 1.0 / std::numeric_limits<short>::max();
 	ApplyWindow(input, window, output, 10, scale);
 	for (int i = 0; i < 10; i++) {
 		EXPECT_FLOAT_EQ(window_ex[i], output[i]);
@@ -34,8 +33,8 @@ TEST(Utils, ApplyWindow2) {
 	short input[10];
 	double output[10];
 	PrepareHammingWindow(window, window + 10);
-	fill(input, input + 10, 0);
-	double scale = 1.0 / numeric_limits<short>::max();
+	std::fill(input, input + 10, 0);
+	double scale = 1.0 / std::numeric_limits<short>::max();
 	ApplyWindow(input, window, output, 10, scale);
 	for (int i = 0; i < 10; i++) {
 		EXPECT_FLOAT_EQ(0.0, output[i]);

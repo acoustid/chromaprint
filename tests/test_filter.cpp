@@ -6,7 +6,6 @@
 #include "image.h"
 #include "filter.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 TEST(Filter, Filter0)

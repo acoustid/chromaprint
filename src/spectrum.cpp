@@ -24,7 +24,6 @@
 #include "utils.h"
 #include "spectrum.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 Spectrum::Spectrum(int num_bands, int min_freq, int max_freq, int frame_size, int sample_rate, FeatureVectorConsumer *consumer)

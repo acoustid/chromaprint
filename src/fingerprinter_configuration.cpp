@@ -21,7 +21,6 @@
 #include "fingerprinter_configuration.h"
 #include "utils.h"
 
-using namespace std;
 using namespace Chromaprint;
 
 static const int kDefaultFrameSize = 4096;
