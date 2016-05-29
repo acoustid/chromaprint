@@ -21,11 +21,14 @@
 #ifndef CHROMAPRINT_FINGERPRINTER_CONFIGURATION_H_
 #define CHROMAPRINT_FINGERPRINTER_CONFIGURATION_H_
 
+#include <algorithm>
 #include "classifier.h"
 #include "chromaprint.h"
 
 namespace Chromaprint
 {
+	static const int DEFAULT_SAMPLE_RATE = 11025;
+
 	class FingerprinterConfiguration
 	{
 	public:	
@@ -61,10 +64,18 @@ namespace Chromaprint
 			return m_classifiers;
 		}
 
+		int max_filter_width() const {
+			return m_max_filter_width;
+		}
+
 		void set_classifiers(const Classifier *classifiers, int size)
 		{
 			m_classifiers = classifiers;
 			m_num_classifiers = size;
+			m_max_filter_width = 0;
+			for (int i = 0; i < size; i++) {
+				m_max_filter_width = std::max(m_max_filter_width, classifiers[i].filter().width());
+			}
 		}
 
 		bool interpolate() const 
@@ -117,8 +128,13 @@ namespace Chromaprint
 			m_frame_overlap = value;
 		}
 
+		int sample_rate() const {
+			return DEFAULT_SAMPLE_RATE;
+		}
+
 	private:
 		int m_num_classifiers;
+		int m_max_filter_width;
 		const Classifier *m_classifiers;
 		int m_num_filter_coefficients;
 		const double *m_filter_coefficients;

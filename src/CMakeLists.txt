@@ -26,8 +26,12 @@ set(chromaprint_SRCS
 	fingerprint_compressor.cpp
 	fingerprint_decompressor.cpp
 	fingerprinter_configuration.cpp
+	fingerprint_matcher.h
+	fingerprint_matcher.cpp
 	base64.cpp
 	utils/gradient.h
+	utils/gaussian_filter.h
+	utils/scope_exit.h
 	avresample/resample2.c
 )
 
@@ -87,3 +91,5 @@ install(TARGETS chromaprint
 	PUBLIC_HEADER DESTINATION ${INCLUDE_INSTALL_DIR}
 )
 
+add_executable(fpcmp cmd/fpcmp.cpp)
+target_link_libraries(fpcmp chromaprint ${chromaprint_LINK_LIBS})

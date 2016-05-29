@@ -162,6 +162,12 @@ namespace Chromaprint
 		v = (v + (v >> 4)) & (T)~(T)0/255*15;                      \
 		c = (T)(v * ((T)~(T)0/255)) >> (sizeof(T) - 1) * CHAR_BIT; \
 
+//	#define CHROMAPRINT_POPCNT_IMPL_32 CHROMAPRINT_POPCNT_IMPL(uint32_t)
+//	#define CHROMAPRINT_POPCNT_IMPL_64 CHROMAPRINT_POPCNT_IMPL(uint64_t)
+
+	#define CHROMAPRINT_POPCNT_IMPL_32 c = __builtin_popcount(v);
+	#define CHROMAPRINT_POPCNT_IMPL_64 c = __builtin_popcountll(v);
+
 	template<typename T, int Size, bool IsSigned>
 	struct _CountSetBits_Impl {
 		static unsigned int Do(T v) {
@@ -185,7 +191,7 @@ namespace Chromaprint
 	struct _CountSetBits_Impl<T, 4, false> {
 		static unsigned int Do(T v) {
 			unsigned int c;
-			CHROMAPRINT_POPCNT_IMPL(uint32_t);
+			CHROMAPRINT_POPCNT_IMPL_32;
 			return c;
 		}
 	};
@@ -194,12 +200,14 @@ namespace Chromaprint
 	struct _CountSetBits_Impl<T, 8, false> {
 		static unsigned int Do(T v) {
 			unsigned int c;
-			CHROMAPRINT_POPCNT_IMPL(uint64_t);
+			CHROMAPRINT_POPCNT_IMPL_64;
 			return c;
 		}
 	};
 
 	#undef CHROMAPRINT_POPCNT_IMPL
+	#undef CHROMAPRINT_POPCNT_IMPL_32
+	#undef CHROMAPRINT_POPCNT_IMPL_64
 
 	template<typename T>
 	inline unsigned int HammingDistance(T a, T b) {

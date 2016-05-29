@@ -1,11 +1,13 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.1)
 
 if(POLICY CMP0048)
     cmake_policy(SET CMP0048 OLD)
 endif()
 
-project(chromaprint)
+project(chromaprint C CXX)
 set(PROJECT_VERSION 1.3.1)
+
+set(CMAKE_CXX_STANDARD 11)
 
 # 1. If the library source code has changed at all since the last update, then increment revision.
 # 2. If any interfaces have been added, removed, or changed since the last update, increment current, and set revision to 0.
@@ -167,4 +169,3 @@ configure_file(
 
 add_custom_target(uninstall
 	COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
-

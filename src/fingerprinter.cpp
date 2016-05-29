@@ -36,7 +36,6 @@
 using namespace std;
 using namespace Chromaprint;
 
-static const int SAMPLE_RATE = 11025;
 static const int MIN_FREQ = 28;
 static const int MAX_FREQ = 3520;
 
@@ -49,17 +48,17 @@ Fingerprinter::Fingerprinter(FingerprinterConfiguration *config)
 	m_image_builder = new ImageBuilder(&m_image);
 	m_chroma_normalizer = new ChromaNormalizer(m_image_builder);
 	m_chroma_filter = new ChromaFilter(config->filter_coefficients(), config->num_filter_coefficients(), m_chroma_normalizer);
-	m_chroma = new Chroma(MIN_FREQ, MAX_FREQ, config->frame_size(), SAMPLE_RATE, m_chroma_filter);
+	m_chroma = new Chroma(MIN_FREQ, MAX_FREQ, config->frame_size(), config->sample_rate(), m_chroma_filter);
 	//m_chroma->set_interpolate(true);
 	m_fft = new FFT(config->frame_size(), config->frame_overlap(), m_chroma);
 	if (config->remove_silence()) {
 		m_silence_remover = new SilenceRemover(m_fft);
 		m_silence_remover->set_threshold(config->silence_threshold());
-		m_audio_processor = new AudioProcessor(SAMPLE_RATE, m_silence_remover);
+		m_audio_processor = new AudioProcessor(config->sample_rate(), m_silence_remover);
 	}
 	else {
 		m_silence_remover = 0;
-		m_audio_processor = new AudioProcessor(SAMPLE_RATE, m_fft);
+		m_audio_processor = new AudioProcessor(config->sample_rate(), m_fft);
 	}
 	m_fingerprint_calculator = new FingerprintCalculator(config->classifiers(), config->num_classifiers());
 	m_config = config;

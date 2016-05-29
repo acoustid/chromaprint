@@ -25,11 +25,13 @@ set(tests_SOURCES
 	test_fingerprint_compressor.cpp
 	test_fingerprint_decompressor.cpp
 	test_fingerprint_calculator.cpp
+	test_fingerprint_matcher.cpp
 	test_filter.cpp
 	test_silence_remover.cpp
 	test_base64.cpp
 	test_moving_average.cpp
 	test_utils_gradient.cpp
+	test_utils_gaussian_filter.cpp
 )
 
 add_executable(all_tests ${tests_SOURCES})
