@@ -126,6 +126,7 @@ inline OutputIt Base64Decode(InputIt first, InputIt last, OutputIt dest)
 void Base64Encode(const std::string &src, std::string &dest);
 std::string Base64Encode(const std::string &src);
 
+void Base64Decode(const std::string &encoded, std::string &dest);
 std::string Base64Decode(const std::string &encoded);
 
 }; // namespace chromaprint
