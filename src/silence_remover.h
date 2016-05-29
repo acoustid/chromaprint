@@ -44,7 +44,7 @@ namespace chromaprint
 		}
 
 		bool Reset(int sample_rate, int num_channels);
-		void Consume(short *input, int length);
+		void Consume(const int16_t *input, int length) override;
 		void Flush();
 
 		int threshold()
@@ -62,7 +62,7 @@ namespace chromaprint
 
 		bool m_start;
 		int m_threshold;
-		MovingAverage<short> m_average;
+		MovingAverage<int16_t> m_average;
 		AudioConsumer *m_consumer;
 	};
 

@@ -25,14 +25,14 @@ public:
 	int Overlap() const { return m_frame_size - m_increment; }
 
 	void Reset();
-	void Consume(short *input, int length);
+	void Consume(const int16_t *input, int length);
 
 private:
 	CHROMAPRINT_DISABLE_COPY(FFT);
 
 	double *m_window;
 	int m_buffer_offset;
-	short *m_buffer;
+	int16_t *m_buffer;
 	FFTFrame m_frame;
 	int m_frame_size;
 	int m_increment;

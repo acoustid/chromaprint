@@ -44,7 +44,7 @@ FFTLib::~FFTLib()
 	delete[] m_input;
 }
 
-void FFTLib::ComputeFrame(CombinedBuffer<short>::Iterator input, double *output)
+void FFTLib::ComputeFrame(CombinedBuffer<int16_t>::Iterator input, double *output)
 {
 	ApplyWindow(input, m_window, m_input, m_frame_size, 1.0);
 	// XXX we can avoid this ctoz call by changing ApplyWindow, is it worth it?

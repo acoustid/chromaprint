@@ -54,7 +54,7 @@ namespace chromaprint
 		 * Process a block of raw audio data. Call this method as many times
 		 * as you need. 
 		 */
-		void Consume(short *input, int length);
+		void Consume(const int16_t *input, int length);
 
 		/**
 		 * Calculate the fingerprint based on the provided audio data.

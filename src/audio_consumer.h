@@ -29,7 +29,7 @@ namespace chromaprint
 	public:
 		virtual ~AudioConsumer() {}
 	
-		virtual void Consume(short *input, int length) = 0;
+		virtual void Consume(const int16_t *input, int length) = 0;
 	};
 
 };

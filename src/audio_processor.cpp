@@ -38,37 +38,37 @@ AudioProcessor::~AudioProcessor()
 	}
 }
 
-void AudioProcessor::LoadMono(short *input, int length)
+void AudioProcessor::LoadMono(const int16_t *input, int length)
 {
-	short *output = m_buffer.data() + m_buffer_offset;
+	int16_t *output = m_buffer.data() + m_buffer_offset;
 	while (length--) {
 		*output++ = input[0];
 		input++;
 	}
 }
 
-void AudioProcessor::LoadStereo(short *input, int length)
+void AudioProcessor::LoadStereo(const int16_t *input, int length)
 {
-	short *output = m_buffer.data() + m_buffer_offset;
+	int16_t *output = m_buffer.data() + m_buffer_offset;
 	while (length--) {
 		*output++ = (input[0] + input[1]) / 2;
 		input += 2;
 	}
 }
 
-void AudioProcessor::LoadMultiChannel(short *input, int length)
+void AudioProcessor::LoadMultiChannel(const int16_t *input, int length)
 {
-	short *output = m_buffer.data() + m_buffer_offset;
+	int16_t *output = m_buffer.data() + m_buffer_offset;
 	while (length--) {
-		long sum = 0;
+		int32_t sum = 0;
 		for (int i = 0; i < m_num_channels; i++) {
 			sum += *input++;
 		}
-		*output++ = (short)(sum / m_num_channels);
+		*output++ = (int16_t)(sum / m_num_channels);
 	}
 }
 
-int AudioProcessor::Load(short *input, int length)
+int AudioProcessor::Load(const int16_t *input, int length)
 {
 	assert(length >= 0);
 	assert(m_buffer_offset <= m_buffer.size());
@@ -142,7 +142,7 @@ bool AudioProcessor::Reset(int sample_rate, int num_channels)
 	return true;
 }
 
-void AudioProcessor::Consume(short *input, int length)
+void AudioProcessor::Consume(const int16_t *input, int length)
 {
 	assert(length >= 0);
 	assert(length % m_num_channels == 0);

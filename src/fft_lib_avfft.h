@@ -38,7 +38,7 @@ namespace chromaprint
 		FFTLib(int frame_size, double *window);
 		~FFTLib();
 
-		void ComputeFrame(CombinedBuffer<short>::Iterator input, double *output);
+		void ComputeFrame(CombinedBuffer<int16_t>::Iterator input, double *output);
 
 	private:
 		CHROMAPRINT_DISABLE_COPY(FFTLib);

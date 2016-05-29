@@ -87,7 +87,7 @@ namespace chromaprint
 			++(*this);
 		}
 
-		T &operator*()
+		const T &operator*()
 		{
 			assert(m_ptr);
 			return *m_ptr;
@@ -95,8 +95,8 @@ namespace chromaprint
 
 	private:
 		CombinedBuffer<T> *m_buffer;
-		T *m_ptr_end;
-		T *m_ptr;
+		const T *m_ptr_end;
+		const T *m_ptr;
 	};
 
 	template<class T>
@@ -105,12 +105,12 @@ namespace chromaprint
 	public:
 		typedef _CombinedBufferIterator<T> Iterator;
 
-		CombinedBuffer(T *buffer1, int size1, T *buffer2, int size2)
+		CombinedBuffer(const T *buffer1, int size1, const T *buffer2, int size2)
 			: m_offset(0)
 		{
 			m_buffer[0] = buffer1;
 			m_buffer[1] = buffer2;
-			m_buffer[2] = 0;
+			m_buffer[2] = nullptr;
 			m_size[0] = size1;
 			m_size[1] = size2;
 			m_size[2] = -1;
@@ -142,7 +142,7 @@ namespace chromaprint
 			return Iterator(this, Size());
 		}
 
-		T &operator[](int i)
+		const T &operator[](int i)
 		{
 			i += m_offset;
 			if (i < m_size[0]) {
@@ -152,7 +152,7 @@ namespace chromaprint
 			return m_buffer[1][i];
 		}
 
-		T *Buffer(int i)
+		const T *Buffer(int i)
 		{
 			return m_buffer[i];
 		}
@@ -163,7 +163,7 @@ namespace chromaprint
 		}
 
 	private:
-		T *m_buffer[3];
+		const T *m_buffer[3];
 		int m_size[3];
 		int m_offset;
 	};

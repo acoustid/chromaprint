@@ -196,7 +196,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 				}
 				remaining -= length;
 
-				if (!chromaprint_feed(chromaprint_ctx, data[0], length)) {
+				if (!chromaprint_feed(chromaprint_ctx, (const int16_t *) data[0], length)) {
 					goto done;
 				}
 

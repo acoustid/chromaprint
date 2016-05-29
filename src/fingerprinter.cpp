@@ -104,7 +104,7 @@ bool Fingerprinter::Start(int sample_rate, int num_channels)
 	return true;
 }
 
-void Fingerprinter::Consume(short *samples, int length)
+void Fingerprinter::Consume(const int16_t *samples, int length)
 {
 	assert(length >= 0);
 	m_audio_processor->Consume(samples, length);

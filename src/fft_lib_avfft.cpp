@@ -42,7 +42,7 @@ FFTLib::~FFTLib()
 	av_free(m_input);
 }
 
-void FFTLib::ComputeFrame(CombinedBuffer<short>::Iterator input, double *output)
+void FFTLib::ComputeFrame(CombinedBuffer<int16_t>::Iterator input, double *output)
 {
 	ApplyWindow(input, m_window, m_input, m_frame_size, 1.0);
 	av_rdft_calc(m_rdft_ctx, m_input);

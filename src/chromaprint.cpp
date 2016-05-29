@@ -66,10 +66,10 @@ int chromaprint_start(ChromaprintContext *c, int sample_rate, int num_channels)
 	return ctx->fingerprinter.Start(sample_rate, num_channels) ? 1 : 0;
 }
 
-int chromaprint_feed(ChromaprintContext *c, void *data, int length)
+int chromaprint_feed(ChromaprintContext *c, const int16_t *data, int length)
 {
 	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
-	ctx->fingerprinter.Consume((short *)data, length);
+	ctx->fingerprinter.Consume(data, length);
 	return 1;
 }
 

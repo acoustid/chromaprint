@@ -40,23 +40,25 @@ namespace chromaprint
 
 		//! Prepare for a new audio stream
 		bool Reset(int sample_rate, int num_channels);
+
 		//! Process a chunk of data from the audio stream
-		void Consume(short *input, int length);
+		void Consume(const int16_t *input, int length);
+
 		//! Process any buffered input that was not processed before and clear buffers
 		void Flush();
 
 	private:
 		CHROMAPRINT_DISABLE_COPY(AudioProcessor);
 
-		int Load(short *input, int length);
-		void LoadMono(short *input, int length);
-		void LoadStereo(short *input, int length);
-		void LoadMultiChannel(short *input, int length);
+		int Load(const int16_t *input, int length);
+		void LoadMono(const int16_t *input, int length);
+		void LoadStereo(const int16_t *input, int length);
+		void LoadMultiChannel(const int16_t *input, int length);
 		void Resample();
 
-		std::vector<short> m_buffer;
+		std::vector<int16_t> m_buffer;
 		size_t m_buffer_offset;
-		std::vector<short> m_resample_buffer;
+		std::vector<int16_t> m_resample_buffer;
 		int m_target_sample_rate;
 		int m_num_channels;
 		AudioConsumer *m_consumer;

@@ -45,11 +45,11 @@ bool SilenceRemover::Reset(int sample_rate, int num_channels)
 	return true;
 }
 
-void SilenceRemover::Consume(short *input, int length)
+void SilenceRemover::Consume(const int16_t *input, int length)
 {
 	if (m_start) {
 		while (length) {
-			m_average.AddValue(abs(*input));
+			m_average.AddValue(std::abs(*input));
 			if (m_average.GetAverage() > m_threshold) {
 				m_start = false;
 				break;

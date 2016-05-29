@@ -39,7 +39,7 @@ FFTLib::~FFTLib()
 	delete[] m_output;
 }
 
-void FFTLib::ComputeFrame(CombinedBuffer<short>::Iterator input, double *output)
+void FFTLib::ComputeFrame(CombinedBuffer<int16_t>::Iterator input, double *output)
 {
 	ApplyWindow(input, m_window, m_input, m_frame_size, 1.0);
 	kiss_fftr(cfg, m_input, m_output);
