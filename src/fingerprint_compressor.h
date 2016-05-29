@@ -25,7 +25,7 @@
 #include <vector>
 #include <string>
 
-namespace Chromaprint
+namespace chromaprint
 {
 	class Classifier;
 	class Image;

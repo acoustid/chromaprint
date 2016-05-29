@@ -33,7 +33,7 @@
 #include "utils.h"
 #include "debug.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 static const int MIN_FREQ = 28;
 static const int MAX_FREQ = 3520;

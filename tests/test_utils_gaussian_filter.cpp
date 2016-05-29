@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include "utils/gaussian_filter.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 TEST(ReflectIterator, Iterate) {
 	std::vector<int> data { 1, 2, 3, 4, 5, 6, 7, 8, 9 };

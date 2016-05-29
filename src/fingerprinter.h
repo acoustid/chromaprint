@@ -26,7 +26,7 @@
 #include "image.h"
 #include "audio_consumer.h"
 
-namespace Chromaprint
+namespace chromaprint
 {
 	class ImageBuilder;
 	class IntegralImage;

@@ -21,7 +21,7 @@
 #include "fingerprinter_configuration.h"
 #include "utils.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 static const int kDefaultFrameSize = 4096;
 static const int kDefaultFrameOverlap = kDefaultFrameSize - kDefaultFrameSize / 3;

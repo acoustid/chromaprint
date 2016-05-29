@@ -6,7 +6,7 @@
 
 #include <algorithm>
 
-namespace Chromaprint {
+namespace chromaprint {
 
 template <typename InputIt, typename OutputIt>
 void Gradient(InputIt begin, InputIt end, OutputIt output) {

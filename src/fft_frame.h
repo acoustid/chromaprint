@@ -23,7 +23,7 @@
 
 #include <math.h>
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 	class FFTFrame

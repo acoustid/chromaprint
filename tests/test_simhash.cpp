@@ -2,7 +2,7 @@
 #include "simhash.h"
 #include "utils.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 TEST(SimHash, Empty)
 {

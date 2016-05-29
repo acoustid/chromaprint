@@ -15,7 +15,7 @@
 #include "image_builder.h"
 #include "utils.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 static const int SAMPLE_RATE = 11025;
 static const int FRAME_SIZE = 4096;
@@ -28,12 +28,12 @@ TEST(Chromaprint, BasicImage)
 {
 	std::vector<short> data = LoadAudioFile("data/test_stereo_44100.raw");
 
-	Chromaprint::Image image(12);
-	Chromaprint::ImageBuilder image_builder(&image);
-	Chromaprint::ChromaNormalizer chroma_normalizer(&image_builder);
-	Chromaprint::Chroma chroma(MIN_FREQ, MAX_FREQ, FRAME_SIZE, SAMPLE_RATE, &chroma_normalizer);
-	Chromaprint::FFT fft(FRAME_SIZE, OVERLAP, &chroma);
-	Chromaprint::AudioProcessor processor(SAMPLE_RATE, &fft);
+	chromaprint::Image image(12);
+	chromaprint::ImageBuilder image_builder(&image);
+	chromaprint::ChromaNormalizer chroma_normalizer(&image_builder);
+	chromaprint::Chroma chroma(MIN_FREQ, MAX_FREQ, FRAME_SIZE, SAMPLE_RATE, &chroma_normalizer);
+	chromaprint::FFT fft(FRAME_SIZE, OVERLAP, &chroma);
+	chromaprint::AudioProcessor processor(SAMPLE_RATE, &fft);
 
 	processor.Reset(44100, 2);
 	processor.Consume(&data[0], data.size());

@@ -27,7 +27,7 @@ extern "C" {
 #include "debug.h"
 #include "audio_processor.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 static const int kMinSampleRate = 1000;
 static const int kMaxBufferSize = 1024 * 16;
@@ -118,7 +118,7 @@ void AudioProcessor::Resample()
 	int consumed = 0;
 	int length = av_resample(m_resample_ctx, m_resample_buffer, m_buffer, &consumed, m_buffer_offset, kMaxBufferSize, 1);
 	if (length > kMaxBufferSize) {
-		DEBUG("Chromaprint::AudioProcessor::Resample() -- Resampling overwrote output buffer.");
+		DEBUG("chromaprint::AudioProcessor::Resample() -- Resampling overwrote output buffer.");
 		length = kMaxBufferSize;
 	}
 	m_consumer->Consume(m_resample_buffer, length);
@@ -127,7 +127,7 @@ void AudioProcessor::Resample()
 		std::copy(m_buffer + consumed, m_buffer + m_buffer_offset, m_buffer);
 	}
 	else if (remaining < 0) {
-		DEBUG("Chromaprint::AudioProcessor::Resample() -- Resampling overread input buffer.");
+		DEBUG("chromaprint::AudioProcessor::Resample() -- Resampling overread input buffer.");
 		remaining = 0;
 	}
 	m_buffer_offset = remaining;
@@ -137,11 +137,11 @@ void AudioProcessor::Resample()
 bool AudioProcessor::Reset(int sample_rate, int num_channels)
 {
 	if (num_channels <= 0) {
-		DEBUG("Chromaprint::AudioProcessor::Reset() -- No audio channels.");
+		DEBUG("chromaprint::AudioProcessor::Reset() -- No audio channels.");
 		return false;
 	}
 	if (sample_rate <= kMinSampleRate) {
-		DEBUG("Chromaprint::AudioProcessor::Reset() -- Sample rate less than "
+		DEBUG("chromaprint::AudioProcessor::Reset() -- Sample rate less than "
               << kMinSampleRate << " (" << sample_rate << ").");
 		return false;
 	}
@@ -174,7 +174,7 @@ void AudioProcessor::Consume(short *input, int length)
 		if (m_buffer_size == m_buffer_offset) {
 			Resample();
 			if (m_buffer_size == m_buffer_offset) {
-				DEBUG("Chromaprint::AudioProcessor::Consume() -- Resampling failed?");
+				DEBUG("chromaprint::AudioProcessor::Consume() -- Resampling failed?");
 				return;
 			}
 		}

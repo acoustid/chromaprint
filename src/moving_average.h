@@ -26,7 +26,7 @@
 #include <algorithm>
 #include "debug.h"
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 	template<class T>

@@ -9,7 +9,7 @@
 #include "utils.h"
 #include "test_utils.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 TEST(BitStringWriter, OneByte)
 {

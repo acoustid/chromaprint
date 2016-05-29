@@ -24,7 +24,7 @@
 #include <assert.h>
 #include <ostream>
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 	class Quantizer

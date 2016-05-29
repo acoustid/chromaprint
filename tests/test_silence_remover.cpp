@@ -8,7 +8,7 @@
 #include "audio_buffer.h"
 #include "utils.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 TEST(SilenceRemover, PassThrough)
 {

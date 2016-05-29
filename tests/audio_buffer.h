@@ -2,7 +2,7 @@
 #include <vector>
 #include "audio_consumer.h"
 
-class AudioBuffer : public Chromaprint::AudioConsumer
+class AudioBuffer : public chromaprint::AudioConsumer
 {
 public:
 	void Consume(short *input, int length)

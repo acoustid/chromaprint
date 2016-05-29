@@ -24,7 +24,7 @@
 #include "chroma_resampler.h"
 #include "utils.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 ChromaResampler::ChromaResampler(int factor, FeatureVectorConsumer *consumer)
 	: m_result(12, 0.0),

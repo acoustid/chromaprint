@@ -24,7 +24,7 @@
 #include "fft.h"
 #include "debug.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 FFT::FFT(int frame_size, int overlap, FFTFrameConsumer *consumer)
 	: m_window(new double[frame_size]),

@@ -2,7 +2,7 @@
 #include <algorithm>
 #include "combined_buffer.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 TEST(CombinedBuffer, Size) {
 	short buffer1[] = { 1, 2, 3, 4, 5 };

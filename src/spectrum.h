@@ -27,7 +27,7 @@
 #include "fft_frame_consumer.h"
 #include "feature_vector_consumer.h"
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 	class Spectrum : public FFTFrameConsumer

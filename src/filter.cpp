@@ -22,7 +22,7 @@
 #include "filter.h"
 #include "filter_utils.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 #define COMPARE_FUNC SubtractLog
 

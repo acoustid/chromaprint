@@ -7,7 +7,7 @@
 #include <cmath>
 #include "debug.h"
 
-namespace Chromaprint {
+namespace chromaprint {
 
 struct ReflectIterator {
 	ReflectIterator(size_t size) : size(size) {}

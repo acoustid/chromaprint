@@ -29,7 +29,7 @@ extern "C" {
 }
 #include "combined_buffer.h"
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 	class FFTLib

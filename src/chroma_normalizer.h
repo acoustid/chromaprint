@@ -26,7 +26,7 @@
 #include "feature_vector_consumer.h"
 #include "utils.h"
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 	class ChromaNormalizer : public FeatureVectorConsumer
@@ -39,7 +39,7 @@ namespace Chromaprint
 		void Consume(std::vector<double> &features)
 		{
 			NormalizeVector(features.begin(), features.end(),
-						    Chromaprint::EuclideanNorm<std::vector<double>::iterator>,
+						    chromaprint::EuclideanNorm<std::vector<double>::iterator>,
 							0.01);
 			m_consumer->Consume(features);
 		}

@@ -33,7 +33,7 @@
 #define CHROMAPRINT_IMAGE_ROW_TYPE_CAST(x, c) ImageRow(x, c)
 #endif
 
-namespace Chromaprint
+namespace chromaprint
 {
 	class ImageRow
 	{

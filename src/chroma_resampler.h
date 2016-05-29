@@ -25,7 +25,7 @@
 #include "image.h"
 #include "feature_vector_consumer.h"
 
-namespace Chromaprint
+namespace chromaprint
 {
 	
 	class ChromaResampler : public FeatureVectorConsumer

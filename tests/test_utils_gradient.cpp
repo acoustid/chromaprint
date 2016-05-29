@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include "utils/gradient.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 TEST(Gradient, Empty)
 {

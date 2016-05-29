@@ -7,7 +7,7 @@
 #include "fingerprint_matcher.h"
 #include "utils.h"
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 TEST(FingerprintMatcher, Match)

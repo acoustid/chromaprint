@@ -21,7 +21,7 @@
 #include "utils.h"
 #include "fft_lib_fftw3.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 FFTLib::FFTLib(int frame_size, double *window)
 	: m_window(window),

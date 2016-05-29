@@ -7,7 +7,7 @@
 #include <vector>
 #include <cstdint>
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 class FingerprinterConfiguration;

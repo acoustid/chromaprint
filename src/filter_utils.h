@@ -25,7 +25,7 @@
 #include "integral_image.h"
 #include "utils.h"
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 	inline double Subtract(double a, double b)

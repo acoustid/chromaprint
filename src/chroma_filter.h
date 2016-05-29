@@ -24,7 +24,7 @@
 #include <vector>
 #include "feature_vector_consumer.h"
 
-namespace Chromaprint
+namespace chromaprint
 {
 	
 	class ChromaFilter : public FeatureVectorConsumer

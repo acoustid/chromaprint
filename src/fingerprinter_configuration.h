@@ -25,7 +25,7 @@
 #include "classifier.h"
 #include "chromaprint.h"
 
-namespace Chromaprint
+namespace chromaprint
 {
 	static const int DEFAULT_SAMPLE_RATE = 11025;
 

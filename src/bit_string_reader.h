@@ -25,7 +25,7 @@
 #include <string>
 #include "debug.h"
 
-namespace Chromaprint
+namespace chromaprint
 {
 	class BitStringReader
 	{

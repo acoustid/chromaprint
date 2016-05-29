@@ -3,7 +3,7 @@
 #include "image_builder.h"
 #include "chroma_filter.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 TEST(ChromaFilter, Blur2) {
 	double coefficients[] = { 0.5, 0.5 };

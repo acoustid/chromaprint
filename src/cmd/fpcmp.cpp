@@ -7,7 +7,7 @@
 #include "fingerprint_matcher.h"
 #include "utils/scope_exit.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 static std::string RStrip(std::string s) {
 	while (!s.empty() && isspace(s.back())) {
@@ -87,7 +87,7 @@ int main(int argc, char **argv) {
 	std::vector<uint32_t> fp1_data2(fp1_data, fp1_data + fp1_size);
 	std::vector<uint32_t> fp2_data2(fp2_data, fp2_data + fp2_size);
 
-	Chromaprint::FingerprintMatcher matcher(Chromaprint::CreateFingerprinterConfiguration(fp1_algorithm));
+	chromaprint::FingerprintMatcher matcher(chromaprint::CreateFingerprinterConfiguration(fp1_algorithm));
 	matcher.Match(fp1_data2, fp2_data2);
 
 	return 0;

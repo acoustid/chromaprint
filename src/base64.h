@@ -23,7 +23,7 @@
 
 #include <string>
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 	std::string Base64Encode(const std::string &str);

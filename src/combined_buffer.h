@@ -26,7 +26,7 @@
 #include <algorithm>
 #include <iterator>
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 	template<class T>

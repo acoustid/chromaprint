@@ -49,7 +49,7 @@ static inline double round(double x)
 
 //#include <iostream>
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 	template<class RandomAccessIterator>

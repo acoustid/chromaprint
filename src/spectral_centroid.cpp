@@ -24,7 +24,7 @@
 #include "utils.h"
 #include "spectral_centroid.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 SpectralCentroid::SpectralCentroid(int num_bands, int min_freq, int max_freq, int frame_size, int sample_rate, FeatureVectorConsumer *consumer)
 	: m_bands(num_bands + 1),

@@ -2,7 +2,7 @@
 #include "base64.h"
 #include "test_utils.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 TEST(Base64, Base64Encode)
 {

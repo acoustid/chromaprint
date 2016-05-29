@@ -25,7 +25,7 @@
 #include "audio_consumer.h"
 #include "moving_average.h"
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 	class SilenceRemover : public AudioConsumer

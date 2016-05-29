@@ -20,7 +20,7 @@
 
 #include "simhash.h"
 
-namespace Chromaprint {
+namespace chromaprint {
 
     uint32_t SimHash(const uint32_t *data, size_t size)
     {

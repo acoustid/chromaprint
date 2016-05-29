@@ -26,7 +26,7 @@
 
 struct AVResampleContext;
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 	class AudioProcessor : public AudioConsumer

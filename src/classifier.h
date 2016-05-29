@@ -26,7 +26,7 @@
 #include "filter.h"
 #include "integral_image.h"
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 	class Classifier

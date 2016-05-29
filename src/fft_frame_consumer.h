@@ -21,7 +21,7 @@
 #ifndef CHROMAPRINT_FFT_FRAME_CONSUMER_H_
 #define CHROMAPRINT_FFT_FRAME_CONSUMER_H_
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 	class FFTFrame;

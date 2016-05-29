@@ -22,7 +22,7 @@
 #include "debug.h"
 #include "utils.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 static const int kMaxNormalValue = 7;
 static const int kNormalBits = 3;

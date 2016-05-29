@@ -25,7 +25,7 @@
 #include "chroma.h"
 #include "debug.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 static const int NUM_BANDS = 12;
 

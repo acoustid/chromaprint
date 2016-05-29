@@ -9,7 +9,7 @@
 #include "utils/gradient.h"
 #include "debug.h"
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 /* fingerprint matcher settings */
@@ -59,11 +59,11 @@ bool FingerprintMatcher::Match(std::vector<uint32_t> &fp1, std::vector<uint32_t>
 	DEBUG("duration2 " << GetHashDuration(fp2_size));
 
 	if (fp1_size + 1 >= offset_mask) {
-		DEBUG("Chromaprint::FingerprintMatcher::Match() -- Fingerprint 1 too long.");
+		DEBUG("chromaprint::FingerprintMatcher::Match() -- Fingerprint 1 too long.");
 		return false;
 	}
 	if (fp2_size + 1 >= offset_mask) {
-		DEBUG("Chromaprint::FingerprintMatcher::Match() -- Fingerprint 2 too long.");
+		DEBUG("chromaprint::FingerprintMatcher::Match() -- Fingerprint 2 too long.");
 		return false;
 	}
 

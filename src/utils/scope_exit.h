@@ -4,7 +4,7 @@
 #ifndef CHROMAPRINT_UTILS_SCOPE_EXIT_H_
 #define CHROMAPRINT_UTILS_SCOPE_EXIT_H_
 
-namespace Chromaprint {
+namespace chromaprint {
 
 #define SCOPE_EXIT_STRING_JOIN2(arg1, arg2) SCOPE_EXIT_DO_STRING_JOIN2(arg1, arg2)
 #define SCOPE_EXIT_DO_STRING_JOIN2(arg1, arg2) arg1 ## arg2

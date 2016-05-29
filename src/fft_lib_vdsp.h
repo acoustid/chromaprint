@@ -25,7 +25,7 @@
 #include <Accelerate/Accelerate.h>
 #include "combined_buffer.h"
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 	class FFTLib

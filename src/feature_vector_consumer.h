@@ -23,7 +23,7 @@
 
 #include <vector>
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 	class FeatureVectorConsumer

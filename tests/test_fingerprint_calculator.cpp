@@ -8,7 +8,7 @@
 #include "fingerprint_calculator.h"
 #include "utils.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 TEST(FingerprintCalculator, CalculateSubfingerprint)
 {

@@ -24,7 +24,7 @@
 #include "bit_string_writer.h"
 #include "debug.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 static const char kBase64Chars[65] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 static const char kBase64CharsReversed[128] = {
@@ -36,7 +36,7 @@ static const char kBase64CharsReversed[128] = {
 	38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 0, 0, 0, 0, 0
 };
 
-std::string Chromaprint::Base64Encode(const std::string &orig)
+std::string chromaprint::Base64Encode(const std::string &orig)
 {
 	int size = orig.size();
 	int encoded_size = (size * 4 + 2) / 3;
@@ -58,7 +58,7 @@ std::string Chromaprint::Base64Encode(const std::string &orig)
 	return encoded;
 }
 
-std::string Chromaprint::Base64Decode(const std::string &encoded)
+std::string chromaprint::Base64Decode(const std::string &encoded)
 {
 	std::string str((3 * encoded.size()) / 4, '\x00');
 	const unsigned char *src = (const unsigned char *)encoded.data();

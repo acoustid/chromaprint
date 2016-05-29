@@ -25,7 +25,7 @@
 #include <tools/kiss_fftr.h>
 #include "combined_buffer.h"
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 	class FFTLib

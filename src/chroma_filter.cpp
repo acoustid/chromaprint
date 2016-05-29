@@ -24,7 +24,7 @@
 #include "chroma_filter.h"
 #include "utils.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 ChromaFilter::ChromaFilter(const double *coefficients, int length, FeatureVectorConsumer *consumer)
 	: m_coefficients(coefficients),

@@ -24,7 +24,7 @@
 #include <stdint.h>
 #include <vector>
 
-namespace Chromaprint
+namespace chromaprint
 {
 	class Classifier;
 	class Image;

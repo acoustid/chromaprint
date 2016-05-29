@@ -24,7 +24,7 @@
 #include <ostream>
 #include "integral_image.h"
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 	class Filter

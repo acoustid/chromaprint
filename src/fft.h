@@ -28,7 +28,7 @@
 #include "audio_consumer.h"
 #include "combined_buffer.h"
 
-namespace Chromaprint
+namespace chromaprint
 {
 	class FFTLib;
 

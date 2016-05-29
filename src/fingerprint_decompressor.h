@@ -26,7 +26,7 @@
 #include <string>
 #include "bit_string_reader.h"
 
-namespace Chromaprint
+namespace chromaprint
 {
 	class FingerprintDecompressor
 	{

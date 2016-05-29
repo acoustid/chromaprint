@@ -23,7 +23,7 @@
 #include "debug.h"
 #include "silence_remover.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 const short kSilenceWindow = 55; // 5 ms as 11025 Hz
 
@@ -38,7 +38,7 @@ SilenceRemover::SilenceRemover(AudioConsumer *consumer, int threshold)
 bool SilenceRemover::Reset(int sample_rate, int num_channels)
 {
 	if (num_channels != 1) {
-		DEBUG("Chromaprint::SilenceRemover::Reset() -- Expecting mono audio signal.");
+		DEBUG("chromaprint::SilenceRemover::Reset() -- Expecting mono audio signal.");
 		return false;
 	}
 	m_start = true;

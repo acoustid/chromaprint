@@ -27,7 +27,7 @@
 #include <iostream>
 #endif
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 #ifdef NDEBUG

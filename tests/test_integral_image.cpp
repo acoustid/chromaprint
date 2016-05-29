@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "integral_image.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 TEST(IntegralImage, Basic2D) {
 	double data[] = {

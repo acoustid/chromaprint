@@ -23,7 +23,7 @@
 
 #include "image.h"
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 	/**

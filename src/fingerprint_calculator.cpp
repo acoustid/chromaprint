@@ -23,7 +23,7 @@
 #include "debug.h"
 #include "utils.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 FingerprintCalculator::FingerprintCalculator(const Classifier *classifiers, int num_classifiers)
 	: m_classifiers(classifiers), m_num_classifiers(num_classifiers)
@@ -40,7 +40,7 @@ std::vector<uint32_t> FingerprintCalculator::Calculate(Image *image)
 {
 	int length = image->NumRows() - m_max_filter_width + 1;
 	if (length <= 0) {
-		DEBUG("Chromaprint::FingerprintCalculator::Calculate() -- Not "
+		DEBUG("chromaprint::FingerprintCalculator::Calculate() -- Not "
 		      << "enough data. Image has " << image->NumRows() << " rows, "
 	          << "needs at least " << m_max_filter_width << " rows.");
 		return std::vector<uint32_t>();

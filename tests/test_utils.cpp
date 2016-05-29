@@ -3,7 +3,7 @@
 #include <limits>
 #include "utils.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 TEST(Utils, PrepareHammingWindow) {
 	double window_ex[10] = { 0.08, 0.187619556165, 0.460121838273, 0.77, 0.972258605562, 0.972258605562, 0.77, 0.460121838273, 0.187619556165, 0.08};

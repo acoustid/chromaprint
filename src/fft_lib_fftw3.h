@@ -25,7 +25,7 @@
 #include <fftw3.h>
 #include "combined_buffer.h"
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 	class FFTLib

@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "filter_utils.h"
 
-using namespace Chromaprint;
+using namespace chromaprint;
 
 TEST(FilterUtils, CompareSubtract) {
 	double res = Subtract(2.0, 1.0);

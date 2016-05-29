@@ -21,7 +21,7 @@
 #ifndef CHROMAPRINT_AUDIO_CONSUMER_H_
 #define CHROMAPRINT_AUDIO_CONSUMER_H_
 
-namespace Chromaprint
+namespace chromaprint
 {
 
 	class AudioConsumer
