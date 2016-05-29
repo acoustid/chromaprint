@@ -76,7 +76,7 @@ void Spectrum::Consume(const FFTFrame &frame)
 		double numerator = 0.0;
 		double denominator = 0.0;
 		for (int j = first; j < last; j++) {
-			double s = frame.Energy(j);
+			double s = frame[j];
 			numerator += j * s;
 			denominator += s;
 		}

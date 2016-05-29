@@ -70,7 +70,7 @@ void Chroma::Consume(const FFTFrame &frame)
 	fill(m_features.begin(), m_features.end(), 0.0);
 	for (int i = m_min_index; i < m_max_index; i++) {
 		int note = m_notes[i];
-		double energy = frame.Energy(i);
+		double energy = frame[i];
 		if (m_interpolate) {
 			int note2 = note;
 			double a = 1.0;
