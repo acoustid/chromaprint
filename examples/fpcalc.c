@@ -242,7 +242,7 @@ done:
 int fpcalc_main(int argc, char **argv)
 {
 	int i, j, max_length = 120, num_file_names = 0, raw = 0, raw_fingerprint_size, duration;
-	int32_t *raw_fingerprint;
+	uint32_t *raw_fingerprint;
 	char *file_name, *fingerprint, **file_names;
 	ChromaprintContext *chromaprint_ctx;
 	int algo = CHROMAPRINT_ALGORITHM_DEFAULT, num_failed = 0, do_hash = 0;
@@ -323,14 +323,14 @@ int fpcalc_main(int argc, char **argv)
 		printf("FILE=%s\n", file_name);
 		printf("DURATION=%d\n", duration);
 		if (raw) {
-			if (!chromaprint_get_raw_fingerprint(chromaprint_ctx, (void **)&raw_fingerprint, &raw_fingerprint_size)) {
+			if (!chromaprint_get_raw_fingerprint(chromaprint_ctx, &raw_fingerprint, &raw_fingerprint_size)) {
 				fprintf(stderr, "ERROR: unable to calculate fingerprint for file %s, skipping\n", file_name);
 				num_failed++;
 				continue;
 			}
 			printf("FINGERPRINT=");
 			for (j = 0; j < raw_fingerprint_size; j++) {
-				printf("%d%s", raw_fingerprint[j], j + 1 < raw_fingerprint_size ? "," : "");
+				printf("%d%s", (int32_t) raw_fingerprint[j], j + 1 < raw_fingerprint_size ? "," : "");
 			}
 			printf("\n");
 			chromaprint_dealloc(raw_fingerprint);
@@ -345,9 +345,9 @@ int fpcalc_main(int argc, char **argv)
 			chromaprint_dealloc(fingerprint);
 		}
         if (do_hash) {
-            int32_t hash = 0;
+            uint32_t hash = 0;
             chromaprint_get_fingerprint_hash(chromaprint_ctx, &hash);
-            printf("HASH=%d\n", hash);
+            printf("HASH=%d\n", (int32_t) hash);
         }
 	}
 

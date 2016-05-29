@@ -126,16 +126,6 @@ namespace Chromaprint
 		return (int)round(frame_size * freq / sample_rate);
 	}
 
-    inline int32_t UnsignedToSigned(uint32_t x)
-    {
-        return *((int32_t *)&x);
-    }
-
-    inline uint32_t SignedToUnsigned(int32_t x)
-    {
-        return *((uint32_t *)&x);
-    }
-
 	template<class T>
 	inline bool IsNaN(T value)
 	{

@@ -37,31 +37,29 @@ FingerprintCalculator::FingerprintCalculator(const Classifier *classifiers, int 
 }
 
 
-vector<int32_t> FingerprintCalculator::Calculate(Image *image)
+std::vector<uint32_t> FingerprintCalculator::Calculate(Image *image)
 {
 	int length = image->NumRows() - m_max_filter_width + 1;
 	if (length <= 0) {
 		DEBUG("Chromaprint::FingerprintCalculator::Calculate() -- Not "
 		      << "enough data. Image has " << image->NumRows() << " rows, "
 	          << "needs at least " << m_max_filter_width << " rows.");
-		return vector<int32_t>();
+		return std::vector<uint32_t>();
 	}
 	IntegralImage integral_image(image);
-	vector<int32_t> fingerprint(length);
+	std::vector<uint32_t> fingerprint(length);
 	for (int i = 0; i < length; i++) {
 		fingerprint[i] = CalculateSubfingerprint(&integral_image, i);
 	}
 	return fingerprint;
 }
 
-int32_t FingerprintCalculator::CalculateSubfingerprint(IntegralImage *image, int offset)
+uint32_t FingerprintCalculator::CalculateSubfingerprint(IntegralImage *image, int offset)
 {
 	uint32_t bits = 0;
 	for (int i = 0; i < m_num_classifiers; i++) {
-	//for (int i = m_num_classifiers - 1; i >= 0; i--) {
 		bits = (bits << 2) | GrayCode(m_classifiers[i].Classify(image, offset));
-		//bits = (bits << 2) | m_classifiers[i].Classify(image, offset);
 	}
-	return UnsignedToSigned(bits);
+	return bits;
 }
 

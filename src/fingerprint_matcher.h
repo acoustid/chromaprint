@@ -17,7 +17,7 @@ class FingerprintMatcher
 public:
 	FingerprintMatcher(FingerprinterConfiguration *config);
 
-	bool Match(std::vector<int32_t> &fp1, std::vector<int32_t> &fp2);
+	bool Match(std::vector<uint32_t> &fp1, std::vector<uint32_t> &fp2);
 
 	double GetHashTime(int i) const;
 	double GetHashDuration(int i) const;

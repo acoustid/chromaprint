@@ -61,20 +61,20 @@ int main(int argc, char **argv) {
 	std::string fp1 = ReadFile(file_names[0]);
 	std::string fp2 = ReadFile(file_names[1]);
 
-	int32_t *fp1_data;
+	uint32_t *fp1_data;
 	int fp1_size;
 	int fp1_algorithm;
 
-	if (!chromaprint_decode_fingerprint(fp1.c_str(), fp1.size(), (void **)&fp1_data, &fp1_size, &fp1_algorithm, 1)) {
+	if (!chromaprint_decode_fingerprint(fp1.c_str(), fp1.size(), &fp1_data, &fp1_size, &fp1_algorithm, 1)) {
 		return 1;
 	}
 	SCOPE_EXIT(chromaprint_dealloc(fp1_data));
 
-	int32_t *fp2_data;
+	uint32_t *fp2_data;
 	int fp2_size;
 	int fp2_algorithm;
 
-	if (!chromaprint_decode_fingerprint(fp2.c_str(), fp2.size(), (void **)&fp2_data, &fp2_size, &fp2_algorithm, 1)) {
+	if (!chromaprint_decode_fingerprint(fp2.c_str(), fp2.size(), &fp2_data, &fp2_size, &fp2_algorithm, 1)) {
 		return 1;
 	}
 	SCOPE_EXIT(chromaprint_dealloc(fp2_data));
@@ -84,8 +84,8 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	std::vector<int32_t> fp1_data2(fp1_data, fp1_data + fp1_size);
-	std::vector<int32_t> fp2_data2(fp2_data, fp2_data + fp2_size);
+	std::vector<uint32_t> fp1_data2(fp1_data, fp1_data + fp1_size);
+	std::vector<uint32_t> fp2_data2(fp2_data, fp2_data + fp2_size);
 
 	Chromaprint::FingerprintMatcher matcher(Chromaprint::CreateFingerprinterConfiguration(fp1_algorithm));
 	matcher.Match(fp1_data2, fp2_data2);

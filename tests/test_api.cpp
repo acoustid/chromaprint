@@ -20,7 +20,7 @@ TEST(API, Test2SilenceFp)
 	}
 
 	char *fp;
-	int32_t fp_hash;
+	uint32_t fp_hash;
 
 	chromaprint_finish(ctx);
 	chromaprint_get_fingerprint(ctx, &fp);
@@ -42,11 +42,11 @@ TEST(API, Test2SilenceRawFp)
 		chromaprint_feed(ctx, zeroes, 1024);
 	}
 
-	int32_t *fp;
+	uint32_t *fp;
 	int length;
 
 	chromaprint_finish(ctx);
-	chromaprint_get_raw_fingerprint(ctx, (void **)&fp, &length);
+	chromaprint_get_raw_fingerprint(ctx, &fp, &length);
 
 	ASSERT_EQ(3, length);
 	EXPECT_EQ(627964279, fp[0]);
@@ -56,12 +56,12 @@ TEST(API, Test2SilenceRawFp)
 
 TEST(API, TestEncodeFingerprint)
 {
-	int32_t fingerprint[] = { 1, 0 };
+	uint32_t fingerprint[] = { 1, 0 };
 	char expected[] = { 55, 0, 0, 2, 65, 0 };
 
 	char *encoded;
 	int encoded_size;
-	chromaprint_encode_fingerprint(fingerprint, 2, 55, (void **)&encoded, &encoded_size, 0);
+	chromaprint_encode_fingerprint(fingerprint, 2, 55, &encoded, &encoded_size, 0);
 
 	ASSERT_EQ(6, encoded_size);
 	for (int i = 0; i < encoded_size; i++) {
@@ -73,12 +73,12 @@ TEST(API, TestEncodeFingerprint)
 
 TEST(API, TestEncodeFingerprintBase64)
 {
-	int32_t fingerprint[] = { 1, 0 };
+	uint32_t fingerprint[] = { 1, 0 };
 	char expected[] = "NwAAAkEA";
 
 	char *encoded;
 	int encoded_size;
-	chromaprint_encode_fingerprint(fingerprint, 2, 55, (void **)&encoded, &encoded_size, 1);
+	chromaprint_encode_fingerprint(fingerprint, 2, 55, &encoded, &encoded_size, 1);
 
 	ASSERT_EQ(8, encoded_size);
 	ASSERT_STREQ(expected, encoded);
@@ -90,10 +90,10 @@ TEST(API, TestDecodeFingerprint)
 {
 	char data[] = { 55, 0, 0, 2, 65, 0 };
 
-	int32_t *fingerprint;
+	uint32_t *fingerprint;
 	int size;
 	int algorithm;
-	chromaprint_decode_fingerprint(data, 6, (void **)&fingerprint, &size, &algorithm, 0);
+	chromaprint_decode_fingerprint(data, 6, &fingerprint, &size, &algorithm, 0);
 
 	ASSERT_EQ(2, size);
 	ASSERT_EQ(55, algorithm);
@@ -103,8 +103,8 @@ TEST(API, TestDecodeFingerprint)
 
 TEST(API, TestHashFingerprint)
 {
-	int32_t fingerprint[] = { 19681, 22345, 312312, 453425 };
-    int32_t hash;
+	uint32_t fingerprint[] = { 19681, 22345, 312312, 453425 };
+    uint32_t hash;
 
     ASSERT_EQ(0, chromaprint_hash_fingerprint(NULL, 4, &hash));
     ASSERT_EQ(0, chromaprint_hash_fingerprint(fingerprint, -1, &hash));

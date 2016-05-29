@@ -11,11 +11,11 @@ using namespace Chromaprint;
 
 TEST(FingerprintDecompressor, OneItemOneBit)
 {
-	int32_t expected[] = { 1 };
+	uint32_t expected[] = { 1 };
 	char data[] = { 0, 0, 0, 1, 1 };
 
 	int algorithm = 1;
-	vector<int32_t> value = DecompressFingerprint(string(data, NELEMS(data)), &algorithm);
+	vector<uint32_t> value = DecompressFingerprint(string(data, NELEMS(data)), &algorithm);
 	CheckFingerprints(value, expected, NELEMS(expected));
 	ASSERT_EQ(0, algorithm);
 }
@@ -23,66 +23,66 @@ TEST(FingerprintDecompressor, OneItemOneBit)
 
 TEST(FingerprintDecompressor, OneItemThreeBits)
 {
-	int32_t expected[] = { 7 };
+	uint32_t expected[] = { 7 };
 	char data[] = { 0, 0, 0, 1, 73, 0 };
 
 	int algorithm = 1;
-	vector<int32_t> value = DecompressFingerprint(string(data, NELEMS(data)), &algorithm);
+	vector<uint32_t> value = DecompressFingerprint(string(data, NELEMS(data)), &algorithm);
 	CheckFingerprints(value, expected, NELEMS(expected));
 	ASSERT_EQ(0, algorithm);
 }
 
 TEST(FingerprintDecompressor, OneItemOneBitExcept)
 {
-	int32_t expected[] = { 1<<6 };
+	uint32_t expected[] = { 1<<6 };
 	char data[] = { 0, 0, 0, 1, 7, 0 };
 
 	int algorithm = 1;
-	vector<int32_t> value = DecompressFingerprint(string(data, NELEMS(data)), &algorithm);
+	vector<uint32_t> value = DecompressFingerprint(string(data, NELEMS(data)), &algorithm);
 	CheckFingerprints(value, expected, NELEMS(expected));
 	ASSERT_EQ(0, algorithm);
 }
 
 TEST(FingerprintDecompressor, OneItemOneBitExcept2)
 {
-	int32_t expected[] = { 1<<8 };
+	uint32_t expected[] = { 1<<8 };
 	char data[] = { 0, 0, 0, 1, 7, 2 };
 
 	int algorithm = 1;
-	vector<int32_t> value = DecompressFingerprint(string(data, NELEMS(data)), &algorithm);
+	vector<uint32_t> value = DecompressFingerprint(string(data, NELEMS(data)), &algorithm);
 	CheckFingerprints(value, expected, NELEMS(expected));
 	ASSERT_EQ(0, algorithm);
 }
 
 TEST(FingerprintDecompressor, TwoItems)
 {
-	int32_t expected[] = { 1, 0 };
+	uint32_t expected[] = { 1, 0 };
 	char data[] = { 0, 0, 0, 2, 65, 0 };
 
 	int algorithm = 1;
-	vector<int32_t> value = DecompressFingerprint(string(data, NELEMS(data)), &algorithm);
+	vector<uint32_t> value = DecompressFingerprint(string(data, NELEMS(data)), &algorithm);
 	CheckFingerprints(value, expected, NELEMS(expected));
 	ASSERT_EQ(0, algorithm);
 }
 
 TEST(FingerprintDecompressor, TwoItemsNoChange)
 {
-	int32_t expected[] = { 1, 1 };
+	uint32_t expected[] = { 1, 1 };
 	char data[] = { 0, 0, 0, 2, 1, 0 };
 
 	int algorithm = 1;
-	vector<int32_t> value = DecompressFingerprint(string(data, NELEMS(data)), &algorithm);
+	vector<uint32_t> value = DecompressFingerprint(string(data, NELEMS(data)), &algorithm);
 	CheckFingerprints(value, expected, NELEMS(expected));
 	ASSERT_EQ(0, algorithm);
 }
 
 TEST(FingerprintDecompressor, Invalid1)
 {
-	int32_t expected[] = { 0 };
+	uint32_t expected[] = { 0 };
 	char data[] = { 0, char(255), char(255), char(255) };
 
 	int algorithm = 1;
-	vector<int32_t> value = DecompressFingerprint(string(data, NELEMS(data)), &algorithm);
+	vector<uint32_t> value = DecompressFingerprint(string(data, NELEMS(data)), &algorithm);
 	CheckFingerprints(value, expected, 0);
 	ASSERT_EQ(0, algorithm);
 }
@@ -93,7 +93,7 @@ TEST(FingerprintDecompressor, Long)
 	std::string data = Base64Decode("AQAAEwkjrUmSJQpUHflR9mjSJMdZpcO_Imdw9dCO9Clu4_wQPvhCB01w6xAtXNcAp5RASgDBhDSCGGIAcwA");
 
 	int algorithm = 2;
-	vector<int32_t> value = DecompressFingerprint(data, &algorithm);
-	CheckFingerprints(value, expected, NELEMS(expected));
+	vector<uint32_t> value = DecompressFingerprint(data, &algorithm);
+	CheckFingerprints(value, (uint32_t *) expected, NELEMS(expected));
 	ASSERT_EQ(1, algorithm);
 }

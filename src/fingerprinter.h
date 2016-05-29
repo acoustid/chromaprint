@@ -59,7 +59,7 @@ namespace Chromaprint
 		/**
 		 * Calculate the fingerprint based on the provided audio data.
 		 */
-		std::vector<int32_t> Finish();
+		std::vector<uint32_t> Finish();
 
 		bool SetOption(const char *name, int value);
 

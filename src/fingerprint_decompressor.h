@@ -32,7 +32,7 @@ namespace Chromaprint
 	{
 	public:
 		FingerprintDecompressor();
-		std::vector<int32_t> Decompress(const std::string &fingerprint, int *algorithm = 0);
+		std::vector<uint32_t> Decompress(const std::string &fingerprint, int *algorithm = 0);
 
 	private:
 
@@ -40,11 +40,11 @@ namespace Chromaprint
 		bool ReadExceptionBits(BitStringReader *reader);
 		void UnpackBits();
 
-		std::vector<int32_t> m_result;
+		std::vector<uint32_t> m_result;
 		std::vector<char> m_bits;
 	};
 
-	inline std::vector<int32_t> DecompressFingerprint(const std::string &data, int *algorithm = 0)
+	inline std::vector<uint32_t> DecompressFingerprint(const std::string &data, int *algorithm = 0)
 	{
 		FingerprintDecompressor decompressor;
 		return decompressor.Decompress(data, algorithm);

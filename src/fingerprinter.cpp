@@ -111,7 +111,7 @@ void Fingerprinter::Consume(short *samples, int length)
 	m_audio_processor->Consume(samples, length);
 }
 
-vector<int32_t> Fingerprinter::Finish()
+std::vector<uint32_t> Fingerprinter::Finish()
 {
 	m_audio_processor->Flush();
 	return m_fingerprint_calculator->Calculate(&m_image);

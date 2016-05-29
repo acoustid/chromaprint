@@ -27,9 +27,9 @@
 namespace Chromaprint
 {
 
-    int32_t SimHash(const int32_t *data, size_t size);
+    uint32_t SimHash(const uint32_t *data, size_t size);
 
-    int32_t SimHash(const std::vector<int32_t> &data);
+    uint32_t SimHash(const std::vector<uint32_t> &data);
 
 };
 

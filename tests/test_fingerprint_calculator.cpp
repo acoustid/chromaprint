@@ -44,7 +44,7 @@ TEST(FingerprintCalculator, Calculate)
 	};
 	FingerprintCalculator calculator(classifiers, 1);
 
-	vector<int32_t> fp = calculator.Calculate(&image);
+	vector<uint32_t> fp = calculator.Calculate(&image);
 	ASSERT_EQ(3, fp.size());
 	EXPECT_EQ(GrayCode(0), fp[0]);
 	EXPECT_EQ(GrayCode(2), fp[1]);

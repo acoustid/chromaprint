@@ -19,7 +19,7 @@ inline void CheckString(std::string actual, char *expected, int expected_size)
 	}
 }
 
-inline void CheckFingerprints(std::vector<int32_t> actual, int32_t *expected, int expected_size)
+inline void CheckFingerprints(std::vector<uint32_t> actual, uint32_t *expected, int expected_size)
 {
 	ASSERT_EQ(expected_size, actual.size());
 	for (int i = 0; i < expected_size; i++) {

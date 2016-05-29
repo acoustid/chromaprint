@@ -18,8 +18,8 @@ TEST(FingerprintMatcher, Match)
 //	const int32_t fp1_data[] = { 1 << 28, 2 << 28, 3 << 28 };
 //	const int32_t fp2_data[] = { 4 << 28, 1 << 28, 2 << 28, 3 << 28 };
 
-	std::vector<int32_t> fp1(fp1_data, fp1_data + sizeof(fp1_data)/sizeof(fp1_data[0]));
-	std::vector<int32_t> fp2(fp2_data, fp2_data + sizeof(fp2_data)/sizeof(fp2_data[0]));
+	std::vector<uint32_t> fp1(fp1_data, fp1_data + sizeof(fp1_data)/sizeof(fp1_data[0]));
+	std::vector<uint32_t> fp2(fp2_data, fp2_data + sizeof(fp2_data)/sizeof(fp2_data[0]));
 
 	FingerprintMatcher matcher(CreateFingerprinterConfiguration(CHROMAPRINT_ALGORITHM_TEST2));
 	matcher.Match(fp1, fp2);

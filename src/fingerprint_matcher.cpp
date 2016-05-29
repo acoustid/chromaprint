@@ -45,7 +45,7 @@ double FingerprintMatcher::GetHashDuration(int i) const {
 	return ((i + (m_config->num_filter_coefficients() - 1) + (m_config->max_filter_width() - 1)) * frame_step + frame_size) * 1.0 / m_config->sample_rate();
 }
 
-bool FingerprintMatcher::Match(std::vector<int32_t> &fp1, std::vector<int32_t> &fp2)
+bool FingerprintMatcher::Match(std::vector<uint32_t> &fp1, std::vector<uint32_t> &fp2)
 {
 	const uint32_t hash_shift = 32 - ALIGN_BITS;
 	const uint32_t hash_mask = ((1u << ALIGN_BITS) - 1) << hash_shift;

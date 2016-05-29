@@ -35,9 +35,9 @@ namespace Chromaprint
 	public:
 		FingerprintCalculator(const Classifier *classifiers, int num_classifiers);
 
-		std::vector<int32_t> Calculate(Image *image);
+		std::vector<uint32_t> Calculate(Image *image);
 
-		int32_t CalculateSubfingerprint(IntegralImage *image, int offset);
+		uint32_t CalculateSubfingerprint(IntegralImage *image, int offset);
 
 	private:
 		const Classifier *m_classifiers;

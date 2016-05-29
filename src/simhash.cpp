@@ -22,7 +22,7 @@
 
 namespace Chromaprint {
 
-    int32_t SimHash(const int32_t *data, size_t size)
+    uint32_t SimHash(const uint32_t *data, size_t size)
     {
         int v[32];
 
@@ -31,7 +31,7 @@ namespace Chromaprint {
         }
 
         for (size_t i = 0; i < size; i++) {
-            uint32_t local_hash = SignedToUnsigned(data[i]);
+            uint32_t local_hash = data[i];
             for (size_t j = 0; j < 32; j++) {
                 v[j] += (local_hash & (1 << j)) ? 1 : -1;
             }
@@ -44,10 +44,10 @@ namespace Chromaprint {
             }
         }
 
-        return UnsignedToSigned(hash);
+		return hash;
     }
 
-    int32_t SimHash(const std::vector<int32_t> &data)
+    uint32_t SimHash(const std::vector<uint32_t> &data)
     {
 		if (data.empty()) {
 			return 0;
