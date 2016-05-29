@@ -30,9 +30,9 @@
 #include "base64.h"
 #include "simhash.h"
 
-using namespace chromaprint;
-
 extern "C" {
+
+namespace chromaprint {
 
 struct ChromaprintContextPrivate {
 	bool finished;
@@ -105,13 +105,9 @@ int chromaprint_get_fingerprint(ChromaprintContext *c, char **data)
 	if (!ctx->finished) {
 		return 0;
 	}
-	std::string fp = chromaprint::Base64Encode(chromaprint::CompressFingerprint(ctx->fingerprint, ctx->algorithm));
-	*data = (char *)malloc(fp.size() + 1);
-	if (!*data) {
-		return 0;
-	}
-	copy(fp.begin(), fp.end(), *data);
-	(*data)[fp.size()] = 0;
+	std::string fingerprint = CompressFingerprint(ctx->fingerprint, ctx->algorithm);
+	*data = (char *) malloc(GetBase64EncodedSize(fingerprint.size()) + 1);
+	Base64Encode(fingerprint.begin(), fingerprint.end(), *data, true);
 	return 1;
 }
 
@@ -180,4 +176,6 @@ void chromaprint_dealloc(void *ptr)
 	free(ptr);
 }
 
-}
+}; // namespace chromaprint
+
+} // extern "C"
