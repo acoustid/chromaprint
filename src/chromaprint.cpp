@@ -1,22 +1,5 @@
-/*
- * Chromaprint -- Audio fingerprinting toolkit
- * Copyright (C) 2010  Lukas Lalinsky <lalinsky@gmail.com>
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
- * USA
- */
+// Copyright (C) 2010-2016  Lukas Lalinsky
+// Distributed under the MIT license, see the LICENSE file for details.
 
 #include <vector>
 #include <string>
@@ -35,9 +18,12 @@ extern "C" {
 namespace chromaprint {
 
 struct ChromaprintContextPrivate {
-	bool finished;
+	ChromaprintContextPrivate(int algorithm)
+		: algorithm(algorithm),
+		  fingerprinter(CreateFingerprinterConfiguration(algorithm)) {}
+	bool finished = false;
 	int algorithm;
-	Fingerprinter *fingerprinter;
+	Fingerprinter fingerprinter;
 	std::vector<uint32_t> fingerprint;
 };
 
@@ -57,51 +43,47 @@ const char *chromaprint_get_version(void)
 
 ChromaprintContext *chromaprint_new(int algorithm)
 {
-	ChromaprintContextPrivate *ctx = new ChromaprintContextPrivate();
-	ctx->finished = false;
-	ctx->algorithm = algorithm;
-	ctx->fingerprinter = new Fingerprinter(CreateFingerprinterConfiguration(algorithm));
-	return (ChromaprintContext *)ctx;
+	ChromaprintContextPrivate *ctx = new ChromaprintContextPrivate(algorithm);
+	return (ChromaprintContext *) ctx;
 }
 
 void chromaprint_free(ChromaprintContext *c)
 {
-	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *)c;
-	delete ctx->fingerprinter;
+	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
 	delete ctx;
 }
 
 int chromaprint_set_option(ChromaprintContext *c, const char *name, int value)
 {
-	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *)c;
-	return ctx->fingerprinter->SetOption(name, value) ? 1 : 0;
+	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
+	return ctx->fingerprinter.SetOption(name, value) ? 1 : 0;
 }
 
 int chromaprint_start(ChromaprintContext *c, int sample_rate, int num_channels)
 {
-	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *)c;
+	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
 	ctx->finished = false;
-	return ctx->fingerprinter->Start(sample_rate, num_channels) ? 1 : 0;
+	return ctx->fingerprinter.Start(sample_rate, num_channels) ? 1 : 0;
 }
 
 int chromaprint_feed(ChromaprintContext *c, void *data, int length)
 {
-	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *)c;
-	ctx->fingerprinter->Consume((short *)data, length);
+	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
+	ctx->fingerprinter.Consume((short *)data, length);
 	return 1;
 }
 
 int chromaprint_finish(ChromaprintContext *c)
 {
-	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *)c;
-	ctx->fingerprint = ctx->fingerprinter->Finish();
+	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
+	ctx->fingerprint = ctx->fingerprinter.Finish();
 	ctx->finished = true;
 	return 1;
 }
 
 int chromaprint_get_fingerprint(ChromaprintContext *c, char **data)
 {
-	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *)c;
+	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
 	if (!ctx->finished) {
 		return 0;
 	}
@@ -113,7 +95,7 @@ int chromaprint_get_fingerprint(ChromaprintContext *c, char **data)
 
 int chromaprint_get_raw_fingerprint(ChromaprintContext *c, uint32_t **data, int *size)
 {
-	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *)c;
+	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
 	if (!ctx->finished) {
 		return 0;
 	}
@@ -128,7 +110,7 @@ int chromaprint_get_raw_fingerprint(ChromaprintContext *c, uint32_t **data, int 
 
 int chromaprint_get_fingerprint_hash(ChromaprintContext *c, uint32_t *hash)
 {
-	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *)c;
+	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
 	if (!ctx->finished) {
 		return 0;
 	}
@@ -178,4 +160,4 @@ void chromaprint_dealloc(void *ptr)
 
 }; // namespace chromaprint
 
-} // extern "C"
+}; // extern "C"
