@@ -9,8 +9,7 @@
 #include "utils/gradient.h"
 #include "debug.h"
 
-namespace chromaprint
-{
+namespace chromaprint {
 
 /* fingerprint matcher settings */
 #define ACOUSTID_MAX_BIT_ERROR 2
@@ -34,26 +33,28 @@ FingerprintMatcher::FingerprintMatcher(FingerprinterConfiguration *config)
 {
 }
 
-double FingerprintMatcher::GetHashTime(int i) const {
+double FingerprintMatcher::GetHashTime(size_t i) const {
 	const auto frame_step = m_config->frame_size() - m_config->frame_overlap();
 	return i * frame_step * 1.0 / m_config->sample_rate();
 }
 
-double FingerprintMatcher::GetHashDuration(int i) const {
+double FingerprintMatcher::GetHashDuration(size_t i) const {
 	const auto frame_size = m_config->frame_size();
 	const auto frame_step = frame_size - m_config->frame_overlap();
-	return ((i + (m_config->num_filter_coefficients() - 1) + (m_config->max_filter_width() - 1)) * frame_step + frame_size) * 1.0 / m_config->sample_rate();
+	return ((i + (m_config->num_filter_coefficients() - 1) + (m_config->max_filter_width() - 1)) * frame_step + m_config->frame_overlap()) * 1.0 / m_config->sample_rate();
 }
 
-bool FingerprintMatcher::Match(std::vector<uint32_t> &fp1, std::vector<uint32_t> &fp2)
+bool FingerprintMatcher::Match(const std::vector<uint32_t> &fp1, const std::vector<uint32_t> &fp2)
+{
+	return Match(fp1.data(), fp1.size(), fp2.data(), fp2.size());
+}
+
+bool FingerprintMatcher::Match(const uint32_t fp1_data[], size_t fp1_size, const uint32_t fp2_data[], size_t fp2_size)
 {
 	const uint32_t hash_shift = 32 - ALIGN_BITS;
 	const uint32_t hash_mask = ((1u << ALIGN_BITS) - 1) << hash_shift;
 	const uint32_t offset_mask = (1u << (32 - ALIGN_BITS - 1)) - 1;
 	const uint32_t source_mask = 1u << (32 - ALIGN_BITS - 1);
-
-	const auto fp1_size = fp1.size();
-	const auto fp2_size = fp2.size();
 
 	DEBUG("duration1 " << GetHashDuration(fp1_size));
 	DEBUG("duration2 " << GetHashDuration(fp2_size));
@@ -70,10 +71,10 @@ bool FingerprintMatcher::Match(std::vector<uint32_t> &fp1, std::vector<uint32_t>
 	m_offsets.clear();
 	m_offsets.reserve(fp1_size + fp2_size);
 	for (size_t i = 0; i < fp1_size; i++) {
-		m_offsets.push_back((ALIGN_STRIP(fp1[i]) << hash_shift) | (i & offset_mask));
+		m_offsets.push_back((ALIGN_STRIP(fp1_data[i]) << hash_shift) | (i & offset_mask));
 	}
 	for (size_t i = 0; i < fp2_size; i++) {
-		m_offsets.push_back((ALIGN_STRIP(fp2[i]) << hash_shift) | (i & offset_mask) | source_mask);
+		m_offsets.push_back((ALIGN_STRIP(fp2_data[i]) << hash_shift) | (i & offset_mask) | source_mask);
 	}
 	std::sort(m_offsets.begin(), m_offsets.end());
 
@@ -124,10 +125,10 @@ bool FingerprintMatcher::Match(std::vector<uint32_t> &fp1, std::vector<uint32_t>
 		const size_t offset1 = offset_diff > 0 ? offset_diff : 0;
 		const size_t offset2 = offset_diff < 0 ? -offset_diff : 0;
 
-		auto it1 = fp1.begin() + offset1;
-		auto it2 = fp2.begin() + offset2;
+		auto it1 = fp1_data + offset1;
+		auto it2 = fp2_data + offset2;
 
-		const auto size = std::min(std::distance(it1, fp1.end()), std::distance(it2, fp2.end()));
+		const auto size = std::min(fp1_size - offset1, fp2_size - offset2);
 		std::vector<float> bit_counts(size);
 		for (size_t i = 0; i < size; i++) {
 			bit_counts[i] = HammingDistance(*it1++, *it2++) + rand() * (0.001 / RAND_MAX);
@@ -156,42 +157,51 @@ bool FingerprintMatcher::Match(std::vector<uint32_t> &fp1, std::vector<uint32_t>
 		}
 		gradient_peaks.push_back(size);
 
-		struct Segment {
-			size_t begin;
-			size_t end;
-			double score;
-			Segment(size_t begin, size_t end, double score) : begin(begin), end(end), score(score) {}
-			size_t size() const { return end - begin; }
-		};
-
 		std::vector<Segment> segments;
-		size_t last_i = 0;
-		for (size_t i : gradient_peaks) {
-			segments.emplace_back(last_i, i, 0.0);
-			last_i = i;
+
+		std::array<size_t, 4> match_duration = { 0 };
+
+		bool found_matches = false;
+		{
+			size_t begin = 0;
+			for (size_t end : gradient_peaks) {
+				const auto duration = end - begin;
+				const auto score = std::accumulate(orig_bit_counts.begin() + begin, orig_bit_counts.begin() + end, 0.0) / duration;
+				if (score < m_match_threshold) {
+					segments.emplace_back(offset1 + begin, offset2 + begin, duration, score);
+					if (score < 1.1) {
+						match_duration[0] += duration;
+					} else if (score < 3.3) {
+						match_duration[1] += duration;
+					} else if (score < 6.0) {
+						match_duration[2] += duration;
+					} else {
+						match_duration[3] += duration;
+					}
+					found_matches = true;
+				}
+				begin = end;
+			}
 		}
 
 		for (auto &s : segments) {
-			for (size_t i = s.begin; i < s.end; i++) {
-				s.score += orig_bit_counts[i];
-			}
-			s.score /= s.size();
-			if (s.score < 10.0) {
-				const auto t1 = GetHashTime(offset1 + s.begin);
-				const auto t2 = GetHashTime(offset2 + s.begin);
-				const auto duration = GetHashDuration(s.size());
-				DEBUG("segment " << t1 << "-" << t1 + duration << " " << t2 << "-" << t2 + duration << " " << s.score);
-				//DEBUG("segment " << offset1 + s.begin << "-" << offset1 + s.end << " " << offset2 + s.begin << "-" << offset2 + s.end << " " << s.score);
-			}
+			const auto t1 = GetHashTime(s.pos1);
+			const auto t2 = GetHashTime(s.pos2);
+			const auto duration = GetHashDuration(s.duration);
+			DEBUG("segment " << t1 << "-" << t1 + duration << " " << t2 << "-" << t2 + duration << " " << s.score);
+			//DEBUG("segment " << offset1 + s.begin << "-" << offset1 + s.end << " " << offset2 + s.begin << "-" << offset2 + s.end << " " << s.score);
 		}
 
-		break;
-		//MatchAligned(fp1_begin, fp1.end(), fp2_begin, fp2.end());
+		for (size_t i = 0; i < 4; i++) {
+			DEBUG("match duration " << i << " " << match_duration[i] << " (" << GetHashTime(match_duration[i]) << "s)");
+		}
+
+//		if (!found_matches) {
+			break;
+//		}
 	}
 	
 	return true;
 }
 
-
-
-};
+}; // namespace chromaprint

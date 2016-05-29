@@ -84,11 +84,8 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	std::vector<uint32_t> fp1_data2(fp1_data, fp1_data + fp1_size);
-	std::vector<uint32_t> fp2_data2(fp2_data, fp2_data + fp2_size);
-
 	chromaprint::FingerprintMatcher matcher(chromaprint::CreateFingerprinterConfiguration(fp1_algorithm));
-	matcher.Match(fp1_data2, fp2_data2);
+	matcher.Match(fp1_data, fp1_size, fp2_data, fp2_size);
 
 	return 0;
 }
