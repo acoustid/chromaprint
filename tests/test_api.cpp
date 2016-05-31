@@ -5,6 +5,9 @@
 #include <vector>
 #include <fstream>
 #include "chromaprint.h"
+#include "utils/scope_exit.h"
+
+namespace chromaprint {
 
 TEST(API, Test2SilenceFp)
 {
@@ -12,17 +15,21 @@ TEST(API, Test2SilenceFp)
 	std::fill(zeroes, zeroes + 1024, 0);
 
 	ChromaprintContext *ctx = chromaprint_new(CHROMAPRINT_ALGORITHM_TEST2);
-	chromaprint_start(ctx, 44100, 1);
+	ASSERT_NE(nullptr, ctx);
+	SCOPE_EXIT(chromaprint_free(ctx));
+
+	ASSERT_EQ(1, chromaprint_start(ctx, 44100, 1));
 	for (int i = 0; i < 130; i++) {
-		chromaprint_feed(ctx, zeroes, 1024);
+		ASSERT_EQ(1, chromaprint_feed(ctx, zeroes, 1024));
 	}
 
 	char *fp;
 	uint32_t fp_hash;
 
-	chromaprint_finish(ctx);
-	chromaprint_get_fingerprint(ctx, &fp);
-	chromaprint_get_fingerprint_hash(ctx, &fp_hash);
+	ASSERT_EQ(1, chromaprint_finish(ctx));
+	ASSERT_EQ(1, chromaprint_get_fingerprint(ctx, &fp));
+	SCOPE_EXIT(chromaprint_dealloc(fp));
+	ASSERT_EQ(1, chromaprint_get_fingerprint_hash(ctx, &fp_hash));
 
 	ASSERT_EQ(18, strlen(fp));
 	EXPECT_EQ(std::string("AQAAA0mUaEkSRZEGAA"), std::string(fp));
@@ -35,16 +42,20 @@ TEST(API, Test2SilenceRawFp)
 	std::fill(zeroes, zeroes + 1024, 0);
 
 	ChromaprintContext *ctx = chromaprint_new(CHROMAPRINT_ALGORITHM_TEST2);
-	chromaprint_start(ctx, 44100, 1);
+	ASSERT_NE(nullptr, ctx);
+	SCOPE_EXIT(chromaprint_free(ctx));
+
+	ASSERT_EQ(1, chromaprint_start(ctx, 44100, 1));
 	for (int i = 0; i < 130; i++) {
-		chromaprint_feed(ctx, zeroes, 1024);
+		ASSERT_EQ(1, chromaprint_feed(ctx, zeroes, 1024));
 	}
 
 	uint32_t *fp;
 	int length;
 
-	chromaprint_finish(ctx);
-	chromaprint_get_raw_fingerprint(ctx, &fp, &length);
+	ASSERT_EQ(1, chromaprint_finish(ctx));
+	ASSERT_EQ(1, chromaprint_get_raw_fingerprint(ctx, &fp, &length));
+	SCOPE_EXIT(chromaprint_dealloc(fp));
 
 	ASSERT_EQ(3, length);
 	EXPECT_EQ(627964279, fp[0]);
@@ -59,14 +70,13 @@ TEST(API, TestEncodeFingerprint)
 
 	char *encoded;
 	int encoded_size;
-	chromaprint_encode_fingerprint(fingerprint, 2, 55, &encoded, &encoded_size, 0);
+	ASSERT_EQ(1, chromaprint_encode_fingerprint(fingerprint, 2, 55, &encoded, &encoded_size, 0));
+	SCOPE_EXIT(chromaprint_dealloc(encoded));
 
 	ASSERT_EQ(6, encoded_size);
 	for (int i = 0; i < encoded_size; i++) {
 		ASSERT_EQ(expected[i], encoded[i]) << "Different at " << i;
 	}
-
-	free(encoded);
 }
 
 TEST(API, TestEncodeFingerprintBase64)
@@ -76,12 +86,11 @@ TEST(API, TestEncodeFingerprintBase64)
 
 	char *encoded;
 	int encoded_size;
-	chromaprint_encode_fingerprint(fingerprint, 2, 55, &encoded, &encoded_size, 1);
+	ASSERT_EQ(1, chromaprint_encode_fingerprint(fingerprint, 2, 55, &encoded, &encoded_size, 1));
+	SCOPE_EXIT(chromaprint_dealloc(encoded));
 
 	ASSERT_EQ(8, encoded_size);
 	ASSERT_STREQ(expected, encoded);
-
-	free(encoded);
 }
 
 TEST(API, TestDecodeFingerprint)
@@ -91,7 +100,8 @@ TEST(API, TestDecodeFingerprint)
 	uint32_t *fingerprint;
 	int size;
 	int algorithm;
-	chromaprint_decode_fingerprint(data, 6, &fingerprint, &size, &algorithm, 0);
+	ASSERT_EQ(1, chromaprint_decode_fingerprint(data, 6, &fingerprint, &size, &algorithm, 0));
+	SCOPE_EXIT(chromaprint_dealloc(fingerprint));
 
 	ASSERT_EQ(2, size);
 	ASSERT_EQ(55, algorithm);
@@ -111,3 +121,5 @@ TEST(API, TestHashFingerprint)
     ASSERT_EQ(1, chromaprint_hash_fingerprint(fingerprint, 4, &hash));
     ASSERT_EQ(17249, hash);
 }
+
+}; // namespace chromaprint
