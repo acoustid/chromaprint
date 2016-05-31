@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-#include <boost/scoped_ptr.hpp>
 #include <algorithm>
 #include <vector>
 #include <fstream>

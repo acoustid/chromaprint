@@ -147,7 +147,6 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DI
 
 add_subdirectory(src)
 
-find_package(Boost COMPONENTS system filesystem)
 if(BUILD_EXAMPLES)
 	find_package(FFmpeg REQUIRED)
 endif()

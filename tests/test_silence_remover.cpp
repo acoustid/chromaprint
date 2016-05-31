@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-#include <boost/scoped_ptr.hpp>
 #include <algorithm>
 #include <vector>
 #include <fstream>
@@ -15,15 +14,15 @@ TEST(SilenceRemover, PassThrough)
 	short samples[] = { 1000, 2000, 3000, 4000, 5000, 6000 };
 	std::vector<short> data(samples, samples + NELEMS(samples));
 
-	boost::scoped_ptr<AudioBuffer> buffer(new AudioBuffer());
-	boost::scoped_ptr<SilenceRemover> processor(new SilenceRemover(buffer.get()));
-	processor->Reset(44100, 1);
-	processor->Consume(&data[0], data.size());
-	processor->Flush();
+	AudioBuffer buffer;
+	SilenceRemover processor(&buffer);
+	processor.Reset(44100, 1);
+	processor.Consume(data.data(), data.size());
+	processor.Flush();
 
-	ASSERT_EQ(data.size(), buffer->data().size());
+	ASSERT_EQ(data.size(), buffer.data().size());
 	for (size_t i = 0; i < data.size(); i++) {
-		ASSERT_EQ(data[i], buffer->data()[i]) << "Signals differ at index " << i;
+		ASSERT_EQ(data[i], buffer.data()[i]) << "Signals differ at index " << i;
 	}
 }
 
@@ -35,14 +34,14 @@ TEST(SilenceRemover, RemoveLeadingSilence)
 	short samples2[] = { 1000, 2000, 0, 4000, 5000, 0 };
 	std::vector<short> data2(samples2, samples2 + NELEMS(samples2));
 
-	boost::scoped_ptr<AudioBuffer> buffer(new AudioBuffer());
-	boost::scoped_ptr<SilenceRemover> processor(new SilenceRemover(buffer.get(), 100));
-	processor->Reset(44100, 1);
-	processor->Consume(&data1[0], data1.size());
-	processor->Flush();
+	AudioBuffer buffer;
+	SilenceRemover processor(&buffer, 100);
+	processor.Reset(44100, 1);
+	processor.Consume(data1.data(), data1.size());
+	processor.Flush();
 
-	ASSERT_EQ(data2.size(), buffer->data().size());
+	ASSERT_EQ(data2.size(), buffer.data().size());
 	for (size_t i = 0; i < data2.size(); i++) {
-		ASSERT_EQ(data2[i], buffer->data()[i]) << "Signals differ at index " << i;
+		ASSERT_EQ(data2[i], buffer.data()[i]) << "Signals differ at index " << i;
 	}
 }

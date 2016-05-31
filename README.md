@@ -11,11 +11,10 @@ section for details.
 
 The `fpcalc` utility included in the package requires FFmpeg (can be older).
 
-In order to build the test suite, you will need the [Google Test library][4] and [Boost Filesystem][3].
+In order to build the test suite, you will need the [Google Test library][4].
 
 [1]: http://www.ffmpeg.org/
 [2]: http://www.fftw.org/
-[3]: http://www.boost.org/
 [4]: http://code.google.com/p/googletest/
 
 Installing
