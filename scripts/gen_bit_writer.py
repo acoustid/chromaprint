@@ -43,8 +43,12 @@ print '#include <algorithm>'
 print
 print 'namespace chromaprint {'
 print
+print 'inline size_t GetPackedInt{}ArraySize(size_t size) {{'.format(nbits)
+print '\treturn (size * {} + {}) / {};'.format(block_size, block_size * 8 // nbits - 1, block_size * 8 // nbits)
+print '}'
+print
 print 'template <typename InputIt, typename OutputIt>'
-print 'inline void PackInt{}Array(const InputIt first, const InputIt last, OutputIt dest) {{'.format(nbits)
+print 'inline OutputIt PackInt{}Array(const InputIt first, const InputIt last, OutputIt dest) {{'.format(nbits)
 print '\tauto size = std::distance(first, last);'
 print '\tauto src = first;'
 first_if = True
@@ -67,6 +71,7 @@ for nbytes in range(block_size * 8 // nbits, 0, -1):
         print '\t}'
     else:
         print '\t}',
+print '\t return dest;'
 print '}'
 print
 print '}; // namespace chromaprint'

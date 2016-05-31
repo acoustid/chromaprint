@@ -10,8 +10,12 @@
 
 namespace chromaprint {
 
+inline size_t GetPackedInt5ArraySize(size_t size) {
+	return (size * 5 + 7) / 8;
+}
+
 template <typename InputIt, typename OutputIt>
-inline void PackInt5Array(const InputIt first, const InputIt last, OutputIt dest) {
+inline OutputIt PackInt5Array(const InputIt first, const InputIt last, OutputIt dest) {
 	auto size = std::distance(first, last);
 	auto src = first;
 	while (size >= 8) {
@@ -87,6 +91,7 @@ inline void PackInt5Array(const InputIt first, const InputIt last, OutputIt dest
 		const unsigned char s0 = *src++;
 		*dest++ = (unsigned char) ((s0 & 0x1f));
 	}
+	 return dest;
 }
 
 }; // namespace chromaprint
