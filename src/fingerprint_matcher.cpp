@@ -159,7 +159,7 @@ bool FingerprintMatcher::Match(const uint32_t fp1_data[], size_t fp1_size, const
 
 		m_segments.clear();
 
-		std::array<size_t, 4> match_duration = { 0 };
+		size_t match_duration[4] = { 0, 0, 0, 0 };
 
 		bool found_matches = false;
 		{
