@@ -82,7 +82,6 @@ void BoxFilter(T &input, T &output, size_t w) {
 	}
 
 	if (size > w) {
-		size_t i = 0;
 		for (size_t i = 0; i < wl; i++) {
 			*out++ = sum / w;
 			sum += input[it2.pos] - input[it1.pos];

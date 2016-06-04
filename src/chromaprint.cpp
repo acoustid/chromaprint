@@ -15,28 +15,28 @@
 #include "simhash.h"
 #include "debug.h"
 
+using namespace chromaprint;
+
 struct ChromaprintContextPrivate {
 	ChromaprintContextPrivate(int algorithm)
 		: algorithm(algorithm),
-		  fingerprinter(chromaprint::CreateFingerprinterConfiguration(algorithm)) {}
+		  fingerprinter(CreateFingerprinterConfiguration(algorithm)) {}
 	bool finished = false;
 	int algorithm;
-	chromaprint::Fingerprinter fingerprinter;
+	Fingerprinter fingerprinter;
 	std::vector<uint32_t> fingerprint;
 };
 
 struct ChromaprintMatcherContextPrivate {
 	ChromaprintMatcherContextPrivate(int algorithm)
 		: algorithm(algorithm),
-		  matcher(chromaprint::CreateFingerprinterConfiguration(algorithm)) {}
+		  matcher(CreateFingerprinterConfiguration(algorithm)) {}
 	int algorithm;
-	chromaprint::FingerprintMatcher matcher;
+	FingerprintMatcher matcher;
 	std::vector<uint32_t> fp[2];
 };
 
 extern "C" {
-
-namespace chromaprint {
 
 #define FAIL_IF(x, msg) if (x) { DEBUG(msg); return 0; }
 
@@ -219,7 +219,8 @@ int chromaprint_matcher_get_segment_position(ChromaprintMatcherContext *ctx, int
 	FAIL_IF(!ctx, "context can't be NULL");
 
 	const auto &segments = ctx->matcher.segments();
-	FAIL_IF(idx < 0 || idx >= segments.size(), "invalid idx");
+	const int num_segments = segments.size();
+	FAIL_IF(idx < 0 || idx >= num_segments, "invalid idx");
 
 	*pos1 = segments[idx].pos1;
 	*pos2 = segments[idx].pos2;
@@ -232,7 +233,8 @@ int chromaprint_matcher_get_segment_position_ms(ChromaprintMatcherContext *ctx, 
 	FAIL_IF(!ctx, "context can't be NULL");
 
 	const auto &segments = ctx->matcher.segments();
-	FAIL_IF(idx < 0 || idx >= segments.size(), "invalid idx");
+	const int num_segments = segments.size();
+	FAIL_IF(idx < 0 || idx >= num_segments, "invalid idx");
 
 	*pos1 = round(1000 * ctx->matcher.GetHashTime(segments[idx].pos1));
 	*pos2 = round(1000 * ctx->matcher.GetHashTime(segments[idx].pos2));
@@ -245,7 +247,8 @@ int chromaprint_matcher_get_segment_score(ChromaprintMatcherContext *ctx, int id
 	FAIL_IF(!ctx, "context can't be NULL");
 
 	const auto &segments = ctx->matcher.segments();
-	FAIL_IF(idx < 0 || idx >= segments.size(), "invalid idx");
+	const int num_segments = segments.size();
+	FAIL_IF(idx < 0 || idx >= num_segments, "invalid idx");
 
 	*score = std::max(0, std::min(100, static_cast<int>(round(100 * (1.0 - segments[idx].score / 32.0)))));
 	return 1;
@@ -255,7 +258,5 @@ void chromaprint_dealloc(void *ptr)
 {
 	free(ptr);
 }
-
-}; // namespace chromaprint
 
 }; // extern "C"

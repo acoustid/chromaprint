@@ -161,7 +161,6 @@ bool FingerprintMatcher::Match(const uint32_t fp1_data[], size_t fp1_size, const
 
 		size_t match_duration[4] = { 0, 0, 0, 0 };
 
-		bool found_matches = false;
 		{
 			size_t begin = 0;
 			for (size_t end : gradient_peaks) {
@@ -178,7 +177,6 @@ bool FingerprintMatcher::Match(const uint32_t fp1_data[], size_t fp1_size, const
 					} else {
 						match_duration[3] += duration;
 					}
-					found_matches = true;
 				}
 				begin = end;
 			}
@@ -196,9 +194,7 @@ bool FingerprintMatcher::Match(const uint32_t fp1_data[], size_t fp1_size, const
 			DEBUG("match duration " << i << " " << match_duration[i] << " (" << GetHashTime(match_duration[i]) << "s)");
 		}
 
-//		if (!found_matches) {
-			break;
-//		}
+		break;
 	}
 	
 	return true;
