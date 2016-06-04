@@ -1,6 +1,17 @@
+sudo: no
+addons:
+  apt:
+    packages:
+      - libavcodec-dev
+      - libavformat-dev
+      - libgtest-dev
+
 language: cpp
 compiler:
   - gcc
-install: sudo apt-get install libavcodec-dev libavformat-dev libgtest-dev
-script: cmake -DBUILD_TESTS=ON . && make && make check
+  - clang
 
+script:
+  - cmake -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Debug .
+  - make
+  - make check
