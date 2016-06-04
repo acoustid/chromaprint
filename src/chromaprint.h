@@ -4,6 +4,53 @@
 #ifndef CHROMAPRINT_CHROMAPRINT_H_
 #define CHROMAPRINT_CHROMAPRINT_H_
 
+/**
+ * @mainpage Chromaprint
+ *
+ * @section intro Introduction
+ *
+ * Chromaprint is a library for generating audio fingerprints, mainly to be used with the <a href="https://acoustid.org">AcoustID</a> service.
+ *
+ * It needs raw audio stream (16-bit signed int) on input. The audio can have any sampling rate and any number of channels. Typically,
+ * you would use some native library for decoding compressed audio files and feed the result into Chromaprint.
+ *
+ * Audio fingerprints returned from the library can be represented either as
+ * base64-encoded strings or 32-bit integer arrays. The base64-encoded strings
+ * are usually what's used externally when you need to send the fingerprint
+ * to a service. You can't directly compare the fingerprints in such form.
+ * The 32-bit integer arrays are also called "raw fingerprints" and they
+ * represent the internal structure of the fingerprints. If you want to
+ * compare two fingerprints yourself, you probably want them in this form.
+ *
+ * @section comparing Comparing fingerprints
+ *
+ *
+ * Here is a very simple example code for matching two fingerprints:
+ *
+ * @code
+ * ChromaprintMatcherContext *ctx;
+ * int num_segments, i, pos1, pos2, duration, score;
+ *
+ * ctx = chromaprint_matcher_new(CHROMAPRINT_ALGORITHM_DEFAULT);
+ *
+ * chromaprint_matcher_set_fingerprint(ctx, 0, "AQAAS5IURssi4vnxPRr-CHuHP-B3P...");
+ * chromaprint_matcher_set_fingerprint(ctx, 1, "AQAAS1KiiHGW4MqOH86HF01OJOee4...");
+ * chromaprint_matcher_run(ctx);
+ *
+ * chromaprint_matcher_get_num_segments(ctx, &num_segments);
+ * for (i = 0; i < num_segments; i++) {
+ *     chromaprint_matcher_get_segment_position_ms(ctx, i, &pos1, &pos2, &duration);
+ *     chromaprint_matcher_get_segment_score(ctx, i, &score);
+ *     printf("%d-%d from fp1 matches %d-%d from fp2 with score %d\n", pos1, pos1 + duration - 1, pos2, pos2 + duration - 1, score);
+ * }
+ *
+ * chromaprint_matcher_free(ctx);
+ * @endcode
+ *
+ * Note that there is no error handling in the code above. Almost any of the called functions can fail.
+ * You should check the return values in an actual code.
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -29,6 +76,7 @@ extern "C" {
 #include <stdint.h>
 
 typedef void *ChromaprintContext;
+typedef struct ChromaprintMatcherContextPrivate ChromaprintMatcherContext;
 
 #define CHROMAPRINT_VERSION_MAJOR 1
 #define CHROMAPRINT_VERSION_MINOR 3
@@ -42,7 +90,6 @@ enum ChromaprintAlgorithm {
 	CHROMAPRINT_ALGORITHM_TEST5,
 	CHROMAPRINT_ALGORITHM_DEFAULT = CHROMAPRINT_ALGORITHM_TEST2,
 };
-
 
 /**
  * Return the version number of Chromaprint.
@@ -258,6 +305,114 @@ CHROMAPRINT_API int chromaprint_decode_fingerprint(const char *encoded_fp, int e
  *  - 0 on error, 1 on success
  */
 CHROMAPRINT_API int chromaprint_hash_fingerprint(const uint32_t *fp, int size, uint32_t *hash);
+
+/**
+ * Create a new fingerprint matcher context.
+ *
+ * You should use chromaprint_matcher_free() to free the pointer.
+ *
+ * @param version the fingerprint algorithm version you want to use, or
+ *		CHROMAPRINT_ALGORITHM_DEFAULT for the default algorithm
+ *
+ * @return Chromaprint matcher context pointer or NULL on error
+ */
+CHROMAPRINT_API ChromaprintMatcherContext *chromaprint_matcher_new(int version);
+
+/**
+ * Free the matcher context allocated by chromaprint_matcher_new().
+ *
+ * @param[in] ctx Chromaprint matcher context
+ */
+CHROMAPRINT_API void chromaprint_matcher_free(ChromaprintMatcherContext *ctx);
+
+/**
+ * Set one of the two fingerprints to be matched.
+ *
+ * @param[in] ctx Chromaprint matcher context
+ * @param[in] idx 0 or 1, depending on which fingerprint you want to set
+ * @param[in] fp base64-encoded fingerprint string
+ *
+ * @return 0 on error, 1 on success
+ */
+CHROMAPRINT_API int chromaprint_matcher_set_fingerprint(ChromaprintMatcherContext *ctx, int idx, const char *fp);
+
+/**
+ * Set one of the two fingerprints to be matched.
+ *
+ * @param[in] ctx Chromaprint matcher context
+ * @param[in] idx 0 or 1, depending on which fingerprint you want to set
+ * @param[in] fp raw fingerprint represented as an 32-bit int array
+ * @param[in] size number of items in the fp array
+ *
+ * @return 0 on error, 1 on success
+ */
+CHROMAPRINT_API int chromaprint_matcher_set_raw_fingerprint(ChromaprintMatcherContext *ctx, int idx, const uint32_t *fp, int size);
+
+/**
+ * Compare two fingerprints.
+ *
+ * The fingerprints should be set before with
+ * chromaprint_matcher_set_fingerprint() or
+ * chromaprint_matcher_set_raw_fingerprint().
+ *
+ * @param[in] ctx Chromaprint matcher context
+ *
+ * @return 0 on error, 1 on success
+ */
+CHROMAPRINT_API int chromaprint_matcher_run(ChromaprintMatcherContext *ctx);
+
+/**
+ * Get the number of matching segments.
+ *
+ * @param[in] ctx Chromaprint matcher context
+ * @param[out] num_segments pointer to an int where the number of segments will be stored
+ *
+ * @return 0 on error, 1 on success
+ */
+CHROMAPRINT_API int chromaprint_matcher_get_num_segments(ChromaprintMatcherContext *ctx, int *num_segments);
+
+/**
+ * Get position details of a particular matching segment.
+ *
+ * This function returns values that are indexes in the raw fingerprint array.
+ * For times in milliseconds, see chromaprint_matcher_get_segment_position_ms().
+ *
+ * @param[in] ctx Chromaprint matcher context
+ * @param[in] idx segment number
+ * @param[out] pos1 starting position of the segment in the first fingerprint
+ * @param[out] pos2 starting position of the segment in the second fingerprint
+ * @param[out] duration total duration of the segment
+ *
+ * @return 0 on error, 1 on success
+ */
+CHROMAPRINT_API int chromaprint_matcher_get_segment_position(ChromaprintMatcherContext *ctx, int idx, int *pos1, int *pos2, int *duration);
+
+/**
+ * Get time position details of a particular matching segment.
+ *
+ * This function returns values in milliseconds.
+ * For raw position offsets, see chromaprint_matcher_get_segment_position().
+ *
+ * @param[in] ctx Chromaprint matcher context
+ * @param[in] idx segment number
+ * @param[out] pos1 starting time of the segment in the first fingerprint
+ * @param[out] pos2 starting time of the segment in the second fingerprint
+ * @param[out] duration total duration of the segment
+ *
+ * @return 0 on error, 1 on success
+ */
+CHROMAPRINT_API int chromaprint_matcher_get_segment_position_ms(ChromaprintMatcherContext *ctx, int idx, int *pos1, int *pos2, int *duration);
+
+/**
+ * Get the score of a particular matching segment.
+ *
+ * @param[in] ctx Chromaprint matcher context
+ * @param[in] idx segment number
+ * @param[out] score number between 0 (worst) and 100 (best)
+ *
+ * @return 0 on error, 1 on success
+ */
+CHROMAPRINT_API int chromaprint_matcher_get_segment_score(ChromaprintMatcherContext *ctx, int idx, int *score);
 
 /**
  * Free memory allocated by any function from the Chromaprint API.

@@ -157,7 +157,7 @@ bool FingerprintMatcher::Match(const uint32_t fp1_data[], size_t fp1_size, const
 		}
 		gradient_peaks.push_back(size);
 
-		std::vector<Segment> segments;
+		m_segments.clear();
 
 		std::array<size_t, 4> match_duration = { 0 };
 
@@ -168,7 +168,7 @@ bool FingerprintMatcher::Match(const uint32_t fp1_data[], size_t fp1_size, const
 				const auto duration = end - begin;
 				const auto score = std::accumulate(orig_bit_counts.begin() + begin, orig_bit_counts.begin() + end, 0.0) / duration;
 				if (score < m_match_threshold) {
-					segments.emplace_back(offset1 + begin, offset2 + begin, duration, score);
+					m_segments.emplace_back(offset1 + begin, offset2 + begin, duration, score);
 					if (score < 1.1) {
 						match_duration[0] += duration;
 					} else if (score < 3.3) {
@@ -184,7 +184,7 @@ bool FingerprintMatcher::Match(const uint32_t fp1_data[], size_t fp1_size, const
 			}
 		}
 
-		for (auto &s : segments) {
+		for (auto &s : m_segments) {
 			const auto t1 = GetHashTime(s.pos1);
 			const auto t2 = GetHashTime(s.pos2);
 			const auto duration = GetHashDuration(s.duration);

@@ -38,11 +38,14 @@ public:
 	double GetHashTime(size_t i) const;
 	double GetHashDuration(size_t i) const;
 
+	const std::vector<Segment> &segments() const { return m_segments; };
+
 private:
 	std::unique_ptr<FingerprinterConfiguration> m_config;
 	std::vector<uint32_t> m_offsets;
 	std::vector<uint32_t> m_histogram;
 	std::vector<std::pair<uint32_t, uint32_t>> m_best_alignments;
+	std::vector<Segment> m_segments;
 	double m_match_threshold = kDefaultMatchThreshold;
 };
 
