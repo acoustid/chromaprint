@@ -1,15 +1,18 @@
 sudo: no
 addons:
   apt:
+    sources:
+      - ubuntu-toolchain-r-test
     packages:
+      - gcc-4.8
+      - g++-4.8
       - libavcodec-dev
       - libavformat-dev
       - libgtest-dev
 
 language: cpp
-compiler:
-  - gcc
-  - clang
+compiler: gcc
+env: COMPILER=g++-4.8 CCOMPILER=gcc-4.8
 
 script:
   - cmake -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Debug .
