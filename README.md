@@ -59,6 +59,14 @@ If you are on Mac, you can use the standard Accelerate framework with the vDSP
 library. This requires you to install no external libraries. It will use
 vDSP by default on OS X (but there still is a `WITH_VDSP` option).
 
+Documentation
+-------------
+
+You can use Doxygen to generate a HTML version of the API documentation:
+
+   $ make docs
+   $ $BROWSER docs/html/index.html
+
 Unit Tests
 ----------
 

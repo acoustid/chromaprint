@@ -103,13 +103,10 @@ CHROMAPRINT_API const char *chromaprint_get_version(void);
  * not reentrant and you need to call it only from one thread at a time.
  * This is not a problem when using FFmpeg or vDSP.
  *
- * Parameters:
- *  - version: Version of the fingerprint algorithm, use
- *             CHROMAPRINT_ALGORITHM_DEFAULT for the default
- *             algorithm
+ * @param algorithm the fingerprint algorithm version you want to use, or
+ *		CHROMAPRINT_ALGORITHM_DEFAULT for the default algorithm
  *
- * Returns:
- *  - Chromaprint context pointer
+ * @return ctx Chromaprint context pointer
  */
 CHROMAPRINT_API ChromaprintContext *chromaprint_new(int algorithm);
 
@@ -120,70 +117,63 @@ CHROMAPRINT_API ChromaprintContext *chromaprint_new(int algorithm);
  * not reentrant and you need to call it only from one thread at a time.
  * This is not a problem when using FFmpeg or vDSP.
  *
- * Parameters:
- *  - ctx: Chromaprint context pointer
+ * @param[in] ctx Chromaprint context pointer
  */
 CHROMAPRINT_API void chromaprint_free(ChromaprintContext *ctx);
 
 /**
  * Return the fingerprint algorithm this context is configured to use.
+ * @param[in] ctx Chromaprint context pointer
+ * @return current algorithm version
  */
 CHROMAPRINT_API int chromaprint_get_algorithm(ChromaprintContext *ctx);
 
 /**
  * Set a configuration option for the selected fingerprint algorithm.
  *
- * NOTE: DO NOT USE THIS FUNCTION IF YOU ARE PLANNING TO USE
+ * DO NOT USE THIS FUNCTION IF YOU ARE PLANNING TO USE
  * THE GENERATED FINGERPRINTS WITH THE ACOUSTID SERVICE.
- *
- * Parameters:
- *  - ctx: Chromaprint context pointer
- *  - name: option name
- *  - value: option value
  *
  * Possible options:
  *  - silence_threshold: threshold for detecting silence, 0-32767
  *
- * Returns:
- *  - 0 on error, 1 on success
+ * @param[in] ctx Chromaprint context pointer
+ * @param[in] name option name
+ * @param[in] value option value
+ *
+ * @return 0 on error, 1 on success
  */
 CHROMAPRINT_API int chromaprint_set_option(ChromaprintContext *ctx, const char *name, int value);
 
 /**
  * Restart the computation of a fingerprint with a new audio stream.
  *
- * Parameters:
- *  - ctx: Chromaprint context pointer
- *  - sample_rate: sample rate of the audio stream (in Hz)
- *  - num_channels: numbers of channels in the audio stream (1 or 2)
+ * @param[in] ctx Chromaprint context pointer
+ * @param[in] sample_rate sample rate of the audio stream (in Hz)
+ * @param[in] num_channels numbers of channels in the audio stream (1 or 2)
  *
- * Returns:
- *  - 0 on error, 1 on success
+ * @return 0 on error, 1 on success
  */
 CHROMAPRINT_API int chromaprint_start(ChromaprintContext *ctx, int sample_rate, int num_channels);
 
 /**
  * Send audio data to the fingerprint calculator.
  *
- * Parameters:
- *  - ctx: Chromaprint context pointer
- *  - data: raw audio data, should point to an array of 16-bit signed
+ * @param[in] ctx Chromaprint context pointer
+ * @param[in] data raw audio data, should point to an array of 16-bit signed
  *          integers in native byte-order
- *  - size: size of the data buffer (in samples)
+ * @param[in] size size of the data buffer (in samples)
  *
- * Returns:
- *  - 0 on error, 1 on success
+ * @return 0 on error, 1 on success
  */
 CHROMAPRINT_API int chromaprint_feed(ChromaprintContext *ctx, const int16_t *data, int size);
 
 /**
  * Process any remaining buffered audio data and calculate the fingerprint.
  *
- * Parameters:
- *  - ctx: Chromaprint context pointer
+ * @param[in] ctx Chromaprint context pointer
  *
- * Returns:
- *  - 0 on error, 1 on success
+ * @return 0 on error, 1 on success
  */
 CHROMAPRINT_API int chromaprint_finish(ChromaprintContext *ctx);
 
@@ -193,13 +183,11 @@ CHROMAPRINT_API int chromaprint_finish(ChromaprintContext *ctx);
  * The caller is responsible for freeing the returned pointer using
  * chromaprint_dealloc().
  *
- * Parameters:
- *  - ctx: Chromaprint context pointer
- *  - fingerprint: pointer to a pointer, where a pointer to the allocated array
+ * @param[in] ctx Chromaprint context pointer
+ * @param[out] fingerprint pointer to a pointer, where a pointer to the allocated array
  *                 will be stored
  *
- * Returns:
- *  - 0 on error, 1 on success
+ * @return 0 on error, 1 on success
  */
 CHROMAPRINT_API int chromaprint_get_fingerprint(ChromaprintContext *ctx, char **fingerprint);
 
@@ -209,14 +197,12 @@ CHROMAPRINT_API int chromaprint_get_fingerprint(ChromaprintContext *ctx, char **
  * The caller is responsible for freeing the returned pointer using
  * chromaprint_dealloc().
  *
- * Parameters:
- *  - ctx: Chromaprint context pointer
- *  - fingerprint: pointer to a pointer, where a pointer to the allocated array
+ * @param[in] ctx Chromaprint context pointer
+ * @param[out] fingerprint pointer to a pointer, where a pointer to the allocated array
  *                 will be stored
- *  - size: number of items in the returned raw fingerprint
+ * @param[out] size number of items in the returned raw fingerprint
  *
- * Returns:
- *  - 0 on error, 1 on success
+ * @return 0 on error, 1 on success
  */
 CHROMAPRINT_API int chromaprint_get_raw_fingerprint(ChromaprintContext *ctx, uint32_t **fingerprint, int *size);
 
@@ -225,12 +211,10 @@ CHROMAPRINT_API int chromaprint_get_raw_fingerprint(ChromaprintContext *ctx, uin
  *
  * See chromaprint_hash_fingerprint() for details on how to use the hash.
  *
- * Parameters:
- *  - ctx: Chromaprint context pointer
- *  - hash: pointer to a 32-bit integer where the hash will be stored
+ * @param[in] ctx Chromaprint context pointer
+ * @param[out] hash pointer to a 32-bit integer where the hash will be stored
  *
- * Returns:
- *  - 0 on error, 1 on success
+ * @return 0 on error, 1 on success
  */
 CHROMAPRINT_API int chromaprint_get_fingerprint_hash(ChromaprintContext *ctx, uint32_t *hash);
 
@@ -240,22 +224,20 @@ CHROMAPRINT_API int chromaprint_get_fingerprint_hash(ChromaprintContext *ctx, ui
  * The caller is responsible for freeing the returned pointer using
  * chromaprint_dealloc().
  *
- * Parameters:
- *  - fp: pointer to an array of 32-bit integers representing the raw
+ * @param[in] fp pointer to an array of 32-bit integers representing the raw
  *        fingerprint to be encoded
- *  - size: number of items in the raw fingerprint
- *  - algorithm: Chromaprint algorithm version which was used to generate the
+ * @param[in] size number of items in the raw fingerprint
+ * @param[in] algorithm Chromaprint algorithm version which was used to generate the
  *               raw fingerprint
- *  - encoded_fp: pointer to a pointer, where the encoded fingerprint will be
+ * @param[out] encoded_fp pointer to a pointer, where the encoded fingerprint will be
  *                stored
- *  - encoded_size: size of the encoded fingerprint in bytes
- *  - base64: Whether to return binary data or base64-encoded ASCII data. The
+ * @param[out] encoded_size size of the encoded fingerprint in bytes
+ * @param[in] base64 Whether to return binary data or base64-encoded ASCII data. The
  *            compressed fingerprint will be encoded using base64 with the
  *            URL-safe scheme if you set this parameter to 1. It will return
  *            binary data if it's 0.
  *
- * Returns:
- *  - 0 on error, 1 on success
+ * @return 0 on error, 1 on success
  */
 CHROMAPRINT_API int chromaprint_encode_fingerprint(const uint32_t *fp, int size, int algorithm, char **encoded_fp, int *encoded_size, int base64);
 
@@ -265,20 +247,18 @@ CHROMAPRINT_API int chromaprint_encode_fingerprint(const uint32_t *fp, int size,
  * The caller is responsible for freeing the returned pointer using
  * chromaprint_dealloc().
  *
- * Parameters:
- *  - encoded_fp: Pointer to an encoded fingerprint
- *  - encoded_size: Size of the encoded fingerprint in bytes
- *  - fp: Pointer to a pointer, where the decoded raw fingerprint (array
+ * @param[in] encoded_fp pointer to an encoded fingerprint
+ * @param[in] encoded_size size of the encoded fingerprint in bytes
+ * @param[out] fp pointer to a pointer, where the decoded raw fingerprint (array
  *        of 32-bit integers) will be stored
- *  - size: Number of items in the returned raw fingerprint
- *  - algorithm: Chromaprint algorithm version which was used to generate the
+ * @param[out] size Number of items in the returned raw fingerprint
+ * @param[out] algorithm Chromaprint algorithm version which was used to generate the
  *               raw fingerprint
- *  - base64: Whether the encoded_fp parameter contains binary data or
+ * @param[in] base64 Whether the encoded_fp parameter contains binary data or
  *            base64-encoded ASCII data. If 1, it will base64-decode the data
  *            before uncompressing the fingerprint.
  *
- * Returns:
- *  - 0 on error, 1 on success
+ * @return 0 on error, 1 on success
  */
 CHROMAPRINT_API int chromaprint_decode_fingerprint(const char *encoded_fp, int encoded_size, uint32_t **fp, int *size, int *algorithm, int base64);
 
@@ -295,14 +275,12 @@ CHROMAPRINT_API int chromaprint_decode_fingerprint(const char *encoded_fp, int e
  * number between 0 and 32. Anthing above 15 means the hashes are
  * completely different.
  *
- * Parameters:
- *  - fp: pointer to an array of 32-bit integers representing the raw
+ * @param[in] fp pointer to an array of 32-bit integers representing the raw
  *        fingerprint to be hashed
- *  - size: number of items in the raw fingerprint
- *  - hash: pointer to a 32-bit integer where the hash will be stored
+ * @param[in] size number of items in the raw fingerprint
+ * @param[out] hash pointer to a 32-bit integer where the hash will be stored
  *
- * Returns:
- *  - 0 on error, 1 on success
+ * @return 0 on error, 1 on success
  */
 CHROMAPRINT_API int chromaprint_hash_fingerprint(const uint32_t *fp, int size, uint32_t *hash);
 
@@ -417,8 +395,7 @@ CHROMAPRINT_API int chromaprint_matcher_get_segment_score(ChromaprintMatcherCont
 /**
  * Free memory allocated by any function from the Chromaprint API.
  *
- * Parameters:
- *  - ptr: Pointer to be deallocated
+ * @param ptr pointer to be deallocated
  */
 CHROMAPRINT_API void chromaprint_dealloc(void *ptr);
 
