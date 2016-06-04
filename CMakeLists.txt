@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 2.8)
 
 if(POLICY CMP0048)
     cmake_policy(SET CMP0048 OLD)
@@ -6,8 +6,6 @@ endif()
 
 project(chromaprint C CXX)
 set(PROJECT_VERSION 1.3.1)
-
-set(CMAKE_CXX_STANDARD 11)
 
 # 1. If the library source code has changed at all since the last update, then increment revision.
 # 2. If any interfaces have been added, removed, or changed since the last update, increment current, and set revision to 0.
@@ -28,6 +26,12 @@ include(CheckFunctionExists)
 set(CMAKE_REQUIRED_LIBRARIES -lm)
 check_function_exists(lrintf HAVE_LRINTF)
 check_function_exists(round HAVE_ROUND)
+
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag("-std=c++11" COMPILER_SUPPORTS_CXX11)
+if(COMPILER_SUPPORTS_CXX11)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+endif()
 
 add_definitions(
 	-DHAVE_CONFIG_H
