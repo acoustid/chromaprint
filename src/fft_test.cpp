@@ -68,10 +68,13 @@ TEST(FFTTest, Sine) {
 	};
 
 	for (const auto &frame : collector.frames) {
+		std::stringstream ss;
 		for (size_t i = 0; i < frame.size(); i++) {
 			const auto magnitude = sqrt(frame[i]) / frame.size();
-			EXPECT_NEAR(expected_spectrum[i], magnitude, 0.01);
+			EXPECT_NEAR(expected_spectrum[i], magnitude, 0.01) << "magnitude different at offset " << i;
+			ss << "s[" << i << "]=" << magnitude << " ";
 		}
+		DEBUG("spectrum " << ss.str());
 	}
 }
 
@@ -119,11 +122,15 @@ TEST(FFTTest, DC) {
 		0,
 	};
 
+
 	for (const auto &frame : collector.frames) {
+		std::stringstream ss;
 		for (size_t i = 0; i < frame.size(); i++) {
 			const auto magnitude = sqrt(frame[i]) / frame.size();
-			EXPECT_NEAR(expected_spectrum[i], magnitude, 0.01);
+			EXPECT_NEAR(expected_spectrum[i], magnitude, 0.01) << "magnitude different at offset " << i;
+			ss << "s[" << i << "]=" << magnitude << " ";
 		}
+		DEBUG("spectrum " << ss.str());
 	}
 }
 
