@@ -15,7 +15,7 @@ inline double Subtract(double a, double b) {
 }
 
 inline double SubtractLog(double a, double b) {
-	double r = log(1.0 + a) - log(1.0 + b);
+	double r = log((1.0 + a) / (1.0 + b));
 	assert(!IsNaN(r));
 	return r;
 }
