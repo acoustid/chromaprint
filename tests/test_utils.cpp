@@ -14,30 +14,20 @@ TEST(Utils, PrepareHammingWindow) {
 	}
 }
 
-TEST(Utils, ApplyWindow1) {
+TEST(Utils, ApplyWindow) {
 	double window_ex[10] = { 0.08, 0.187619556165, 0.460121838273, 0.77, 0.972258605562, 0.972258605562, 0.77, 0.460121838273, 0.187619556165, 0.08};
 	double window[10];
-	short input[10];
+	int16_t input[10];
 	double output[10];
-	PrepareHammingWindow(window, window + 10);
-	std::fill(input, input + 10, std::numeric_limits<short>::max());
-	double scale = 1.0 / std::numeric_limits<short>::max();
-	ApplyWindow(input, window, output, 10, scale);
+	PrepareHammingWindow(window, window + 10, 1.0 / INT16_MAX);
+	std::fill(input, input + 10, INT16_MAX);
+	auto window_ptr = window + 0;
+	auto output_ptr = output + 0;
+	ApplyWindow(input, input + 10, window_ptr, output_ptr);
+	ASSERT_EQ(window + 10, window_ptr);
+	ASSERT_EQ(output + 10, output_ptr);
 	for (int i = 0; i < 10; i++) {
 		EXPECT_FLOAT_EQ(window_ex[i], output[i]);
-	}
-}
-
-TEST(Utils, ApplyWindow2) {
-	double window[10];
-	short input[10];
-	double output[10];
-	PrepareHammingWindow(window, window + 10);
-	std::fill(input, input + 10, 0);
-	double scale = 1.0 / std::numeric_limits<short>::max();
-	ApplyWindow(input, window, output, 10, scale);
-	for (int i = 0; i < 10; i++) {
-		EXPECT_FLOAT_EQ(0.0, output[i]);
 	}
 }
 

@@ -26,13 +26,9 @@ FFTLib::~FFTLib() {
 
 void FFTLib::Load(const int16_t *b1, const int16_t *e1, const int16_t *b2, const int16_t *e2) {
 	auto window = m_window;
-	auto input = m_input;
-	for (auto i = b1; i != e1; ++i) {
-		*input++ = *i * *window++;
-	}
-	for (auto i = b2; i != e2; ++i) {
-		*input++ = *i * *window++;
-	}
+	auto output = m_input;
+	ApplyWindow(b1, e1, window, output);
+	ApplyWindow(b2, e2, window, output);
 }
 
 void FFTLib::Compute(FFTFrame &frame) {

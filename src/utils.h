@@ -63,11 +63,12 @@ namespace chromaprint
 		}
 	}
 
-	template<class InputIterator1, class InputIterator2, class OutputIterator>
-	void ApplyWindow(InputIterator1 input, InputIterator2 window, OutputIterator output, int size, double scale)
+	template <typename InputIt, typename WindowIt, typename OutputIt>
+	void ApplyWindow(InputIt first, InputIt last, WindowIt &window, OutputIt &output)
 	{
-		while (size--) {
-			*output = *input * *window * scale;
+		auto input = first;
+		while (input != last) {
+			*output = *input * *window;
 			++input;
 			++window;
 			++output;
