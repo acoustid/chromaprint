@@ -2,7 +2,6 @@
 // Distributed under the MIT license, see the LICENSE file for details.
 
 #include "fft_lib_avfft.h"
-#include "debug.h"
 
 namespace chromaprint {
 

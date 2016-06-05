@@ -1,52 +1,39 @@
-/*
- * Chromaprint -- Audio fingerprinting toolkit
- * Copyright (C) 2010  Lukas Lalinsky <lalinsky@gmail.com>
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
- * USA
- */
+// Copyright (C) 2010-2016  Lukas Lalinsky
+// Distributed under the MIT license, see the LICENSE file for details.
 
-#include "utils.h"
 #include "fft_lib_kissfft.h"
 
-using namespace chromaprint;
+namespace chromaprint {
 
-FFTLib::FFTLib(int frame_size, double *window)
-	: m_window(window),
-	  m_frame_size(frame_size)
-{
-	cfg = kiss_fftr_alloc(frame_size, 0, NULL, NULL);
-	m_input = new kiss_fft_scalar[frame_size];
-	m_output = new kiss_fft_cpx[frame_size];
+FFTLib::FFTLib(size_t frame_size) : m_frame_size(frame_size) {
+	m_window = (kiss_fft_scalar *) KISS_FFT_MALLOC(sizeof(kiss_fft_scalar) * frame_size);
+	m_input = (kiss_fft_scalar *) KISS_FFT_MALLOC(sizeof(kiss_fft_scalar) * frame_size);
+	m_output = (kiss_fft_cpx *) KISS_FFT_MALLOC(sizeof(kiss_fft_cpx) * frame_size);
+	PrepareHammingWindow(m_window, m_window + frame_size, 1.0 / INT16_MAX);
+	m_cfg = kiss_fftr_alloc(frame_size, 0, NULL, NULL);
 }
 
-FFTLib::~FFTLib()
-{
-	kiss_fftr_free(cfg);
-	delete[] m_input;
-	delete[] m_output;
+FFTLib::~FFTLib() {
+	kiss_fftr_free(m_cfg);
+	KISS_FFT_FREE(m_output);
+	KISS_FFT_FREE(m_input);
+	KISS_FFT_FREE(m_window);
 }
 
-void FFTLib::ComputeFrame(CombinedBuffer<int16_t>::Iterator input, double *output)
-{
-	ApplyWindow(input, m_window, m_input, m_frame_size, 1.0);
-	kiss_fftr(cfg, m_input, m_output);
+void FFTLib::Load(const int16_t *b1, const int16_t *e1, const int16_t *b2, const int16_t *e2) {
+	auto window = m_window;
+	auto output = m_input;
+	ApplyWindow(b1, e1, window, output);
+	ApplyWindow(b2, e2, window, output);
+}
 
-	const kiss_fft_cpx *in_ptr = m_output;
-	for (int i = 0; i <= m_frame_size / 2; i++) {
-		*output++ = in_ptr[0].r * in_ptr[0].r + in_ptr[0].i * in_ptr[0].i;
-		in_ptr++;
+void FFTLib::Compute(FFTFrame &frame) {
+	kiss_fftr(m_cfg, m_input, m_output);
+	auto input = m_output;
+	auto output = frame.data();
+	for (size_t i = 0; i <= m_frame_size / 2; ++i, ++input, ++output) {
+		*output = input->r * input->r + input->i * input->i;
 	}
 }
+
+}; // namespace chromaprint

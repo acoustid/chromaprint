@@ -1,52 +1,34 @@
-/*
- * Chromaprint -- Audio fingerprinting toolkit
- * Copyright (C) 2010  Lukas Lalinsky <lalinsky@gmail.com>
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
- * USA
- */
+// Copyright (C) 2010-2016  Lukas Lalinsky
+// Distributed under the MIT license, see the LICENSE file for details.
 
 #ifndef CHROMAPRINT_FFT_LIB_KISSFFT_H_
 #define CHROMAPRINT_FFT_LIB_KISSFFT_H_
 
-#include <math.h>
 #include <tools/kiss_fftr.h>
-#include "combined_buffer.h"
 
-namespace chromaprint
-{
+#include "fft_frame.h"
+#include "utils.h"
 
-	class FFTLib
-	{
-	public:
-		FFTLib(int frame_size, double *window);
-		~FFTLib();
+namespace chromaprint {
 
-		void ComputeFrame(CombinedBuffer<int16_t>::Iterator input, double *output);
+class FFTLib {
+public:
+	FFTLib(size_t frame_size);
+	~FFTLib();
 
-	private:
-		CHROMAPRINT_DISABLE_COPY(FFTLib);
+	void Load(const int16_t *begin1, const int16_t *end1, const int16_t *begin2, const int16_t *end2);
+	void Compute(FFTFrame &frame);
 
-		kiss_fftr_cfg cfg;
+private:
+	CHROMAPRINT_DISABLE_COPY(FFTLib);
 
-		double *m_window;
-		int m_frame_size;
-		kiss_fft_scalar *m_input;
-		kiss_fft_cpx *m_output;
-	};
-
+	size_t m_frame_size;
+	kiss_fft_scalar *m_window;
+	kiss_fft_scalar *m_input;
+	kiss_fft_cpx *m_output;
+	kiss_fftr_cfg m_cfg;
 };
 
-#endif
+}; // namespace chromaprint
+
+#endif // CHROMAPRINT_FFT_LIB_KISSFFT_H_
