@@ -1,5 +1,6 @@
 include_directories(
 	${GTEST_INCLUDE_DIRS}
+	${CMAKE_CURRENT_SOURCE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}/../src
 )
 add_subdirectory(${GTEST_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/gtest_build)
@@ -31,6 +32,7 @@ set(tests_SOURCES
 	test_moving_average.cpp
 	test_utils_gradient.cpp
 	test_utils_gaussian_filter.cpp
+	../src/audio/audio_slicer_test.cpp
 )
 
 add_executable(all_tests ${tests_SOURCES})

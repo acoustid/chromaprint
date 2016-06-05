@@ -32,6 +32,7 @@ set(chromaprint_SRCS
 	utils/gradient.h
 	utils/gaussian_filter.h
 	utils/scope_exit.h
+	audio/audio_slicer.h
 	avresample/resample2.c
 )
 
