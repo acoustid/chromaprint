@@ -55,6 +55,12 @@ if(WITH_FFTW3)
 	include_directories(${FFTW3_INCLUDE_DIR})
 endif(WITH_FFTW3)
 
+if(WITH_FFTW3F)
+	set(chromaprint_SRCS fft_lib_fftw3.cpp ${chromaprint_SRCS})
+	set(chromaprint_LINK_LIBS ${FFTW3_FFTWF_LIBRARY})
+	include_directories(${FFTW3_INCLUDE_DIR})
+endif(WITH_FFTW3F)
+
 if(WITH_VDSP)
 	set(chromaprint_SRCS fft_lib_vdsp.cpp ${chromaprint_SRCS})
 	set(chromaprint_LINK_LIBS ${ACCELERATE_LIBRARIES})

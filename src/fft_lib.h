@@ -33,6 +33,10 @@
 #include "fft_lib_fftw3.h"
 #endif
 
+#ifdef WITH_FFTW3F
+#include "fft_lib_fftw3.h"
+#endif
+
 #ifdef WITH_VDSP
 #include "fft_lib_vdsp.h"
 #endif

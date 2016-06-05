@@ -1,51 +1,46 @@
-/*
- * Chromaprint -- Audio fingerprinting toolkit
- * Copyright (C) 2010  Lukas Lalinsky <lalinsky@gmail.com>
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
- * USA
- */
+// Copyright (C) 2010-2016  Lukas Lalinsky
+// Distributed under the MIT license, see the LICENSE file for details.
 
 #ifndef CHROMAPRINT_FFT_LIB_FFTW3_H_
 #define CHROMAPRINT_FFT_LIB_FFTW3_H_
 
-#include <math.h>
 #include <fftw3.h>
-#include "combined_buffer.h"
 
-namespace chromaprint
-{
+#include "fft_frame.h"
+#include "utils.h"
 
-	class FFTLib
-	{
-	public:
-		FFTLib(int frame_size, double *window);
-		~FFTLib();
+#ifdef WITH_FFTW3F
+#define FFTW_SCALAR float
+#define fftw_plan fftwf_plan
+#define fftw_plan_r2r_1d fftwf_plan_r2r_1d
+#define fftw_execute fftwf_execute
+#define fftw_destroy_plan fftwf_destroy_plan
+#define fftw_malloc fftwf_malloc
+#define fftw_free fftwf_free
+#else
+#define FFTW_SCALAR double
+#endif
 
-		void ComputeFrame(CombinedBuffer<int16_t>::Iterator input, double *output);
+namespace chromaprint {
 
-	private:
-		CHROMAPRINT_DISABLE_COPY(FFTLib);
+class FFTLib {
+public:
+	FFTLib(size_t frame_size);
+	~FFTLib();
 
-		double *m_window;
-		int m_frame_size;
-		double *m_input;
-		double *m_output;
-		fftw_plan m_plan;
-	};
+	void Load(const int16_t *begin1, const int16_t *end1, const int16_t *begin2, const int16_t *end2);
+	void Compute(FFTFrame &frame);
 
+private:
+	CHROMAPRINT_DISABLE_COPY(FFTLib);
+
+	size_t m_frame_size;
+	FFTW_SCALAR *m_window;
+	FFTW_SCALAR *m_input;
+	FFTW_SCALAR *m_output;
+	fftw_plan m_plan;
 };
 
-#endif
+}; // namespace chromaprint
+
+#endif // CHROMAPRINT_FFT_LIB_FFTW3_H_
