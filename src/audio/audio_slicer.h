@@ -39,14 +39,12 @@ public:
 		size_t buffer_size = std::distance(m_buffer_begin, m_buffer_end);
 
 		while (buffer_size > 0 && buffer_size + size >= m_size) {
-			DEBUG("chromaprint::AudioSlicer::Process() -- processing buffer (" << buffer_size << ") + input (" << (m_size - buffer_size) << ")");
 			consumer(&(*m_buffer_begin), &(*m_buffer_end), begin, std::next(begin, m_size - buffer_size));
 			if (buffer_size >= m_increment) {
 				std::advance(m_buffer_begin, m_increment);
 				buffer_size -= m_increment;
 				const size_t available_buffer_size = std::distance(m_buffer_end, m_buffer.end());
 				if (buffer_size + available_buffer_size < m_size) {
-					DEBUG("chromaprint::AudioSlicer::Process() -- moving buffer to the front");
 					const auto new_buffer_begin = m_buffer.begin();
 					m_buffer_end = std::copy(m_buffer_begin, m_buffer_end, new_buffer_begin);
 					m_buffer_begin = new_buffer_begin;
@@ -61,14 +59,12 @@ public:
 
 		if (buffer_size == 0) {
 			while (size >= m_size) {
-				DEBUG("chromaprint::AudioSlicer::Process() -- processing input");
 				consumer(begin, std::next(begin, m_size), end, end);
 				std::advance(begin, m_increment);
 				size -= m_increment;
 			}
 		}
 
-		DEBUG("chromaprint::AudioSlicer::Process() -- adding " << size << " items to the back of the buffer");
 		assert(buffer_size + size < m_size);
 		m_buffer_end = std::copy(begin, end, m_buffer_end);
 	}

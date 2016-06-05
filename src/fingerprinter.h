@@ -56,7 +56,13 @@ namespace chromaprint
 		/**
 		 * Calculate the fingerprint based on the provided audio data.
 		 */
-		std::vector<uint32_t> Finish();
+		void Finish();
+
+		//! Get the fingerprint generate from data up to this point.
+		const std::vector<uint32_t> &GetFingerprint() const;
+
+		//! Clear the generated fingerprint, but allow more audio to be processed.
+		void ClearFingerprint();
 
 		bool SetOption(const char *name, int value);
 

@@ -21,11 +21,11 @@ public:
 
 	virtual void Consume(std::vector<double> &features) override;
 
-	//! Get the current fingerprint.
-	std::vector<uint32_t> GetFingerprint() const;
+	//! Get the fingerprint generate from data up to this point.
+	const std::vector<uint32_t> &GetFingerprint() const;
 
-	//! Reset the current fingerprint, but keep the internal state.
-	void ResetFingerprint();
+	//! Clear the generated fingerprint, but allow more features to be processed.
+	void ClearFingerprint();
 
 	//! Reset all internal state.
 	void Reset();

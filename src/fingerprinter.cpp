@@ -105,10 +105,17 @@ void Fingerprinter::Consume(const int16_t *samples, int length)
 	m_audio_processor->Consume(samples, length);
 }
 
-std::vector<uint32_t> Fingerprinter::Finish()
+void Fingerprinter::Finish()
 {
 	m_audio_processor->Flush();
+}
+
+const std::vector<uint32_t> &Fingerprinter::GetFingerprint() const {
 	return m_fingerprint_calculator->GetFingerprint();
+}
+
+void Fingerprinter::ClearFingerprint() {
+	m_fingerprint_calculator->ClearFingerprint();
 }
 
 }; // namespace chromaprint

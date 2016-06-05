@@ -22,10 +22,8 @@ struct ChromaprintContextPrivate {
 	ChromaprintContextPrivate(int algorithm)
 		: algorithm(algorithm),
 		  fingerprinter(CreateFingerprinterConfiguration(algorithm)) {}
-	bool finished = false;
 	int algorithm;
 	Fingerprinter fingerprinter;
-	std::vector<uint32_t> fingerprint;
 };
 
 struct ChromaprintMatcherContextPrivate {
@@ -73,7 +71,6 @@ int chromaprint_set_option(ChromaprintContext *c, const char *name, int value)
 int chromaprint_start(ChromaprintContext *c, int sample_rate, int num_channels)
 {
 	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
-	ctx->finished = false;
 	return ctx->fingerprinter.Start(sample_rate, num_channels) ? 1 : 0;
 }
 
@@ -87,18 +84,14 @@ int chromaprint_feed(ChromaprintContext *c, const int16_t *data, int length)
 int chromaprint_finish(ChromaprintContext *c)
 {
 	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
-	ctx->fingerprint = ctx->fingerprinter.Finish();
-	ctx->finished = true;
+	ctx->fingerprinter.Finish();
 	return 1;
 }
 
 int chromaprint_get_fingerprint(ChromaprintContext *c, char **data)
 {
 	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
-	if (!ctx->finished) {
-		return 0;
-	}
-	std::string fingerprint = CompressFingerprint(ctx->fingerprint, ctx->algorithm);
+	std::string fingerprint = CompressFingerprint(ctx->fingerprinter.GetFingerprint(), ctx->algorithm);
 	*data = (char *) malloc(GetBase64EncodedSize(fingerprint.size()) + 1);
 	Base64Encode(fingerprint.begin(), fingerprint.end(), *data, true);
 	return 1;
@@ -107,38 +100,40 @@ int chromaprint_get_fingerprint(ChromaprintContext *c, char **data)
 int chromaprint_get_raw_fingerprint(ChromaprintContext *c, uint32_t **data, int *size)
 {
 	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
-	if (!ctx->finished) {
-		return 0;
-	}
-	*data = (uint32_t *) malloc(sizeof(uint32_t) * ctx->fingerprint.size());
+	const auto fingerprint = ctx->fingerprinter.GetFingerprint();
+	*data = (uint32_t *) malloc(sizeof(uint32_t) * fingerprint.size());
 	if (!*data) {
 		return 0;
 	}
-	*size = ctx->fingerprint.size();
-	copy(ctx->fingerprint.begin(), ctx->fingerprint.end(), *data);
+	*size = fingerprint.size();
+	std::copy(fingerprint.begin(), fingerprint.end(), *data);
 	return 1;
 }
 
 int chromaprint_get_fingerprint_hash(ChromaprintContext *c, uint32_t *hash)
 {
 	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
-	if (!ctx->finished) {
-		return 0;
-	}
-	*hash = SimHash(ctx->fingerprint);
+	*hash = SimHash(ctx->fingerprinter.GetFingerprint());
+	return 1;
+}
+
+int chromaprint_clear_fingerprint(ChromaprintContext *c)
+{
+	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
+	ctx->fingerprinter.ClearFingerprint();
 	return 1;
 }
 
 int chromaprint_encode_fingerprint(const uint32_t *fp, int size, int algorithm, char **encoded_fp, int *encoded_size, int base64)
 {
 	std::vector<uint32_t> uncompressed(fp, fp + size);
-	std::string encoded = chromaprint::CompressFingerprint(uncompressed, algorithm);
+	std::string encoded = CompressFingerprint(uncompressed, algorithm);
 	if (base64) {
-		encoded = chromaprint::Base64Encode(encoded);
+		encoded = Base64Encode(encoded);
 	}
 	*encoded_fp = (char *) malloc(encoded.size() + 1);
 	*encoded_size = encoded.size();	
-	memcpy(*encoded_fp, encoded.c_str(), encoded.size() + 1);
+	std::copy(encoded.data(), encoded.data() + encoded.size() + 1, *encoded_fp);
 	return 1;
 }
 
@@ -146,9 +141,9 @@ int chromaprint_decode_fingerprint(const char *encoded_fp, int encoded_size, uin
 {
 	std::string encoded(encoded_fp, encoded_size);
 	if (base64) {
-		encoded = chromaprint::Base64Decode(encoded);
+		encoded = Base64Decode(encoded);
 	}
-	std::vector<uint32_t> uncompressed = chromaprint::DecompressFingerprint(encoded, algorithm);
+	std::vector<uint32_t> uncompressed = DecompressFingerprint(encoded, algorithm);
 	*fp = (uint32_t *) malloc(sizeof(uint32_t) * uncompressed.size());
 	*size = uncompressed.size();
 	std::copy(uncompressed.begin(), uncompressed.end(), *fp);

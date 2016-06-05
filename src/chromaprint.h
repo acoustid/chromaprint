@@ -22,16 +22,41 @@
  * represent the internal structure of the fingerprints. If you want to
  * compare two fingerprints yourself, you probably want them in this form.
  *
+ * @section generating Generating fingerprints
+ *
+ * Here is a simple example code that generates a fingerprint from audio samples in memory:
+ *
+ * @code
+ * ChromaprintContext *ctx;
+ * char *fp;
+ *
+ * const int sample_rate = 44100;
+ * const int num_channels = 2;
+ *
+ * ctx = chromaprint_new(CHROMAPRINT_ALGORITHM_DEFAULT);
+ *
+ * chromaprint_start(ctx, sample_rate, num_channels);
+ * while (has_more_data) {
+ *     chromaprint_feed(ctx, data, size);
+ * }
+ * chromaprint_finish(ctx);
+ *
+ * chromaprint_get_fingerprint(ctx, &fp);
+ * printf("%s\n", fp);
+ * chromaprint_dealloc(fp);
+ *
+ * chromaprint_free(ctx);
+ * @endcode
+ *
  * @section comparing Comparing fingerprints
  *
- *
- * Here is a very simple example code for matching two fingerprints:
+ * Here is a simple example code for matching two fingerprints:
  *
  * @code
  * ChromaprintMatcherContext *ctx;
  * int num_segments, i, pos1, pos2, duration, score;
  *
- * ctx = chromaprint_matcher_new(CHROMAPRINT_ALGORITHM_DEFAULT);
+ * ctx = chromaprint_matcher_new();
  *
  * chromaprint_matcher_set_fingerprint(ctx, 0, "AQAAS5IURssi4vnxPRr-CHuHP-B3P...");
  * chromaprint_matcher_set_fingerprint(ctx, 1, "AQAAS1KiiHGW4MqOH86HF01OJOee4...");
@@ -169,7 +194,7 @@ CHROMAPRINT_API int chromaprint_start(ChromaprintContext *ctx, int sample_rate, 
 CHROMAPRINT_API int chromaprint_feed(ChromaprintContext *ctx, const int16_t *data, int size);
 
 /**
- * Process any remaining buffered audio data and calculate the fingerprint.
+ * Process any remaining buffered audio data.
  *
  * @param[in] ctx Chromaprint context pointer
  *
@@ -217,6 +242,19 @@ CHROMAPRINT_API int chromaprint_get_raw_fingerprint(ChromaprintContext *ctx, uin
  * @return 0 on error, 1 on success
  */
 CHROMAPRINT_API int chromaprint_get_fingerprint_hash(ChromaprintContext *ctx, uint32_t *hash);
+
+/**
+ * Clear the current fingerprint, but allow more data to be processed.
+ *
+ * This is useful if you are processing a long stream and want to many
+ * smaller fingerprints, instead of waiting for the entire stream to be
+ * processed.
+ *
+ * @param[in] ctx Chromaprint context pointer
+ *
+ * @return 0 on error, 1 on success
+ */
+CHROMAPRINT_API int chromaprint_clear_fingerprint(ChromaprintContext *ctx);
 
 /**
  * Compress and optionally base64-encode a raw fingerprint

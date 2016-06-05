@@ -40,11 +40,11 @@ void FingerprintCalculator::Consume(std::vector<double> &features) {
 	}
 }
 
-std::vector<uint32_t> FingerprintCalculator::GetFingerprint() const {
+const std::vector<uint32_t> &FingerprintCalculator::GetFingerprint() const {
 	return m_fingerprint;
 }
 
-void FingerprintCalculator::ResetFingerprint() {
+void FingerprintCalculator::ClearFingerprint() {
 	m_fingerprint.clear();
 }
 
