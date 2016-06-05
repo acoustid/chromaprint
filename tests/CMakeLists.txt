@@ -32,6 +32,7 @@ set(tests_SOURCES
 	test_moving_average.cpp
 	test_utils_gradient.cpp
 	test_utils_gaussian_filter.cpp
+	../src/fft_test.cpp
 	../src/audio/audio_slicer_test.cpp
 )
 

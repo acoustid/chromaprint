@@ -10,22 +10,25 @@ namespace chromaprint {
 
 namespace {
 
-	struct Collector {
-		template <typename InputIt1, typename InputIt2>
-		void operator()(InputIt1 b1, InputIt1 e1, InputIt2 b2, InputIt2 e2) {
-			std::vector<int16_t> slice;
-			slice.insert(slice.end(), b1, e1);
-			slice.insert(slice.end(), b2, e2);
-			output.push_back(slice);
-		}
-		std::vector<std::vector<int16_t>> output;
-	};
+struct Collector {
+	template <typename InputIt1, typename InputIt2>
+	void operator()(InputIt1 b1, InputIt1 e1, InputIt2 b2, InputIt2 e2) {
+		std::vector<int16_t> slice;
+		slice.insert(slice.end(), b1, e1);
+		slice.insert(slice.end(), b2, e2);
+		output.push_back(slice);
+	}
+	std::vector<std::vector<int16_t>> output;
+};
 
 };
 
 TEST(AudioSlicerTest, Process) {
 	AudioSlicer<int16_t> slicer(4, 2);
 	Collector collector;
+
+	EXPECT_EQ(4, slicer.size());
+	EXPECT_EQ(2, slicer.increment());
 
 	const int16_t input[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 	slicer.Process(input + 0, input + 1, std::ref(collector));

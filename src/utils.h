@@ -32,6 +32,7 @@
 #include <algorithm>
 #include <limits>
 #include <iterator>
+#include "debug.h"
 
 #ifndef HAVE_ROUND
 static inline double round(double x)
@@ -53,12 +54,12 @@ namespace chromaprint
 {
 
 	template<class RandomAccessIterator>
-	void PrepareHammingWindow(RandomAccessIterator first, RandomAccessIterator last)
+	void PrepareHammingWindow(RandomAccessIterator first, RandomAccessIterator last, double scale = 1.0)
 	{
-		size_t i = 0, max_i = last - first - 1;
-		double scale = 2. * M_PI / max_i;
+		int i = 0;
+		const auto size = std::distance(first, last);
 		while (first != last) {
-			*first++ = 0.54 - 0.46 * cos(scale * i++);
+			*first++ = scale * (0.54 - 0.46 * cos(i++ * 2.0 * M_PI / (size - 1)));
 		}
 	}
 

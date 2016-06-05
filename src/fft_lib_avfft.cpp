@@ -1,33 +1,15 @@
-/*
- * Chromaprint -- Audio fingerprinting toolkit
- * Copyright (C) 2010  Lukas Lalinsky <lalinsky@gmail.com>
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
- * USA
- */
+// Copyright (C) 2010-2016  Lukas Lalinsky
+// Distributed under the MIT license, see the LICENSE file for details.
 
-#include "utils.h"
 #include "fft_lib_avfft.h"
+#include "debug.h"
 
-using namespace chromaprint;
+namespace chromaprint {
 
-FFTLib::FFTLib(int frame_size, double *window)
-	: m_window(window),
-	  m_frame_size(frame_size)
-{
-	m_input = (float *)av_mallocz(sizeof(float) * frame_size);
+FFTLib::FFTLib(size_t frame_size) : m_frame_size(frame_size) {
+	m_window = (FFTSample *) av_malloc(sizeof(FFTSample) * frame_size);
+	m_input = (FFTSample *) av_malloc(sizeof(FFTSample) * frame_size);
+	PrepareHammingWindow(m_window, m_window + frame_size, 1.0 / INT16_MAX);
 	int bits = -1;
 	while (frame_size) {
 		bits++;
@@ -36,24 +18,35 @@ FFTLib::FFTLib(int frame_size, double *window)
 	m_rdft_ctx = av_rdft_init(bits, DFT_R2C);
 }
 
-FFTLib::~FFTLib()
-{
+FFTLib::~FFTLib() {
 	av_rdft_end(m_rdft_ctx);
 	av_free(m_input);
+	av_free(m_window);
 }
 
-void FFTLib::ComputeFrame(CombinedBuffer<int16_t>::Iterator input, double *output)
-{
-	ApplyWindow(input, m_window, m_input, m_frame_size, 1.0);
-	av_rdft_calc(m_rdft_ctx, m_input);
-	float *in_ptr = m_input;
-	output[0] = in_ptr[0] * in_ptr[0];
-	output[m_frame_size / 2] = in_ptr[1] * in_ptr[1];
-	output += 1;
-	in_ptr += 2;
-	for (int i = 1; i < m_frame_size / 2; i++) {
-		*output++ = in_ptr[0] * in_ptr[0] + in_ptr[1] * in_ptr[1];
-		in_ptr += 2;
+void FFTLib::Load(const int16_t *b1, const int16_t *e1, const int16_t *b2, const int16_t *e2) {
+	auto window = m_window;
+	auto input = m_input;
+	for (auto i = b1; i != e1; ++i) {
+		*input++ = *i * *window++;
+	}
+	for (auto i = b2; i != e2; ++i) {
+		*input++ = *i * *window++;
 	}
 }
 
+void FFTLib::Compute(FFTFrame &frame) {
+	av_rdft_calc(m_rdft_ctx, m_input);
+	auto input = m_input;
+	auto output = frame.begin();
+	output[0] = input[0] * input[0];
+	output[m_frame_size / 2] = input[1] * input[1];
+	output += 1;
+	input += 2;
+	for (size_t i = 1; i < m_frame_size / 2; i++) {
+		*output++ = input[0] * input[0] + input[1] * input[1];
+		input += 2;
+	}
+}
+
+}; // namespace chromaprint

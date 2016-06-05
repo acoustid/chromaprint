@@ -13,7 +13,7 @@ extern "C" {
 namespace chromaprint {
 
 static const int kMinSampleRate = 1000;
-static const int kMaxBufferSize = 1024 * 16;
+static const int kMaxBufferSize = 1024 * 32;
 
 // Resampler configuration
 static const int kResampleFilterLength = 16;

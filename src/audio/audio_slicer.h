@@ -17,8 +17,20 @@ class AudioSlicer {
 public:
 	AudioSlicer(size_t size, size_t increment)
 		: m_size(size), m_increment(increment), m_buffer(size * 2) {
-		m_buffer_begin = m_buffer_end = m_buffer.begin();
 		assert(size >= increment);
+		Reset();
+	}
+
+	size_t size() const {
+		return m_size;
+	}
+
+	size_t increment() const {
+		return m_increment;
+	}
+
+	void Reset() {
+		m_buffer_begin = m_buffer_end = m_buffer.begin();
 	}
 
 	template <typename InputIt, typename ConsumerFunc>
@@ -28,7 +40,7 @@ public:
 
 		while (buffer_size > 0 && buffer_size + size >= m_size) {
 			DEBUG("chromaprint::AudioSlicer::Process() -- processing buffer (" << buffer_size << ") + input (" << (m_size - buffer_size) << ")");
-			consumer(m_buffer_begin, m_buffer_end, begin, std::next(begin, m_size - buffer_size));
+			consumer(&(*m_buffer_begin), &(*m_buffer_end), begin, std::next(begin, m_size - buffer_size));
 			if (buffer_size >= m_increment) {
 				std::advance(m_buffer_begin, m_increment);
 				buffer_size -= m_increment;

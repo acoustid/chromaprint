@@ -1,76 +1,29 @@
-/*
- * Chromaprint -- Audio fingerprinting toolkit
- * Copyright (C) 2010  Lukas Lalinsky <lalinsky@gmail.com>
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
- * USA
- */
+// Copyright (C) 2010-2016  Lukas Lalinsky
+// Distributed under the MIT license, see the LICENSE file for details.
 
-#include <limits>
+#include "audio/audio_slicer.h"
 #include "utils.h"
 #include "fft_lib.h"
 #include "fft.h"
 #include "debug.h"
 
-using namespace chromaprint;
+namespace chromaprint {
 
-FFT::FFT(int frame_size, int overlap, FFTFrameConsumer *consumer)
-	: m_window(new double[frame_size]),
-	  m_buffer_offset(0),
-	  m_buffer(new int16_t[frame_size]),
-	  m_frame(frame_size),
-	  m_frame_size(frame_size),
-	  m_increment(frame_size - overlap),
-	  m_consumer(consumer)
-{
-	PrepareHammingWindow(m_window, m_window + frame_size);
-	for (int i = 0; i < frame_size; i++) {
-		m_window[i] /= std::numeric_limits<int16_t>::max();
-	}
-	m_lib = new FFTLib(frame_size, m_window);
+FFT::FFT(size_t frame_size, size_t overlap, FFTFrameConsumer *consumer)
+	: m_frame(1 + frame_size / 2), m_slicer(frame_size, frame_size - overlap), m_lib(new FFTLib(frame_size)), m_consumer(consumer) {}
+
+FFT::~FFT() {}
+
+void FFT::Reset() {
+	m_slicer.Reset();
 }
 
-FFT::~FFT()
-{
-	delete m_lib;
-	delete[] m_buffer;
-	delete[] m_window;
-}
-
-void FFT::Reset()
-{
-	m_buffer_offset = 0;
-}
-
-void FFT::Consume(const int16_t *input, int length)
-{
-	// Special case, just pre-filling the buffer
-	if (m_buffer_offset + length < m_frame_size) {
-		std::copy(input, input + length, m_buffer + m_buffer_offset);
-		m_buffer_offset += length;
-		return;
-	}
-	// Apply FFT on the available data
-	CombinedBuffer<int16_t> combined_buffer(m_buffer, m_buffer_offset, input, length);
-	while (combined_buffer.Size() >= m_frame_size) {
-		m_lib->ComputeFrame(combined_buffer.Begin(), m_frame.data());
+void FFT::Consume(const int16_t *input, int length) {
+	m_slicer.Process(input, input + length, [&](const int16_t *b1, const int16_t *e1, const int16_t *b2, const int16_t *e2) {
+		m_lib->Load(b1, e1, b2, e2);
+		m_lib->Compute(m_frame);
 		m_consumer->Consume(m_frame);
-		combined_buffer.Shift(m_increment);
-	}
-	// Copy the remaining input data to the internal buffer
-	std::copy(combined_buffer.Begin(), combined_buffer.End(), m_buffer);
-	m_buffer_offset = combined_buffer.Size();
+	});
 }
 
+}; // namespace chromaprint
