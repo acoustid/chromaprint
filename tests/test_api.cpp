@@ -4,9 +4,32 @@
 #include <vector>
 #include <fstream>
 #include "chromaprint.h"
+#include "test_utils.h"
 #include "utils/scope_exit.h"
 
 namespace chromaprint {
+
+TEST(API, TestFp) {
+	std::vector<short> data = LoadAudioFile("data/test_stereo_44100.raw");
+
+	ChromaprintContext *ctx = chromaprint_new(CHROMAPRINT_ALGORITHM_TEST2);
+	ASSERT_NE(nullptr, ctx);
+	SCOPE_EXIT(chromaprint_free(ctx));
+
+	ASSERT_EQ(1, chromaprint_start(ctx, 44100, 1));
+	ASSERT_EQ(1, chromaprint_feed(ctx, data.data(), data.size()));
+
+	char *fp;
+	uint32_t fp_hash;
+
+	ASSERT_EQ(1, chromaprint_finish(ctx));
+	ASSERT_EQ(1, chromaprint_get_fingerprint(ctx, &fp));
+	SCOPE_EXIT(chromaprint_dealloc(fp));
+	ASSERT_EQ(1, chromaprint_get_fingerprint_hash(ctx, &fp_hash));
+
+	EXPECT_EQ(std::string("AQAAC0kkZUqYREkUnFAXHk8uuMZl6EfO4zu-4ABKFGESWIIMEQE"), std::string(fp));
+	ASSERT_EQ(3732003127, fp_hash);
+}
 
 TEST(API, Test2SilenceFp)
 {

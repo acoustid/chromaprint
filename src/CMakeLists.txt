@@ -11,10 +11,8 @@ set(chromaprint_SRCS
 	chroma.cpp
 	chroma_resampler.cpp
 	chroma_filter.cpp
-	integral_image.cpp
 	spectrum.cpp
 	spectral_centroid.cpp
-	filter.cpp
 	fft.cpp
 	fingerprinter.cpp
 	image_builder.cpp
@@ -32,6 +30,7 @@ set(chromaprint_SRCS
 	utils/gradient.h
 	utils/gaussian_filter.h
 	utils/scope_exit.h
+	utils/rolling_integral_image.h
 	audio/audio_slicer.h
 	avresample/resample2.c
 )

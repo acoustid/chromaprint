@@ -1,64 +1,51 @@
-/*
- * Chromaprint -- Audio fingerprinting toolkit
- * Copyright (C) 2010  Lukas Lalinsky <lalinsky@gmail.com>
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
- * USA
- */
+// Copyright (C) 2010-2016  Lukas Lalinsky
+// Distributed under the MIT license, see the LICENSE file for details.
 
 #include "fingerprint_calculator.h"
 #include "classifier.h"
 #include "debug.h"
 #include "utils.h"
 
-using namespace chromaprint;
+namespace chromaprint {
 
-FingerprintCalculator::FingerprintCalculator(const Classifier *classifiers, int num_classifiers)
-	: m_classifiers(classifiers), m_num_classifiers(num_classifiers)
+FingerprintCalculator::FingerprintCalculator(const Classifier *classifiers, size_t num_classifiers)
+	: m_classifiers(classifiers), m_num_classifiers(num_classifiers), m_image(256)
 {
 	m_max_filter_width = 0;
-	for (int i = 0; i < num_classifiers; i++) {
-		m_max_filter_width = std::max(m_max_filter_width, classifiers[i].filter().width());
+	for (size_t i = 0; i < num_classifiers; i++) {
+		m_max_filter_width = std::max(m_max_filter_width, (size_t) classifiers[i].filter().width());
 	}
 	assert(m_max_filter_width > 0);
+	assert(m_max_filter_width < 256);
 }
 
-
-std::vector<uint32_t> FingerprintCalculator::Calculate(Image *image)
-{
-	int length = image->NumRows() - m_max_filter_width + 1;
-	if (length <= 0) {
-		DEBUG("chromaprint::FingerprintCalculator::Calculate() -- Not "
-		      << "enough data. Image has " << image->NumRows() << " rows, "
-	          << "needs at least " << m_max_filter_width << " rows.");
-		return std::vector<uint32_t>();
-	}
-	IntegralImage integral_image(image);
-	std::vector<uint32_t> fingerprint(length);
-	for (int i = 0; i < length; i++) {
-		fingerprint[i] = CalculateSubfingerprint(&integral_image, i);
-	}
-	return fingerprint;
-}
-
-uint32_t FingerprintCalculator::CalculateSubfingerprint(IntegralImage *image, int offset)
+uint32_t FingerprintCalculator::CalculateSubfingerprint(size_t offset)
 {
 	uint32_t bits = 0;
-	for (int i = 0; i < m_num_classifiers; i++) {
-		bits = (bits << 2) | GrayCode(m_classifiers[i].Classify(image, offset));
+	for (size_t i = 0; i < m_num_classifiers; i++) {
+		bits = (bits << 2) | GrayCode(m_classifiers[i].Classify(m_image, offset));
 	}
 	return bits;
 }
 
+void FingerprintCalculator::Reset() {
+	m_image.Reset();
+	m_fingerprint.clear();
+}
+
+void FingerprintCalculator::Consume(std::vector<double> &features) {
+	m_image.AddRow(features);
+	if (m_image.num_rows() >= m_max_filter_width) {
+		m_fingerprint.push_back(CalculateSubfingerprint(m_image.num_rows() - m_max_filter_width));
+	}
+}
+
+std::vector<uint32_t> FingerprintCalculator::GetFingerprint() const {
+	return m_fingerprint;
+}
+
+void FingerprintCalculator::ResetFingerprint() {
+	m_fingerprint.clear();
+}
+
+}; // namespace chromaprint

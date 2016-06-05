@@ -1,51 +1,46 @@
-/*
- * Chromaprint -- Audio fingerprinting toolkit
- * Copyright (C) 2010  Lukas Lalinsky <lalinsky@gmail.com>
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
- * USA
- */
+// Copyright (C) 2010-2016  Lukas Lalinsky
+// Distributed under the MIT license, see the LICENSE file for details.
 
 #ifndef CHROMAPRINT_FINGERPRINT_CALCULATOR_H_
 #define CHROMAPRINT_FINGERPRINT_CALCULATOR_H_
 
-#include <stdint.h>
+#include <cstdint>
 #include <vector>
+#include "feature_vector_consumer.h"
+#include "utils/rolling_integral_image.h"
 
-namespace chromaprint
-{
-	class Classifier;
-	class Image;
-	class IntegralImage;
+namespace chromaprint {
 
-	class FingerprintCalculator
-	{
-	public:
-		FingerprintCalculator(const Classifier *classifiers, int num_classifiers);
+class Classifier;
+class Image;
+class IntegralImage;
 
-		std::vector<uint32_t> Calculate(Image *image);
+class FingerprintCalculator : public FeatureVectorConsumer {
+public:
+	FingerprintCalculator(const Classifier *classifiers, size_t num_classifiers);
 
-		uint32_t CalculateSubfingerprint(IntegralImage *image, int offset);
+	virtual void Consume(std::vector<double> &features) override;
 
-	private:
-		const Classifier *m_classifiers;
-		int m_num_classifiers;
-		int m_max_filter_width;
-	};
+	//! Get the current fingerprint.
+	std::vector<uint32_t> GetFingerprint() const;
 
+	//! Reset the current fingerprint, but keep the internal state.
+	void ResetFingerprint();
+
+	//! Reset all internal state.
+	void Reset();
+
+private:
+	uint32_t CalculateSubfingerprint(size_t offset);
+
+	const Classifier *m_classifiers;
+	size_t m_num_classifiers;
+	size_t m_max_filter_width;
+	RollingIntegralImage m_image;
+	std::vector<uint32_t> m_fingerprint;
 };
+
+}; // namespace chromaprint
 
 #endif
 

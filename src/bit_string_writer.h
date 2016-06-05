@@ -27,9 +27,6 @@
 
 namespace chromaprint
 {
-	class Classifier;
-	class Image;
-	class IntegralImage;
 
 	class BitStringWriter
 	{

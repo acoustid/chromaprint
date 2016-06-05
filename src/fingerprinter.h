@@ -23,13 +23,10 @@
 
 #include <stdint.h>
 #include <vector>
-#include "image.h"
 #include "audio_consumer.h"
 
 namespace chromaprint
 {
-	class ImageBuilder;
-	class IntegralImage;
 	class FFT;
 	class Chroma;
 	class ChromaNormalizer;
@@ -64,8 +61,6 @@ namespace chromaprint
 		bool SetOption(const char *name, int value);
 
 	private:
-		Image m_image;
-		ImageBuilder *m_image_builder;
 		Chroma *m_chroma;
 		ChromaNormalizer *m_chroma_normalizer;
 		ChromaFilter *m_chroma_filter;
