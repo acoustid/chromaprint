@@ -20,6 +20,12 @@ struct Segment
 	double score;
 	Segment(size_t pos1, size_t pos2, size_t duration, double score)
 		: pos1(pos1), pos2(pos2), duration(duration), score(score) {}
+
+	int public_score() const {
+		//return round(100 * (1 - score / 16));
+		return round(100 * pow(score, 1.4) / pow(10, 1.4));
+	}
+
 };
 
 class FingerprintMatcher

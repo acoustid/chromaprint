@@ -128,7 +128,7 @@ TEST(API, TestMatcher)
 
 	ChromaprintMatcherContext *ctx;
 
-	ctx = chromaprint_matcher_new(CHROMAPRINT_ALGORITHM_DEFAULT);
+	ctx = chromaprint_matcher_new();
 	ASSERT_NE(nullptr, ctx);
 	SCOPE_EXIT(chromaprint_matcher_free(ctx));
 

@@ -289,12 +289,9 @@ CHROMAPRINT_API int chromaprint_hash_fingerprint(const uint32_t *fp, int size, u
  *
  * You should use chromaprint_matcher_free() to free the pointer.
  *
- * @param version the fingerprint algorithm version you want to use, or
- *		CHROMAPRINT_ALGORITHM_DEFAULT for the default algorithm
- *
  * @return Chromaprint matcher context pointer or NULL on error
  */
-CHROMAPRINT_API ChromaprintMatcherContext *chromaprint_matcher_new(int version);
+CHROMAPRINT_API ChromaprintMatcherContext *chromaprint_matcher_new();
 
 /**
  * Free the matcher context allocated by chromaprint_matcher_new().
@@ -321,10 +318,12 @@ CHROMAPRINT_API int chromaprint_matcher_set_fingerprint(ChromaprintMatcherContex
  * @param[in] idx 0 or 1, depending on which fingerprint you want to set
  * @param[in] fp raw fingerprint represented as an 32-bit int array
  * @param[in] size number of items in the fp array
+ * @param[in] algorithm Chromaprint algorithm version which was used to generate the
+ *               raw fingerprint
  *
  * @return 0 on error, 1 on success
  */
-CHROMAPRINT_API int chromaprint_matcher_set_raw_fingerprint(ChromaprintMatcherContext *ctx, int idx, const uint32_t *fp, int size);
+CHROMAPRINT_API int chromaprint_matcher_set_raw_fingerprint(ChromaprintMatcherContext *ctx, int idx, const uint32_t *fp, int size, int algorithm);
 
 /**
  * Compare two fingerprints.

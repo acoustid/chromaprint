@@ -91,5 +91,5 @@ install(TARGETS chromaprint
 	PUBLIC_HEADER DESTINATION ${INCLUDE_INSTALL_DIR}
 )
 
-#add_executable(fpcmp cmd/fpcmp.cpp)
-#target_link_libraries(fpcmp chromaprint ${chromaprint_LINK_LIBS})
+add_executable(fpcmp cmd/fpcmp.cpp)
+target_link_libraries(fpcmp chromaprint ${chromaprint_LINK_LIBS})
