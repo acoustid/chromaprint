@@ -100,7 +100,10 @@ extern "C" {
 
 #include <stdint.h>
 
-typedef void *ChromaprintContext;
+struct ChromaprintContextPrivate;
+typedef struct ChromaprintContextPrivate ChromaprintContext;
+
+struct ChromaprintMatcherContextPrivate;
 typedef struct ChromaprintMatcherContextPrivate ChromaprintMatcherContext;
 
 #define CHROMAPRINT_VERSION_MAJOR 1

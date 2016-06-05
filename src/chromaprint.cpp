@@ -52,54 +52,54 @@ const char *chromaprint_get_version(void)
 
 ChromaprintContext *chromaprint_new(int algorithm)
 {
-	ChromaprintContextPrivate *ctx = new ChromaprintContextPrivate(algorithm);
-	return (ChromaprintContext *) ctx;
+	return new ChromaprintContextPrivate(algorithm);
 }
 
-void chromaprint_free(ChromaprintContext *c)
+void chromaprint_free(ChromaprintContext *ctx)
 {
-	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
-	delete ctx;
+	if (ctx) {
+		delete ctx;
+	}
 }
 
-int chromaprint_set_option(ChromaprintContext *c, const char *name, int value)
+int chromaprint_set_option(ChromaprintContext *ctx, const char *name, int value)
 {
-	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
+	FAIL_IF(!ctx, "context can't be NULL");
 	return ctx->fingerprinter.SetOption(name, value) ? 1 : 0;
 }
 
-int chromaprint_start(ChromaprintContext *c, int sample_rate, int num_channels)
+int chromaprint_start(ChromaprintContext *ctx, int sample_rate, int num_channels)
 {
-	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
+	FAIL_IF(!ctx, "context can't be NULL");
 	return ctx->fingerprinter.Start(sample_rate, num_channels) ? 1 : 0;
 }
 
-int chromaprint_feed(ChromaprintContext *c, const int16_t *data, int length)
+int chromaprint_feed(ChromaprintContext *ctx, const int16_t *data, int length)
 {
-	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
+	FAIL_IF(!ctx, "context can't be NULL");
 	ctx->fingerprinter.Consume(data, length);
 	return 1;
 }
 
-int chromaprint_finish(ChromaprintContext *c)
+int chromaprint_finish(ChromaprintContext *ctx)
 {
-	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
+	FAIL_IF(!ctx, "context can't be NULL");
 	ctx->fingerprinter.Finish();
 	return 1;
 }
 
-int chromaprint_get_fingerprint(ChromaprintContext *c, char **data)
+int chromaprint_get_fingerprint(ChromaprintContext *ctx, char **data)
 {
-	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
+	FAIL_IF(!ctx, "context can't be NULL");
 	std::string fingerprint = CompressFingerprint(ctx->fingerprinter.GetFingerprint(), ctx->algorithm);
 	*data = (char *) malloc(GetBase64EncodedSize(fingerprint.size()) + 1);
 	Base64Encode(fingerprint.begin(), fingerprint.end(), *data, true);
 	return 1;
 }
 
-int chromaprint_get_raw_fingerprint(ChromaprintContext *c, uint32_t **data, int *size)
+int chromaprint_get_raw_fingerprint(ChromaprintContext *ctx, uint32_t **data, int *size)
 {
-	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
+	FAIL_IF(!ctx, "context can't be NULL");
 	const auto fingerprint = ctx->fingerprinter.GetFingerprint();
 	*data = (uint32_t *) malloc(sizeof(uint32_t) * fingerprint.size());
 	if (!*data) {
@@ -110,16 +110,16 @@ int chromaprint_get_raw_fingerprint(ChromaprintContext *c, uint32_t **data, int 
 	return 1;
 }
 
-int chromaprint_get_fingerprint_hash(ChromaprintContext *c, uint32_t *hash)
+int chromaprint_get_fingerprint_hash(ChromaprintContext *ctx, uint32_t *hash)
 {
-	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
+	FAIL_IF(!ctx, "context can't be NULL");
 	*hash = SimHash(ctx->fingerprinter.GetFingerprint());
 	return 1;
 }
 
-int chromaprint_clear_fingerprint(ChromaprintContext *c)
+int chromaprint_clear_fingerprint(ChromaprintContext *ctx)
 {
-	ChromaprintContextPrivate *ctx = (ChromaprintContextPrivate *) c;
+	FAIL_IF(!ctx, "context can't be NULL");
 	ctx->fingerprinter.ClearFingerprint();
 	return 1;
 }
@@ -166,7 +166,9 @@ ChromaprintMatcherContext *chromaprint_matcher_new()
 
 void chromaprint_matcher_free(ChromaprintMatcherContext *ctx)
 {
-	delete ctx;
+	if (ctx) {
+		delete ctx;
+	}
 }
 
 int chromaprint_matcher_set_fingerprint(ChromaprintMatcherContext *ctx, int idx, const char *fp)
