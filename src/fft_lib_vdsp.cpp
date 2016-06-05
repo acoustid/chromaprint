@@ -1,6 +1,7 @@
 // Copyright (C) 2010-2016  Lukas Lalinsky
 // Distributed under the MIT license, see the LICENSE file for details.
 
+#include <cassert>
 #include "fft_lib_vdsp.h"
 
 namespace chromaprint {
@@ -39,7 +40,7 @@ void FFTLib::Compute(FFTFrame &frame) {
 	output[0] = m_a.realp[0] * m_a.realp[0];
 	output[m_frame_size / 2] = m_a.imagp[0] * m_a.imagp[0];
 	output += 1;
-	for (int i = 1; i < m_frame_size / 2; ++i, ++output) {
+	for (size_t i = 1; i < m_frame_size / 2; ++i, ++output) {
 		*output = m_a.realp[i] * m_a.realp[i] + m_a.imagp[i] * m_a.imagp[i];
 	}
 }
