@@ -14,7 +14,7 @@ FFTLib::FFTLib(size_t frame_size) : m_frame_size(frame_size) {
 	m_input = new float[frame_size];
 	m_a.realp = new float[frame_size / 2];
 	m_a.imagp = new float[frame_size / 2];
-	PrepareHammingWindow(m_window, m_window + frame_size, 1.0 / INT16_MAX);
+	PrepareHammingWindow(m_window, m_window + frame_size, 0.5 / INT16_MAX);
 	m_setup = vDSP_create_fftsetup(m_log2n, 0);
 }
 
