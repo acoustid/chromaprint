@@ -14,8 +14,6 @@ set(tests_SOURCES
 	test_filter_utils.cpp
 	test_lloyds.cpp
 	test_audio_processor.cpp
-	test_bit_string_reader.cpp
-	test_bit_string_writer.cpp
 	test_simhash.cpp
 	test_chromaprint.cpp
 	test_chroma.cpp

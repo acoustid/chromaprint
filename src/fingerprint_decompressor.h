@@ -4,10 +4,9 @@
 #ifndef CHROMAPRINT_FINGERPRINT_DECOMPRESSOR_H_
 #define CHROMAPRINT_FINGERPRINT_DECOMPRESSOR_H_
 
-#include <stdint.h>
+#include <cstdint>
 #include <vector>
 #include <string>
-#include "bit_string_reader.h"
 
 namespace chromaprint {
 
@@ -18,13 +17,10 @@ public:
 	std::vector<uint32_t> Decompress(const std::string &fingerprint, int *algorithm = 0);
 
 private:
-
-	bool ReadNormalBits(BitStringReader *reader);
-	bool ReadExceptionBits(BitStringReader *reader);
 	void UnpackBits();
-
 	std::vector<uint32_t> m_result;
-	std::vector<char> m_bits;
+	std::vector<unsigned char> m_bits;
+	std::vector<unsigned char> m_exceptional_bits;
 };
 
 inline std::vector<uint32_t> DecompressFingerprint(const std::string &data, int *algorithm = 0)
