@@ -82,7 +82,7 @@ std::vector<uint32_t> FingerprintDecompressor::Decompress(const std::string &dat
 	}
 
 	if (num_exceptional_bits) {
-		m_exceptional_bits.resize(num_exceptional_bits);
+		m_exceptional_bits.resize(GetUnpackedInt5ArraySize(GetPackedInt5ArraySize(num_exceptional_bits)));
 		UnpackInt5Array(data.begin() + offset, data.end(), m_exceptional_bits.begin());
 		for (size_t i = 0, j = 0; i < m_bits.size(); i++) {
 			if (m_bits[i] == kMaxNormalValue) {
