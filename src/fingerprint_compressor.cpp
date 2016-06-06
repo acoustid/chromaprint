@@ -36,7 +36,7 @@ void FingerprintCompressor::ProcessSubfingerprint(uint32_t x)
 	m_normal_bits.push_back(0);
 }
 
-std::string FingerprintCompressor::Compress(const std::vector<uint32_t> &data, int algorithm)
+void FingerprintCompressor::Compress(const std::vector<uint32_t> &data, int algorithm, std::string &output)
 {
 	const auto size = data.size();
 
@@ -52,17 +52,15 @@ std::string FingerprintCompressor::Compress(const std::vector<uint32_t> &data, i
 		}
 	}
 
-	m_result.resize(4 + GetPackedInt3ArraySize(m_normal_bits.size()) + GetPackedInt5ArraySize(m_exceptional_bits.size()));
-	m_result[0] = algorithm & 255;
-	m_result[1] = (size >> 16) & 255;
-	m_result[2] = (size >>  8) & 255;
-	m_result[3] = (size      ) & 255;
+	output.resize(4 + GetPackedInt3ArraySize(m_normal_bits.size()) + GetPackedInt5ArraySize(m_exceptional_bits.size()));
+	output[0] = algorithm & 255;
+	output[1] = (size >> 16) & 255;
+	output[2] = (size >>  8) & 255;
+	output[3] = (size      ) & 255;
 
-	auto ptr = m_result.begin() + 4;
+	auto ptr = output.begin() + 4;
 	ptr = PackInt3Array(m_normal_bits.begin(), m_normal_bits.end(), ptr);
 	ptr = PackInt5Array(m_exceptional_bits.begin(), m_exceptional_bits.end(), ptr);
-
-	return m_result;
 }
 
 }; // namespace chromaprint

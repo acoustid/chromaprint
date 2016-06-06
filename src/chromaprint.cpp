@@ -25,6 +25,7 @@ struct ChromaprintContextPrivate {
 	int algorithm;
 	Fingerprinter fingerprinter;
 	FingerprintCompressor compressor;
+	std::string tmp_fingerprint;
 };
 
 struct ChromaprintMatcherContextPrivate {
@@ -93,9 +94,10 @@ int chromaprint_finish(ChromaprintContext *ctx)
 int chromaprint_get_fingerprint(ChromaprintContext *ctx, char **data)
 {
 	FAIL_IF(!ctx, "context can't be NULL");
-	std::string fingerprint = ctx->compressor.Compress(ctx->fingerprinter.GetFingerprint(), ctx->algorithm);
-	*data = (char *) malloc(GetBase64EncodedSize(fingerprint.size()) + 1);
-	Base64Encode(fingerprint.begin(), fingerprint.end(), *data, true);
+	ctx->compressor.Compress(ctx->fingerprinter.GetFingerprint(), ctx->algorithm, ctx->tmp_fingerprint);
+	*data = (char *) malloc(GetBase64EncodedSize(ctx->tmp_fingerprint.size()) + 1);
+	FAIL_IF(!*data, "can't allocate memory for the result");
+	Base64Encode(ctx->tmp_fingerprint.begin(), ctx->tmp_fingerprint.end(), *data, true);
 	return 1;
 }
 
@@ -104,9 +106,7 @@ int chromaprint_get_raw_fingerprint(ChromaprintContext *ctx, uint32_t **data, in
 	FAIL_IF(!ctx, "context can't be NULL");
 	const auto fingerprint = ctx->fingerprinter.GetFingerprint();
 	*data = (uint32_t *) malloc(sizeof(uint32_t) * fingerprint.size());
-	if (!*data) {
-		return 0;
-	}
+	FAIL_IF(!*data, "can't allocate memory for the result");
 	*size = fingerprint.size();
 	std::copy(fingerprint.begin(), fingerprint.end(), *data);
 	return 1;

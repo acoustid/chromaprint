@@ -14,13 +14,17 @@ class FingerprintCompressor
 {
 public:
 	FingerprintCompressor();
-	std::string Compress(const std::vector<uint32_t> &fingerprint, int algorithm = 0);
+
+	std::string Compress(const std::vector<uint32_t> &fingerprint, int algorithm = 0) {
+		std::string tmp;
+		Compress(fingerprint, algorithm, tmp);
+		return tmp;
+	}
+
+	void Compress(const std::vector<uint32_t> &fingerprint, int algorithm, std::string &output);
 
 private:
-
 	void ProcessSubfingerprint(uint32_t);
-
-	std::string m_result;
 	std::vector<unsigned char> m_normal_bits;
 	std::vector<unsigned char> m_exceptional_bits;
 };
