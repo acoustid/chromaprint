@@ -8,7 +8,6 @@ add_subdirectory(${GTEST_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/gtest_build)
 set(tests_SOURCES
 	main.cpp
 	test_api.cpp
-	test_combined_buffer.cpp
 	test_utils.cpp
 	test_quantizer.cpp
 	test_filter.cpp

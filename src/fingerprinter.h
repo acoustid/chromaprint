@@ -1,22 +1,5 @@
-/*
- * Chromaprint -- Audio fingerprinting toolkit
- * Copyright (C) 2010-2012  Lukas Lalinsky <lalinsky@gmail.com>
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
- * USA
- */
+// Copyright (C) 2016  Lukas Lalinsky
+// Distributed under the MIT license, see the LICENSE file for details.
 
 #ifndef CHROMAPRINT_FINGERPRINTER_H_
 #define CHROMAPRINT_FINGERPRINTER_H_
@@ -25,59 +8,58 @@
 #include <vector>
 #include "audio_consumer.h"
 
-namespace chromaprint
+namespace chromaprint {
+
+class FFT;
+class Chroma;
+class ChromaNormalizer;
+class ChromaFilter;
+class AudioProcessor;
+class FingerprintCalculator;
+class FingerprinterConfiguration;
+class SilenceRemover;
+
+class Fingerprinter : public AudioConsumer
 {
-	class FFT;
-	class Chroma;
-	class ChromaNormalizer;
-	class ChromaFilter;
-	class AudioProcessor;
-	class FingerprintCalculator;
-	class FingerprinterConfiguration;
-	class SilenceRemover;
+public:
+	Fingerprinter(FingerprinterConfiguration *config = 0);
+	~Fingerprinter();
 
-	class Fingerprinter : public AudioConsumer
-	{
-	public:
-		Fingerprinter(FingerprinterConfiguration *config = 0);
-		~Fingerprinter();
+	/**
+	 * Initialize the fingerprinting process.
+	 */
+	bool Start(int sample_rate, int num_channels);
 
-		/**
-		 * Initialize the fingerprinting process.
-		 */
-		bool Start(int sample_rate, int num_channels);
+	/**
+	 * Process a block of raw audio data. Call this method as many times
+	 * as you need. 
+	 */
+	void Consume(const int16_t *input, int length);
 
-		/**
-		 * Process a block of raw audio data. Call this method as many times
-		 * as you need. 
-		 */
-		void Consume(const int16_t *input, int length);
+	/**
+	 * Calculate the fingerprint based on the provided audio data.
+	 */
+	void Finish();
 
-		/**
-		 * Calculate the fingerprint based on the provided audio data.
-		 */
-		void Finish();
+	//! Get the fingerprint generate from data up to this point.
+	const std::vector<uint32_t> &GetFingerprint() const;
 
-		//! Get the fingerprint generate from data up to this point.
-		const std::vector<uint32_t> &GetFingerprint() const;
+	//! Clear the generated fingerprint, but allow more audio to be processed.
+	void ClearFingerprint();
 
-		//! Clear the generated fingerprint, but allow more audio to be processed.
-		void ClearFingerprint();
+	bool SetOption(const char *name, int value);
 
-		bool SetOption(const char *name, int value);
-
-	private:
-		Chroma *m_chroma;
-		ChromaNormalizer *m_chroma_normalizer;
-		ChromaFilter *m_chroma_filter;
-		FFT *m_fft;
-		AudioProcessor *m_audio_processor;
-		FingerprintCalculator *m_fingerprint_calculator;
-		FingerprinterConfiguration *m_config;
-		SilenceRemover *m_silence_remover;
-	};
-
+private:
+	Chroma *m_chroma;
+	ChromaNormalizer *m_chroma_normalizer;
+	ChromaFilter *m_chroma_filter;
+	FFT *m_fft;
+	AudioProcessor *m_audio_processor;
+	FingerprintCalculator *m_fingerprint_calculator;
+	FingerprinterConfiguration *m_config;
+	SilenceRemover *m_silence_remover;
 };
 
-#endif
+}; // namespace chromaprint
 
+#endif

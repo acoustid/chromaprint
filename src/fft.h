@@ -10,7 +10,6 @@
 #include "fft_frame.h"
 #include "fft_frame_consumer.h"
 #include "audio_consumer.h"
-#include "combined_buffer.h"
 #include "audio/audio_slicer.h"
 
 namespace chromaprint {

@@ -1,22 +1,5 @@
-/*
- * Chromaprint -- Audio fingerprinting toolkit
- * Copyright (C) 2010-2012  Lukas Lalinsky <lalinsky@gmail.com>
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
- * USA
- */
+// Copyright (C) 2016  Lukas Lalinsky
+// Distributed under the MIT license, see the LICENSE file for details.
 
 #ifndef CHROMAPRINT_SILENCE_REMOVER_H_
 #define CHROMAPRINT_SILENCE_REMOVER_H_
@@ -25,48 +8,46 @@
 #include "audio_consumer.h"
 #include "moving_average.h"
 
-namespace chromaprint
+namespace chromaprint {
+
+class SilenceRemover : public AudioConsumer
 {
+public:
+	SilenceRemover(AudioConsumer *consumer, int threshold = 0);
 
-	class SilenceRemover : public AudioConsumer
+	AudioConsumer *consumer() const
 	{
-	public:
-		SilenceRemover(AudioConsumer *consumer, int threshold = 0);
+		return m_consumer;
+	}
 
-		AudioConsumer *consumer() const
-		{
-			return m_consumer;
-		}
+	void set_consumer(AudioConsumer *consumer)
+	{
+		m_consumer = consumer;
+	}
 
-		void set_consumer(AudioConsumer *consumer)
-		{
-			m_consumer = consumer;
-		}
+	bool Reset(int sample_rate, int num_channels);
+	void Consume(const int16_t *input, int length) override;
+	void Flush();
 
-		bool Reset(int sample_rate, int num_channels);
-		void Consume(const int16_t *input, int length) override;
-		void Flush();
+	int threshold()
+	{
+		return m_threshold;
+	}
 
-		int threshold()
-		{
-			return m_threshold;
-		}
+	void set_threshold(int value)
+	{
+		m_threshold = value;
+	}
 
-		void set_threshold(int value)
-		{
-			m_threshold = value;
-		}
+private:
+	CHROMAPRINT_DISABLE_COPY(SilenceRemover);
 
-	private:
-		CHROMAPRINT_DISABLE_COPY(SilenceRemover);
-
-		bool m_start;
-		int m_threshold;
-		MovingAverage<int16_t> m_average;
-		AudioConsumer *m_consumer;
-	};
-
+	bool m_start;
+	int m_threshold;
+	MovingAverage<int16_t> m_average;
+	AudioConsumer *m_consumer;
 };
 
-#endif
+}; // namespace chromaprint
 
+#endif

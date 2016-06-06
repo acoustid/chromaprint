@@ -64,8 +64,8 @@ Documentation
 
 You can use Doxygen to generate a HTML version of the API documentation:
 
-   $ make docs
-   $ $BROWSER docs/html/index.html
+    $ make docs
+    $ $BROWSER docs/html/index.html
 
 Unit Tests
 ----------
@@ -80,7 +80,7 @@ Related Projects
 
 Bindings, wrappers and reimplementations in other languages:
 
- * [Python][https://github.com/beetbox/pyacoustid]
+ * [Python](https://github.com/beetbox/pyacoustid)
  * [Rust](https://github.com/jameshurst/rust-chromaprint)
  * [Ruby](https://github.com/TMXCredit/chromaprint)
  * [Perl](https://github.com/jonathanstowe/Audio-Fingerprint-Chromaprint)

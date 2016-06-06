@@ -14,4 +14,4 @@ public:
 
 }; // namespace chromaprint
 
-#endif // CHROMAPRINT_AUDIO_CONSUMER_H_
+#endif
