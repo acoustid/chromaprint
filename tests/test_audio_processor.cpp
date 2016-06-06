@@ -90,7 +90,7 @@ TEST(AudioProcessor, ResampleMonoNonInteger)
 
 	ASSERT_EQ(data2.size(), buffer.data().size());
 	for (size_t i = 0; i < data2.size(); i++) {
-		ASSERT_EQ(data2[i], buffer.data()[i]) << "Signals differ at index " << i;
+		ASSERT_NEAR(data2[i], buffer.data()[i], 3) << "Signals differ at index " << i;
 	}
 }
 
