@@ -78,16 +78,25 @@ The test suite can be built and run using the following commands:
 Related Projects
 ----------------
 
- * [pyacoustid][]
- * [node-acoustid][] and [node-fpcalc][]
- * [chromaprint component in gst-plugins-bad][gst]
- * [AcoustID.NET][]
- 
-[pyacoustid]: https://github.com/sampsyo/pyacoustid
-[gst]: http://cgit.freedesktop.org/gstreamer/gst-plugins-bad/tree/ext/chromaprint
-[node-acoustid]: https://github.com/parshap/node-acoustid
-[node-fpcalc]: https://github.com/parshap/node-fpcalc
-[AcoustID.NET]: https://github.com/wo80/AcoustID.NET
+Bindings, wrappers and reimplementations in other languages:
+
+ * [Python][https://github.com/beetbox/pyacoustid]
+ * [Rust](https://github.com/jameshurst/rust-chromaprint)
+ * [Ruby](https://github.com/TMXCredit/chromaprint)
+ * [Perl](https://github.com/jonathanstowe/Audio-Fingerprint-Chromaprint)
+ * [JavaScript](https://github.com/parshap/node-fpcalc)
+ * [JavaScript](https://github.com/bjjb/chromaprint.js) (standalone reimplementation)
+ * [Go](https://github.com/go-fingerprint/gochroma)
+ * [C#](https://github.com/wo80/AcoustID.NET) (standalone reimplementation)
+ * [Pascal](https://github.com/CMCHTPC/ChromaPrint) (standalone reimplementation)
+ * [C++/CLI](https://github.com/CyberSinh/Luminescence.Audio)
+
+Integrations:
+
+ * [FFmpeg](https://www.ffmpeg.org/ffmpeg-formats.html#chromaprint-1)
+ * [GStreamer](http://cgit.freedesktop.org/gstreamer/gst-plugins-bad/tree/ext/chromaprint)
+
+If you know about a project that is not listed here, but should be, please let me know.
 
 Standing on the Shoulder of Giants
 ----------------------------------
@@ -97,8 +106,8 @@ without having information from past research. I've read many papers, but the
 concrete ideas implemented in this library are based on the following papers:
 
  * Yan Ke, Derek Hoiem, Rahul Sukthankar. Computer Vision for Music
-   Identification, Proceedings of Computer Vision and Pattern Recognition,
-   2005. http://www.cs.cmu.edu/~yke/musicretrieval/
+   Identification, Proceedings of Computer Vision and Pattern Recognition, 2005.
+   http://www.cs.cmu.edu/~yke/musicretrieval/
 
  * Frank Kurth, Meinard Müller. Efficient Index-Based Audio Matching, 2008.
    http://dx.doi.org/10.1109/TASL.2007.911552
