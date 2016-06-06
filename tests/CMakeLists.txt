@@ -12,7 +12,6 @@ set(tests_SOURCES
 	test_quantizer.cpp
 	test_filter.cpp
 	test_filter_utils.cpp
-	test_lloyds.cpp
 	test_audio_processor.cpp
 	test_simhash.cpp
 	test_chromaprint.cpp
