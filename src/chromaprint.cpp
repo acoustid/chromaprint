@@ -24,12 +24,14 @@ struct ChromaprintContextPrivate {
 		  fingerprinter(CreateFingerprinterConfiguration(algorithm)) {}
 	int algorithm;
 	Fingerprinter fingerprinter;
+	FingerprintCompressor compressor;
 };
 
 struct ChromaprintMatcherContextPrivate {
 	int algorithm = -1;
 	std::unique_ptr<FingerprintMatcher> matcher;
 	std::vector<uint32_t> fp[2];
+	FingerprintDecompressor decompressor;
 };
 
 extern "C" {
@@ -91,7 +93,7 @@ int chromaprint_finish(ChromaprintContext *ctx)
 int chromaprint_get_fingerprint(ChromaprintContext *ctx, char **data)
 {
 	FAIL_IF(!ctx, "context can't be NULL");
-	std::string fingerprint = CompressFingerprint(ctx->fingerprinter.GetFingerprint(), ctx->algorithm);
+	std::string fingerprint = ctx->compressor.Compress(ctx->fingerprinter.GetFingerprint(), ctx->algorithm);
 	*data = (char *) malloc(GetBase64EncodedSize(fingerprint.size()) + 1);
 	Base64Encode(fingerprint.begin(), fingerprint.end(), *data, true);
 	return 1;
@@ -177,7 +179,7 @@ int chromaprint_matcher_set_fingerprint(ChromaprintMatcherContext *ctx, int idx,
 	FAIL_IF(idx < 0 || idx > 1, "idx can be only 0 or 1");
 
 	int algorithm;
-	ctx->fp[idx] = DecompressFingerprint(Base64Decode(fp), &algorithm);
+	ctx->fp[idx] = ctx->decompressor.Decompress(Base64Decode(fp), &algorithm);
 
 	if (ctx->algorithm == -1) {
 		ctx->matcher.reset(new FingerprintMatcher(CreateFingerprinterConfiguration(algorithm)));
