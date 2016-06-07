@@ -25,7 +25,8 @@ set(chromaprint_SRCS
 	fingerprinter_configuration.cpp
 	fingerprint_matcher.h
 	fingerprint_matcher.cpp
-	base64.cpp
+	utils/base64.h
+	utils/base64.cpp
 	utils/gradient.h
 	utils/gaussian_filter.h
 	utils/scope_exit.h

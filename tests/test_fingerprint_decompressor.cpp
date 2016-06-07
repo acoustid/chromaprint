@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <vector>
 #include "fingerprint_decompressor.h"
-#include "base64.h"
+#include "utils/base64.h"
 #include "utils.h"
 #include "test_utils.h"
 

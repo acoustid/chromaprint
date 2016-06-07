@@ -12,7 +12,7 @@
 #include "fingerprint_decompressor.h"
 #include "fingerprint_matcher.h"
 #include "fingerprinter_configuration.h"
-#include "base64.h"
+#include "utils/base64.h"
 #include "simhash.h"
 #include "debug.h"
 
