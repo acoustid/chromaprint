@@ -1,0 +1,6 @@
+pipelines:
+  default:
+    - step:
+        script:
+          - cmake .
+          - make
