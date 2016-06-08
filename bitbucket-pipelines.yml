@@ -1,7 +1,9 @@
+image: acoustid/chromaprint-build
+
 pipelines:
   default:
     - step:
         script:
-          - apt-get -y install cmake libavcodec-dev libavformat-dev libavutil-dev libfftw3-dev libgtest-dev
-          - cmake .
+          - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON .
           - make
+          - make check
