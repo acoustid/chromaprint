@@ -2,5 +2,6 @@ pipelines:
   default:
     - step:
         script:
+          - apt-get install cmake libavcodec-dev libavformat-dev libavutil-dev libfftw3-dev libgtest-dev
           - cmake .
           - make
