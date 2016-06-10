@@ -2,6 +2,7 @@
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <libavutil/opt.h>
+#include <libavutil/channel_layout.h>
 
 #if defined(HAVE_SWRESAMPLE)
 #include <libswresample/swresample.h>
@@ -17,12 +18,17 @@
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(55, 28, 1)
+#define av_frame_alloc avcodec_alloc_frame
+#define av_frame_free avcodec_free_frame
+#endif
+
 int64_t get_default_channel_layout(int nb_channels)
 {
 /* 51.8.0 for FFmpeg, 51.26.0 for libav. I don't know how to identify them,
    so let's use the higher one. I really wish Ubuntu would stop being
    stupid and just drop libav. */
-#if LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(51, 26, 0)
+#if LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(51, 27, 0)
 	return av_get_default_channel_layout(nb_channels);
 #else
 	switch (nb_channels) {
@@ -155,8 +161,6 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 		}
 
 		if (packet.stream_index == stream_index) {
-			av_frame_unref(frame);
-
 			got_frame = 0;
 			consumed = avcodec_decode_audio4(codec_ctx, frame, &got_frame, &packet);
 			if (consumed < 0) {
