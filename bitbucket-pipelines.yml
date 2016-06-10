@@ -1,0 +1,9 @@
+image: acoustid/chromaprint-build
+
+pipelines:
+  default:
+    - step:
+        script:
+          - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON .
+          - make
+          - make check
