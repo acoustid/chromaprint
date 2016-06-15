@@ -39,6 +39,7 @@ if(WITH_AVFFT)
 	set(chromaprint_SRCS fft_lib_avfft.cpp ${chromaprint_SRCS})
 	set(chromaprint_LINK_LIBS
 		${FFMPEG_LIBAVCODEC_LIBRARIES}
+		${FFMPEG_LIBAVFORMAT_LIBRARIES}
 		${FFMPEG_LIBAVUTIL_LIBRARIES}
 	)
 	include_directories(
@@ -99,3 +100,8 @@ install(TARGETS chromaprint
 
 add_executable(fpcmp cmd/fpcmp.cpp)
 target_link_libraries(fpcmp chromaprint ${chromaprint_LINK_LIBS})
+install(TARGETS fpcmp RUNTIME DESTINATION ${BIN_INSTALL_DIR})
+
+add_executable(fpcalc cmd/fpcalc.cpp)
+target_link_libraries(fpcalc chromaprint ${chromaprint_LINK_LIBS})
+install(TARGETS fpcalc RUNTIME DESTINATION ${BIN_INSTALL_DIR})

@@ -31,14 +31,27 @@ set(tests_SOURCES
 	../src/utils/rolling_integral_image_test.cpp
 )
 
-add_executable(all_tests ${tests_SOURCES})
-set_target_properties(all_tests PROPERTIES
-	COMPILE_DEFINITIONS CHROMAPRINT_NODLL)
-target_link_libraries(all_tests
+set(tests_LIBS
 	${GTEST_BOTH_LIBRARIES}
 	${CMAKE_THREAD_LIBS_INIT}
 	chromaprint_p
 )
+
+if(BUILD_EXAMPLES)
+	set(tests_SOURCES ${tests_SOURCES}
+		../src/audio/ffmpeg_audio_reader_test.cpp
+	)
+	set(tests_LIBS ${tests_LIBS}
+		${FFMPEG_LIBAVFORMAT_LIBRARIES}
+		${FFMPEG_LIBAVCODEC_LIBRARIES}
+		${FFMPEG_LIBAVUTIL_LIBRARIES}
+	)
+endif()
+
+add_executable(all_tests ${tests_SOURCES})
+set_target_properties(all_tests PROPERTIES
+	COMPILE_DEFINITIONS CHROMAPRINT_NODLL)
+target_link_libraries(all_tests ${tests_LIBS})
 
 add_custom_target(check
 	${CMAKE_CURRENT_BINARY_DIR}/all_tests

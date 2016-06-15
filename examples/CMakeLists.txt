@@ -41,11 +41,11 @@ set(fpcalc_LIBS ${fpcalc_LIBS}
 	${FFMPEG_LIBAVUTIL_LIBRARIES}
 	${EXTRA_LIBS})
 
-add_executable(fpcalc fpcalc.c)
+add_executable(fpcalc2 fpcalc.c)
 
-target_link_libraries(fpcalc ${fpcalc_LIBS})
+target_link_libraries(fpcalc2 ${fpcalc_LIBS})
 
-install(TARGETS fpcalc
+install(TARGETS fpcalc2
 	RUNTIME DESTINATION ${BIN_INSTALL_DIR}
 )
 
