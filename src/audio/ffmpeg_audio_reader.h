@@ -318,10 +318,12 @@ inline bool FFmpegAudioReader::ReadFrame(Func consumer) {
 inline void FFmpegAudioReader::SetError(const char *message, int errnum) {
 	m_error = message;
 	if (errnum < 0) {
-		char errbuf[AV_ERROR_MAX_STRING_SIZE];
-		m_error += " (";
-		m_error += av_make_error_string(errbuf, AV_ERROR_MAX_STRING_SIZE, errnum);
-		m_error += ")";
+		char buf[AV_ERROR_MAX_STRING_SIZE];
+		if (av_strerror(errnum, buf, AV_ERROR_MAX_STRING_SIZE) == 0) {
+			m_error += " (";
+			m_error += buf;
+			m_error += ")";
+		}
 	}
 	DEBUG(m_error);
 }
