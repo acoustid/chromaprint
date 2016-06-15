@@ -2,6 +2,8 @@
 #include <cstdlib>
 #include <cstring>
 
+#include <sstream>
+
 #include <chromaprint.h>
 
 #include "audio/ffmpeg_audio_reader.h"
@@ -16,6 +18,7 @@ static int g_input_sample_rate = 0;
 static double g_max_duration = 0;
 static double g_chunk_duration = 0;
 static bool g_overlap = false;
+static bool g_raw = false;
 
 const char *g_help =
 	"Usage: %s [OPTIONS] FILE [FILE...]\n"
@@ -27,6 +30,7 @@ const char *g_help =
 	"  -r NUM       Set the sample rate of the input audio\n"
 	"  -c NUM       Set the number of channels in the input audio\n"
 	"  -json        Print the output in JSON format\n"
+	"  -raw         Output fingerprints in the uncompressed format\n"
 	"  -length SECS Restrict the duration of the processed input audio\n"
 	"  -chunk SECS  Split the input audio into chunks of this duration\n"
 	"  -overlap     Overlap the chunks slightly to make sure audio on the edges is fingerprinted\n"
@@ -81,6 +85,8 @@ static void ParseOptions(int &argc, char **argv) {
 			g_json = true;
 		} else if (!strcmp(argv[i], "-overlap")) {
 			g_overlap = true;
+		} else if (!strcmp(argv[i], "-raw")) {
+			g_raw = true;
 		} else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "-help") || !strcmp(argv[i], "--help")) {
 			fprintf(stdout, g_help, argv[0]);
 			exit(0);
@@ -102,18 +108,44 @@ static void ParseOptions(int &argc, char **argv) {
 }
 
 void PrintResult(ChromaprintContext *ctx, FFmpegAudioReader &reader) {
-	char *fp;
-	if (!chromaprint_get_fingerprint(ctx, &fp)) {
-		fprintf(stderr, "ERROR: Could not get the fingerprinting\n");
-		exit(2);
+	std::string tmp_fp;
+	const char *fp;
+	bool dealloc_fp = false;
+
+	if (g_raw) {
+		std::stringstream ss;
+		uint32_t *raw_fp_data = nullptr;
+		int raw_fp_size = 0;
+		if (!chromaprint_get_raw_fingerprint(ctx, &raw_fp_data, &raw_fp_size)) {
+			fprintf(stderr, "ERROR: Could not get the fingerprinting\n");
+			exit(2);
+		}
+		SCOPE_EXIT(chromaprint_dealloc(raw_fp_data));
+		for (int i = 0; i < raw_fp_size; i++) {
+			if (i > 0) {
+				ss << ',';
+			}
+			ss << int32_t(raw_fp_data[i]);
+		}
+		tmp_fp = ss.str();
+		fp = tmp_fp.c_str();
+	} else {
+		char *tmp_fp2;
+		if (!chromaprint_get_fingerprint(ctx, &tmp_fp2)) {
+			fprintf(stderr, "ERROR: Could not get the fingerprinting\n");
+			exit(2);
+		}
+		fp = tmp_fp2;
+		dealloc_fp = true;
 	}
-	SCOPE_EXIT(chromaprint_dealloc(fp));
+	SCOPE_EXIT(if (dealloc_fp) { chromaprint_dealloc((void *) fp); });
 
 	const auto duration = reader.GetDuration() / 1000.0;
 
 	const char *json_fmt = "{\"duration\": %.2f, \"fingerprint\": \"%s\"}\n";
+	const char *raw_json_fmt = "{\"duration\": %.2f, \"fingerprint\": [%s]}\n";
 	const char *text_fmt = "DURATION=%.2f\nFINGERPRINT=%s\n";
-	printf(g_json ? json_fmt : text_fmt, duration, fp);
+	printf(g_json ? (g_raw ? raw_json_fmt : json_fmt) : text_fmt, duration, fp);
 }
 
 void ProcessFile(ChromaprintContext *ctx, FFmpegAudioReader &reader, const char *file_name) {
