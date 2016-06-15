@@ -112,6 +112,14 @@ int chromaprint_get_raw_fingerprint(ChromaprintContext *ctx, uint32_t **data, in
 	return 1;
 }
 
+int chromaprint_get_raw_fingerprint_size(ChromaprintContext *ctx, int *size)
+{
+	FAIL_IF(!ctx, "context can't be NULL");
+	const auto fingerprint = ctx->fingerprinter.GetFingerprint();
+	*size = fingerprint.size();
+	return 1;
+}
+
 int chromaprint_get_fingerprint_hash(ChromaprintContext *ctx, uint32_t *hash)
 {
 	FAIL_IF(!ctx, "context can't be NULL");

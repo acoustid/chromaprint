@@ -235,6 +235,16 @@ CHROMAPRINT_API int chromaprint_get_fingerprint(ChromaprintContext *ctx, char **
 CHROMAPRINT_API int chromaprint_get_raw_fingerprint(ChromaprintContext *ctx, uint32_t **fingerprint, int *size);
 
 /**
+ * Return the length of the current raw fingerprint.
+ *
+ * @param[in] ctx Chromaprint context pointer
+ * @param[out] size number of items in the current raw fingerprint
+ *
+ * @return 0 on error, 1 on success
+ */
+CHROMAPRINT_API int chromaprint_get_raw_fingerprint_size(ChromaprintContext *ctx, int *size);
+
+/**
  * Return 32-bit hash of the calculated fingerprint.
  *
  * See chromaprint_hash_fingerprint() for details on how to use the hash.
