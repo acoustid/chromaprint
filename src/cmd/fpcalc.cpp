@@ -13,7 +13,9 @@ static bool g_json = false;
 static char *g_input_format = nullptr;
 static int g_input_channels = 0;
 static int g_input_sample_rate = 0;
-static size_t g_chunk_size = 0;
+static double g_max_duration = 0;
+static double g_chunk_duration = 0;
+static bool g_overlap = false;
 
 const char *g_help =
 	"Usage: %s [OPTIONS] FILE [FILE...]\n"
@@ -25,7 +27,9 @@ const char *g_help =
 	"  -r NUM       Set the sample rate of the input audio\n"
 	"  -c NUM       Set the number of channels in the input audio\n"
 	"  -json        Print the output in JSON format\n"
-	"  -chunk NUM   Size of one fingerprint chunk in seconds, default 0 (unlimited)\n"
+	"  -length SECS Restrict the duration of the processed input audio\n"
+	"  -chunk SECS  Split the input audio into chunks of this duration\n"
+	"  -overlap     Overlap the chunks slightly to make sure audio on the edges is fingerprinted\n"
 	;
 
 static void ParseOptions(int &argc, char **argv) {
@@ -38,13 +42,45 @@ static void ParseOptions(int &argc, char **argv) {
 		} else if (!strcmp(argv[i], "-f") && i + 1 < argc) {
 			g_input_format = argv[++i];
 		} else if (!strcmp(argv[i], "-c") && i + 1 < argc) {
-			g_input_channels = atoi(argv[++i]);
+			auto value = atoi(argv[i + 1]);
+			if (value > 0) {
+				g_input_channels = value;
+			} else {
+				fprintf(stderr, "ERROR: The argument for %s must be a non-zero positive number\n", argv[i]);
+				exit(2);
+			}
+			i++;
 		} else if (!strcmp(argv[i], "-r") && i + 1 < argc) {
-			g_input_sample_rate = atoi(argv[++i]);
+			auto value = atoi(argv[i + 1]);
+			if (value >= 0) {
+				g_input_sample_rate = value;
+			} else {
+				fprintf(stderr, "ERROR: The argument for %s must be a positive number\n", argv[i]);
+				exit(2);
+			}
+			i++;
+		} else if (!strcmp(argv[i], "-length") && i + 1 < argc) {
+			auto value = atof(argv[i + 1]);
+			if (value >= 0) {
+				g_max_duration = value;
+			} else {
+				fprintf(stderr, "ERROR: The argument for %s must be a positive number\n", argv[i]);
+				exit(2);
+			}
+			i++;
 		} else if (!strcmp(argv[i], "-chunk") && i + 1 < argc) {
-			g_chunk_size = atoi(argv[++i]);
+			auto value = atof(argv[i + 1]);
+			if (value >= 0) {
+				g_chunk_duration = value;
+			} else {
+				fprintf(stderr, "ERROR: The argument for %s must be a positive number\n", argv[i]);
+				exit(2);
+			}
+			i++;
 		} else if (!strcmp(argv[i], "-json")) {
 			g_json = true;
+		} else if (!strcmp(argv[i], "-overlap")) {
+			g_overlap = true;
 		} else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "-help") || !strcmp(argv[i], "--help")) {
 			fprintf(stdout, g_help, argv[0]);
 			exit(0);
@@ -76,7 +112,7 @@ void PrintResult(ChromaprintContext *ctx, FFmpegAudioReader &reader) {
 	const auto duration = reader.GetDuration() / 1000.0;
 
 	const char *json_fmt = "{\"duration\": %.2f, \"fingerprint\": \"%s\"}\n";
-	const char *text_fmt = "DURATION=%.2f\nJSON=%s\n";
+	const char *text_fmt = "DURATION=%.2f\nFINGERPRINT=%s\n";
 	printf(g_json ? json_fmt : text_fmt, duration, fp);
 }
 
@@ -86,13 +122,15 @@ void ProcessFile(ChromaprintContext *ctx, FFmpegAudioReader &reader, const char 
 		exit(2);
 	}
 
+	size_t remaining = g_max_duration * reader.GetSampleRate();
+
 	if (!chromaprint_start(ctx, reader.GetSampleRate(), reader.GetChannels())) {
 		fprintf(stderr, "ERROR: Could not initialize the fingerprinting process\n");
 		exit(2);
 	}
 
 	size_t chunk = 0;
-	const size_t chunk_limit = g_chunk_size * reader.GetSampleRate();
+	const size_t chunk_limit = g_chunk_duration * reader.GetSampleRate();
 	while (!reader.IsFinished()) {
 		const int16_t *data = nullptr;
 		size_t size = 0;
@@ -100,17 +138,58 @@ void ProcessFile(ChromaprintContext *ctx, FFmpegAudioReader &reader, const char 
 			fprintf(stderr, "ERROR: %s\n", reader.GetError().c_str());
 			exit(2);
 		}
+
 		if (data) {
-			if (!chromaprint_feed(ctx, data, size * reader.GetChannels())) {
+			if (g_max_duration > 0) {
+				if (size > remaining) {
+					size = remaining;
+				}
+				remaining -= size;
+			}
+
+			size_t first_part_size = size;
+			if (chunk_limit > 0 && chunk + size > chunk_limit) {
+				first_part_size = chunk_limit - chunk;
+			}
+
+			if (!chromaprint_feed(ctx, data, first_part_size * reader.GetChannels())) {
 				fprintf(stderr, "ERROR: Could not process audio data\n");
 				exit(2);
 			}
-			chunk += size;
+
+			data += first_part_size * reader.GetChannels();
+			size -= first_part_size;
+
+			chunk += first_part_size;
+
 			if (chunk_limit > 0 && chunk >= chunk_limit) {
+				if (!chromaprint_finish(ctx)) {
+					fprintf(stderr, "ERROR: Could not finish the fingerprinting process\n");
+					exit(2);
+				}
 				PrintResult(ctx, reader);
-				chromaprint_clear_fingerprint(ctx);
+				if (g_overlap) {
+					if (!chromaprint_clear_fingerprint(ctx)) {
+						fprintf(stderr, "ERROR: Could not initialize the fingerprinting process\n");
+						exit(2);
+					}
+				} else {
+					if (!chromaprint_start(ctx, reader.GetSampleRate(), reader.GetChannels())) {
+						fprintf(stderr, "ERROR: Could not initialize the fingerprinting process\n");
+						exit(2);
+					}
+				}
 				chunk -= chunk_limit;
 			}
+
+			if (size > 0) {
+				if (!chromaprint_feed(ctx, data, size * reader.GetChannels())) {
+					fprintf(stderr, "ERROR: Could not process audio data\n");
+					exit(2);
+				}
+			}
+
+			chunk += size;
 		}
 	}
 
@@ -119,7 +198,9 @@ void ProcessFile(ChromaprintContext *ctx, FFmpegAudioReader &reader, const char 
 		exit(2);
 	}
 
-	PrintResult(ctx, reader);
+	if (chunk > 0) {
+		PrintResult(ctx, reader);
+	}
 }
 
 int main(int argc, char **argv) {
