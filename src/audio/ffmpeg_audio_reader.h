@@ -6,6 +6,7 @@
 
 #include "debug.h"
 #include "utils/scope_exit.h"
+#include <cstdlib>
 #include <string>
 
 extern "C" {
@@ -26,6 +27,10 @@ extern "C" {
 #if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(55, 28, 1)
 #define av_frame_alloc avcodec_alloc_frame
 #define av_frame_free avcodec_free_frame
+#endif
+
+#ifndef AV_ERROR_MAX_STRING_SIZE
+#define AV_ERROR_MAX_STRING_SIZE 128
 #endif
 
 namespace chromaprint {
@@ -105,11 +110,15 @@ inline bool FFmpegAudioReader::SetInputFormat(const char *name) {
 }
 
 inline bool FFmpegAudioReader::SetInputSampleRate(int sample_rate) {
-	return av_dict_set_int(&m_input_opts, "sample_rate", sample_rate, 0) >= 0;
+	char buf[64];
+	sprintf(buf, "%d", sample_rate);
+	return av_dict_set(&m_input_opts, "sample_rate", buf, 0) >= 0;
 }
 
 inline bool FFmpegAudioReader::SetInputChannels(int channels) {
-	return av_dict_set_int(&m_input_opts, "channels", channels, 0) >= 0;
+	char buf[64];
+	sprintf(buf, "%d", channels);
+	return av_dict_set(&m_input_opts, "channels", buf, 0) >= 0;
 }
 
 inline bool FFmpegAudioReader::Open(const std::string &file_name) {
