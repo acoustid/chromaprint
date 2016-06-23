@@ -222,6 +222,10 @@ void ProcessFile(ChromaprintContext *ctx, FFmpegAudioReader &reader, const char 
 			}
 
 			chunk += size;
+
+			if (g_max_duration > 0 && remaining == 0) {
+				break;
+			}
 		}
 	}
 
@@ -257,6 +261,9 @@ int main(int argc, char **argv) {
 			return 2;
 		}
 	}
+
+	reader.SetOutputChannels(1);
+	reader.SetOutputSampleRate(11025);
 
 	ChromaprintContext *chromaprint_ctx = chromaprint_new(CHROMAPRINT_ALGORITHM_DEFAULT);
 	SCOPE_EXIT(chromaprint_free(chromaprint_ctx));
