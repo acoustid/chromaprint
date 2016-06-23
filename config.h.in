@@ -7,3 +7,5 @@
 #cmakedefine WITH_KISSFFT 1
 #cmakedefine TESTS_DIR "@TESTS_DIR@"
 
+#cmakedefine USE_SWRESAMPLE 1
+#cmakedefine USE_AVRESAMPLE 1

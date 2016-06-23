@@ -4,14 +4,16 @@
 #ifndef CHROMAPRINT_AUDIO_FFMPEG_AUDIO_PROCESSOR_H_
 #define CHROMAPRINT_AUDIO_FFMPEG_AUDIO_PROCESSOR_H_
 
-#if 0
-#if defined(HAVE_SWRESAMPLE)
-#include <libswresample/swresample.h>
-#elif defined(HAVE_AVRESAMPLE)
-#include <libavresample/avresample.h>
-#endif
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
+#if defined(USE_SWRESAMPLE)
 #include "audio/ffmpeg_audio_processor_swresample.h"
+#elif defined(USE_AVRESAMPLE)
+#include "audio/ffmpeg_audio_processor_avresample.h"
+#else
+#error "no audio processing library"
+#endif
 
 #endif

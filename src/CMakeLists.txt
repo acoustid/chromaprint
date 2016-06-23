@@ -41,13 +41,11 @@ if(WITH_AVFFT)
 		${FFMPEG_LIBAVCODEC_LIBRARIES}
 		${FFMPEG_LIBAVFORMAT_LIBRARIES}
 		${FFMPEG_LIBAVUTIL_LIBRARIES}
-		${FFMPEG_LIBSWRESAMPLE_LIBRARIES}
 	)
 	include_directories(
 		${FFMPEG_LIBAVCODEC_INCLUDE_DIRS}
 		${FFMPEG_LIBAVFORMAT_INCLUDE_DIRS}
 		${FFMPEG_LIBAVUTIL_INCLUDE_DIRS}
-		${FFMPEG_LIBSWRESAMPLE_INCLUDE_DIRS}
 	)
 endif(WITH_AVFFT)
 
@@ -72,6 +70,9 @@ if(WITH_KISSFFT)
 	set(chromaprint_SRCS fft_lib_kissfft.cpp ${chromaprint_SRCS} ${KISSFFT_SOURCES})
 	include_directories(${KISSFFT_INCLUDE_DIRS})
 endif()
+
+set(chromaprint_LINK_LIBS ${chromaprint_LINK_LIBS} ${AUDIO_PROCESSOR_LIBRARIES})
+include_directories(${AUDIO_PROCESSOR_INCLUDE_DIRS})
 
 add_library(chromaprint_p STATIC ${chromaprint_SRCS})
 set_target_properties(chromaprint_p PROPERTIES
