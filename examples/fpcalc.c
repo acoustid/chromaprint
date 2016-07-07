@@ -164,8 +164,8 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 			got_frame = 0;
 			consumed = avcodec_decode_audio4(codec_ctx, frame, &got_frame, &packet);
 			if (consumed < 0) {
-				fprintf(stderr, "WARNING: error decoding audio\n");
-				continue;
+				fprintf(stderr, "ERROR: error decoding audio\n");
+				goto done;
 			}
 
 			if (got_frame) {
