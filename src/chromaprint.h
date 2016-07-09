@@ -174,6 +174,32 @@ CHROMAPRINT_API int chromaprint_get_algorithm(ChromaprintContext *ctx);
 CHROMAPRINT_API int chromaprint_set_option(ChromaprintContext *ctx, const char *name, int value);
 
 /**
+ * Get the number of channels that is internally used for fingerprinting.
+ *
+ * @note You normally don't need this. Just set the audio's actual number of channels
+ * when calling chromaprint_start() and everything will work. This is only used for
+ * certain optimized cases to control the audio source.
+ *
+ * @param[in] ctx Chromaprint context pointer
+ *
+ * @return number of channels
+ */
+CHROMAPRINT_API int chromaprint_get_num_channels(ChromaprintContext *ctx);
+
+/**
+ * Get the sampling rate that is internally used for fingerprinting.
+ *
+ * @note You normally don't need this. Just set the audio's actual number of channels
+ * when calling chromaprint_start() and everything will work. This is only used for
+ * certain optimized cases to control the audio source.
+ *
+ * @param[in] ctx Chromaprint context pointer
+ *
+ * @return sampling rate
+ */
+CHROMAPRINT_API int chromaprint_get_sample_rate(ChromaprintContext *ctx);
+
+/**
  * Restart the computation of a fingerprint with a new audio stream.
  *
  * @param[in] ctx Chromaprint context pointer

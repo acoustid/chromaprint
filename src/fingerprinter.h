@@ -49,6 +49,8 @@ public:
 
 	bool SetOption(const char *name, int value);
 
+	const FingerprinterConfiguration *config() { return m_config; }
+
 private:
 	Chroma *m_chroma;
 	ChromaNormalizer *m_chroma_normalizer;

@@ -16,6 +16,9 @@ TEST(API, TestFp) {
 	ASSERT_NE(nullptr, ctx);
 	SCOPE_EXIT(chromaprint_free(ctx));
 
+	ASSERT_EQ(1, chromaprint_get_num_channels(ctx));
+	ASSERT_EQ(11025, chromaprint_get_sample_rate(ctx));
+
 	ASSERT_EQ(1, chromaprint_start(ctx, 44100, 1));
 	ASSERT_EQ(1, chromaprint_feed(ctx, data.data(), data.size()));
 

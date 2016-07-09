@@ -71,6 +71,16 @@ int chromaprint_set_option(ChromaprintContext *ctx, const char *name, int value)
 	return ctx->fingerprinter.SetOption(name, value) ? 1 : 0;
 }
 
+int chromaprint_get_num_channels(ChromaprintContext *ctx)
+{
+	return 1;
+}
+
+int chromaprint_get_sample_rate(ChromaprintContext *ctx)
+{
+	return ctx ? ctx->fingerprinter.config()->sample_rate() : 0;
+}
+
 int chromaprint_start(ChromaprintContext *ctx, int sample_rate, int num_channels)
 {
 	FAIL_IF(!ctx, "context can't be NULL");

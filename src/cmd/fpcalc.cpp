@@ -63,7 +63,7 @@ static void ParseOptions(int &argc, char **argv) {
 				exit(2);
 			}
 			i++;
-		} else if (!strcmp(argv[i], "-length") && i + 1 < argc) {
+		} else if ((!strcmp(argv[i], "-length") || !strcmp(argv[i], "-t")) && i + 1 < argc) {
 			auto value = atof(argv[i + 1]);
 			if (value >= 0) {
 				g_max_duration = value;
@@ -262,11 +262,11 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	reader.SetOutputChannels(1);
-	reader.SetOutputSampleRate(11025);
-
 	ChromaprintContext *chromaprint_ctx = chromaprint_new(CHROMAPRINT_ALGORITHM_DEFAULT);
 	SCOPE_EXIT(chromaprint_free(chromaprint_ctx));
+
+	reader.SetOutputChannels(chromaprint_get_num_channels(chromaprint_ctx));
+	reader.SetOutputSampleRate(chromaprint_get_sample_rate(chromaprint_ctx));
 
 	for (int i = 1; i < argc; i++) {
 		ProcessFile(chromaprint_ctx, reader, argv[i]);
