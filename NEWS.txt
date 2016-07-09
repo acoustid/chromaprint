@@ -1,3 +1,9 @@
+Version 1.3.2 -- July 9, 2016
+=============================
+
+ - Fixed crash on an invalid audio file that FFmpeg could not decode.
+ - Fixed build on Ubuntu 14.04 with libav.
+
 Version 1.3.1 -- February 10, 2016
 ==================================
 
