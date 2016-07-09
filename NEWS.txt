@@ -1,10 +1,16 @@
 Version 2.0 -- Unreleased
-==================================
+=========================
 
  - C++11 is now required to compile the library.
  - The public C API now standard fixed-size int types from stdint.h.
  - Boost is no longer used.
  - Added support for using the FFTW3F version of FFTW3.
+
+Version 1.3.2 -- July 9, 2016
+=============================
+
+ - Fixed crash on an invalid audio file that FFmpeg could not decode.
+ - Fixed build on Ubuntu 14.04 with libav.
 
 Version 1.3.1 -- February 10, 2016
 ==================================
