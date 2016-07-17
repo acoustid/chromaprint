@@ -101,4 +101,6 @@ install(TARGETS chromaprint
 	PUBLIC_HEADER DESTINATION ${INCLUDE_INSTALL_DIR}
 )
 
-add_subdirectory(cmd)
+if(BUILD_TOOLS)
+	add_subdirectory(cmd)
+endif()

@@ -58,8 +58,8 @@ if(APPLE)
 endif()
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
-option(BUILD_EXAMPLES "Build the examples" OFF)
-option(BUILD_TESTS "Build the test suite" OFF)
+option(BUILD_TOOLS "Build command line tools" OFF)
+option(BUILD_TESTS "Build test suite" OFF)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
@@ -193,14 +193,6 @@ endif()
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 add_subdirectory(src)
-
-if(BUILD_EXAMPLES)
-	find_package(FFmpeg REQUIRED)
-endif()
-
-if(BUILD_EXAMPLES)
-	add_subdirectory(examples)
-endif()
 
 if(BUILD_TESTS)
 	find_package(Threads)

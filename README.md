@@ -22,7 +22,7 @@ Installing
 
 The most common way to build Chromaprint is like this:
 
-    $ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON .
+    $ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TOOLS=ON .
     $ make
     $ sudo make install
 
