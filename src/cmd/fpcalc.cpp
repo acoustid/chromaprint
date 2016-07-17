@@ -26,14 +26,14 @@ const char *g_help =
 	"Generate fingerprints from audio files/streams.\n"
 	"\n"
 	"Options:\n"
-	"  -f NAME      Set the input format name\n"
-	"  -r NUM       Set the sample rate of the input audio\n"
-	"  -c NUM       Set the number of channels in the input audio\n"
-	"  -json        Print the output in JSON format\n"
-	"  -raw         Output fingerprints in the uncompressed format\n"
-	"  -length SECS Restrict the duration of the processed input audio\n"
-	"  -chunk SECS  Split the input audio into chunks of this duration\n"
-	"  -overlap     Overlap the chunks slightly to make sure audio on the edges is fingerprinted\n"
+	"  -format NAME   Set the input format name\n"
+	"  -rate NUM      Set the sample rate of the input audio\n"
+	"  -channels NUM  Set the number of channels in the input audio\n"
+	"  -length SECS   Restrict the duration of the processed input audio\n"
+	"  -chunk SECS    Split the input audio into chunks of this duration\n"
+	"  -overlap       Overlap the chunks slightly to make sure audio on the edges is fingerprinted\n"
+	"  -json          Print the output in JSON format\n"
+	"  -raw           Output fingerprints in the uncompressed format\n"
 	;
 
 static void ParseOptions(int &argc, char **argv) {
@@ -43,9 +43,9 @@ static void ParseOptions(int &argc, char **argv) {
 			while (++i < argc) {
 				argv[j++] = argv[i];
 			}
-		} else if (!strcmp(argv[i], "-f") && i + 1 < argc) {
+		} else if ((!strcmp(argv[i], "-format") || !strcmp(argv[i], "-f")) && i + 1 < argc) {
 			g_input_format = argv[++i];
-		} else if (!strcmp(argv[i], "-c") && i + 1 < argc) {
+		} else if ((!strcmp(argv[i], "-channels") || !strcmp(argv[i], "-c")) && i + 1 < argc) {
 			auto value = atoi(argv[i + 1]);
 			if (value > 0) {
 				g_input_channels = value;
@@ -54,7 +54,7 @@ static void ParseOptions(int &argc, char **argv) {
 				exit(2);
 			}
 			i++;
-		} else if (!strcmp(argv[i], "-r") && i + 1 < argc) {
+		} else if ((!strcmp(argv[i], "-rate") || !strcmp(argv[i], "-r")) && i + 1 < argc) {
 			auto value = atoi(argv[i + 1]);
 			if (value >= 0) {
 				g_input_sample_rate = value;

@@ -83,7 +83,7 @@ std::string FormatTime(int ms, bool with_hours = false) {
 	} else {
 		snprintf(buf, 100, "%02d:%02d", m, s % 60);
 	}
-	return buf;
+	return std::string(buf);
 }
 
 std::string FormatTimeRange(int ms1, int ms2) {
