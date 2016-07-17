@@ -1,21 +1,24 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-
 #include <sstream>
-
 #include <chromaprint.h>
-
 #include "audio/ffmpeg_audio_reader.h"
 #include "utils/scope_exit.h"
 
 using namespace chromaprint;
 
-static bool g_json = false;
+enum Format {
+	TEXT = 0,
+	JSON,
+	PLAIN,
+};
+
+static Format g_format = TEXT;
 static char *g_input_format = nullptr;
 static int g_input_channels = 0;
 static int g_input_sample_rate = 0;
-static double g_max_duration = 0;
+static double g_max_duration = 120;
 static double g_chunk_duration = 0;
 static bool g_overlap = false;
 static bool g_raw = false;
@@ -29,11 +32,13 @@ const char *g_help =
 	"  -format NAME   Set the input format name\n"
 	"  -rate NUM      Set the sample rate of the input audio\n"
 	"  -channels NUM  Set the number of channels in the input audio\n"
-	"  -length SECS   Restrict the duration of the processed input audio\n"
+	"  -length SECS   Restrict the duration of the processed input audio (default 120)\n"
 	"  -chunk SECS    Split the input audio into chunks of this duration\n"
 	"  -overlap       Overlap the chunks slightly to make sure audio on the edges is fingerprinted\n"
-	"  -json          Print the output in JSON format\n"
 	"  -raw           Output fingerprints in the uncompressed format\n"
+	"  -json          Print the output in JSON format\n"
+	"  -text          Print the output in text format\n"
+	"  -plain         Print the just the fingerprint in text format\n"
 	;
 
 static void ParseOptions(int &argc, char **argv) {
@@ -81,8 +86,12 @@ static void ParseOptions(int &argc, char **argv) {
 				exit(2);
 			}
 			i++;
+		} else if (!strcmp(argv[i], "-text")) {
+			g_format = TEXT;
 		} else if (!strcmp(argv[i], "-json")) {
-			g_json = true;
+			g_format = JSON;
+		} else if (!strcmp(argv[i], "-plain")) {
+			g_format = PLAIN;
 		} else if (!strcmp(argv[i], "-overlap")) {
 			g_overlap = true;
 		} else if (!strcmp(argv[i], "-raw")) {
@@ -142,10 +151,21 @@ void PrintResult(ChromaprintContext *ctx, FFmpegAudioReader &reader) {
 
 	const auto duration = reader.GetDuration() / 1000.0;
 
-	const char *json_fmt = "{\"duration\": %.2f, \"fingerprint\": \"%s\"}\n";
-	const char *raw_json_fmt = "{\"duration\": %.2f, \"fingerprint\": [%s]}\n";
-	const char *text_fmt = "DURATION=%.2f\nFINGERPRINT=%s\n";
-	printf(g_json ? (g_raw ? raw_json_fmt : json_fmt) : text_fmt, duration, fp);
+	switch (g_format) {
+		case TEXT:
+			printf("DURATION=%.2f\nFINGERPRINT=%s\n", duration, fp);
+			break;
+		case JSON:
+			if (g_raw) {
+				printf("{\"duration\": %.2f, \"fingerprint\": [%s]}\n", duration, fp);
+			} else {
+				printf("{\"duration\": %.2f, \"fingerprint\": \"%s\"}\n", duration, fp);
+			}
+			break;
+		case PLAIN:
+			printf("%s\n", fp);
+			break;
+	}
 }
 
 void ProcessFile(ChromaprintContext *ctx, FFmpegAudioReader &reader, const char *file_name) {

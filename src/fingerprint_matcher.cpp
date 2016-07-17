@@ -56,9 +56,6 @@ bool FingerprintMatcher::Match(const uint32_t fp1_data[], size_t fp1_size, const
 	const uint32_t offset_mask = (1u << (32 - ALIGN_BITS - 1)) - 1;
 	const uint32_t source_mask = 1u << (32 - ALIGN_BITS - 1);
 
-	DEBUG("duration1 " << GetHashDuration(fp1_size));
-	DEBUG("duration2 " << GetHashDuration(fp2_size));
-
 	if (fp1_size + 1 >= offset_mask) {
 		DEBUG("chromaprint::FingerprintMatcher::Match() -- Fingerprint 1 too long.");
 		return false;
@@ -117,10 +114,10 @@ bool FingerprintMatcher::Match(const uint32_t fp1_data[], size_t fp1_size, const
 	}
 	std::sort(m_best_alignments.rbegin(), m_best_alignments.rend());
 
+	m_segments.clear();
+
 	for (const auto &item : m_best_alignments) {
-		const auto count = item.first;
 		const int offset_diff = item.second - fp2_size;
-		DEBUG("found " << count << " matches at offset " << offset_diff);
 
 		const size_t offset1 = offset_diff > 0 ? offset_diff : 0;
 		const size_t offset2 = offset_diff < 0 ? -offset_diff : 0;
@@ -153,46 +150,20 @@ bool FingerprintMatcher::Match(const uint32_t fp1_data[], size_t fp1_size, const
 					gradient_peaks.push_back(i);
 				}
 			}
-//			DEBUG("x " << i << " " << orig_bit_counts[i] << " " << smoothed_bit_counts[i] << " " << gradient[i]);
 		}
 		gradient_peaks.push_back(size);
 
-		m_segments.clear();
-
-		size_t match_duration[4] = { 0, 0, 0, 0 };
-
-		{
-			size_t begin = 0;
-			for (size_t end : gradient_peaks) {
-				const auto duration = end - begin;
-				const auto score = std::accumulate(orig_bit_counts.begin() + begin, orig_bit_counts.begin() + end, 0.0) / duration;
-				if (score < m_match_threshold) {
-					m_segments.emplace_back(offset1 + begin, offset2 + begin, duration, score);
-					if (score < 1.1) {
-						match_duration[0] += duration;
-					} else if (score < 3.3) {
-						match_duration[1] += duration;
-					} else if (score < 6.0) {
-						match_duration[2] += duration;
-					} else {
-						match_duration[3] += duration;
-					}
-				}
-				begin = end;
+		size_t begin = 0;
+		for (size_t end : gradient_peaks) {
+			const auto duration = end - begin;
+			const auto score = std::accumulate(orig_bit_counts.begin() + begin, orig_bit_counts.begin() + end, 0.0) / duration;
+			if (score < m_match_threshold) {
+				m_segments.emplace_back(offset1 + begin, offset2 + begin, duration, score);
 			}
+			begin = end;
 		}
 
-		for (auto &s : m_segments) {
-			const auto t1 = GetHashTime(s.pos1);
-			const auto t2 = GetHashTime(s.pos2);
-			const auto duration = GetHashDuration(s.duration);
-			DEBUG("segment " << t1 << "-" << t1 + duration << " " << t2 << "-" << t2 + duration << " " << s.score);
-			//DEBUG("segment " << offset1 + s.begin << "-" << offset1 + s.end << " " << offset2 + s.begin << "-" << offset2 + s.end << " " << s.score);
-		}
-
-/*		for (size_t i = 0; i < 4; i++) {
-			DEBUG("match duration " << i << " " << match_duration[i] << " (" << GetHashTime(match_duration[i]) << "s)");
-		}*/
+		// TODO try to merge segments from multiple offsets
 
 		break;
 	}

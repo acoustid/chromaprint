@@ -13,6 +13,16 @@ enum Format {
 	JSON,
 };
 
+const char *g_help =
+	"Usage: %s [OPTIONS] FP1 FP2\n"
+	"\n"
+	"Compare two audio fingerprints.\n"
+	"\n"
+	"Options:\n"
+	"  -json  Print the output in JSON format\n"
+	"  -text  Print the output in readable text format\n"
+	;
+
 static std::string RStrip(std::string s) {
 	while (!s.empty() && isspace(s.back())) {
 		s.resize(s.size() - 1);
@@ -28,12 +38,14 @@ static std::string ReadFile(std::string file_name) {
 	SCOPE_EXIT(fclose(fp));
 
 	char buffer[1024];
-	std::string line;
+	std::string line, last_line;
+	int num_lines = 0;
+
 	while (true) {
 		bool new_line;
 		if (fgets(buffer, sizeof(buffer), fp) == NULL) {
 			if (line.empty()) {
-				return std::string();
+				break;
 			}
 			new_line = true;
 		} else {
@@ -45,10 +57,24 @@ static std::string ReadFile(std::string file_name) {
 			if (line.compare(0, prefix.size(), prefix) == 0) {
 				return RStrip(line.substr(prefix.size()));
 			}
+			last_line = line;
 			line.clear();
+			num_lines += 1;
 		}
 	}
-	return std::string();
+
+	if (num_lines == 1) {
+		return last_line;
+	} else {
+		return std::string();
+	}
+}
+
+static std::string GetFingerprint(const std::string &value) {
+	if (value.size() > 1 && value[0] == '@') {
+		return ReadFile(value.substr(1));
+	}
+	return value;
 }
 
 void PrintJson(ChromaprintMatcherContext *ctx) {
@@ -95,7 +121,7 @@ std::string FormatTimeRange(int ms1, int ms2) {
 void PrintText(ChromaprintMatcherContext *ctx) {
 	int num_segments = 0;
 	chromaprint_matcher_get_num_segments(ctx, &num_segments);
-	printf("%s\t%s\t%s\t%s\n", "POSITION1", "POSITION2", "SCORE", "DURATION");
+	printf("%s\t%s\t%s\t%s\n", "POSITION 1", "POSITION 2", "SCORE", "DURATION");
 	for (int i = 0; i < num_segments; i++) {
 		int pos1, pos1_ms, pos2, pos2_ms, duration, duration_ms, score;
 		chromaprint_matcher_get_segment_position_ms(ctx, i, &pos1, &pos2, &duration);
@@ -123,9 +149,12 @@ int main(int argc, char **argv) {
 			} else if (!strcmp(argv[i], "-json")) {
 				format = JSON;
 				continue;
+			} else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "-help") || !strcmp(argv[i], "--help")) {
+				fprintf(stdout, g_help, argv[0]);
+				exit(0);
 			} else if (!strncmp(argv[i], "-", 1)) {
 				fprintf(stderr, "ERROR: unknown option %s\n", argv[i]);
-				return 2;
+				exit(2);
 			}
 		}
 		file_names.push_back(argv[i]);
@@ -144,7 +173,7 @@ int main(int argc, char **argv) {
 
 	SCOPE_EXIT(chromaprint_matcher_free(ctx));
 
-	std::string fp1 = ReadFile(file_names[0]);
+	std::string fp1 = GetFingerprint(file_names[0]);
 	if (fp1.empty()) {
 		fprintf(stderr, "ERROR: could not load the first fingerprint\n");
 		return 1;
@@ -155,7 +184,7 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	std::string fp2 = ReadFile(file_names[1]);
+	std::string fp2 = GetFingerprint(file_names[1]);
 	if (fp2.empty()) {
 		fprintf(stderr, "ERROR: could not load the second fingerprint\n");
 		return 1;
