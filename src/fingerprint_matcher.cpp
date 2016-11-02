@@ -2,6 +2,7 @@
 // Distributed under the MIT license, see the LICENSE file for details.
 
 #include <algorithm>
+#include <iostream>
 #include "fingerprint_matcher.h"
 #include "fingerprinter_configuration.h"
 #include "utils.h"
@@ -145,7 +146,7 @@ bool FingerprintMatcher::Match(const uint32_t fp1_data[], size_t fp1_size, const
 		std::vector<size_t> gradient_peaks;
 		for (size_t i = 0; i < size; i++) {
 			const auto gi = gradient[i];
-			if (i > 0 && i < size - 1 && gi > 0.09 && gi >= gradient[i - 1] && gi >= gradient[i + 1]) {
+			if (i > 0 && i < size - 1 && gi > 0.15 && gi >= gradient[i - 1] && gi >= gradient[i + 1]) {
 				if (gradient_peaks.empty() || gradient_peaks.back() + 1 < i) {
 					gradient_peaks.push_back(i);
 				}
@@ -158,7 +159,17 @@ bool FingerprintMatcher::Match(const uint32_t fp1_data[], size_t fp1_size, const
 			const auto duration = end - begin;
 			const auto score = std::accumulate(orig_bit_counts.begin() + begin, orig_bit_counts.begin() + end, 0.0) / duration;
 			if (score < m_match_threshold) {
-				m_segments.emplace_back(offset1 + begin, offset2 + begin, duration, score);
+				bool added = false;
+				if (!m_segments.empty()) {
+					auto &s1 = m_segments.back();
+					if (std::abs(s1.score - score) < 0.7) {
+						s1 = s1.merged(Segment(offset1 + begin, offset2 + begin, duration, score));
+						added = true;
+					}
+				}
+				if (!added) {
+					m_segments.emplace_back(offset1 + begin, offset2 + begin, duration, score);
+				}
 			}
 			begin = end;
 		}

@@ -7,6 +7,7 @@
 #include <vector>
 #include <memory>
 #include <cstdint>
+#include <cassert>
 
 namespace chromaprint {
 
@@ -18,12 +19,27 @@ struct Segment
 	size_t pos2;
 	size_t duration;
 	double score;
+	double left_score;
+	double right_score;
+
 	Segment(size_t pos1, size_t pos2, size_t duration, double score)
-		: pos1(pos1), pos2(pos2), duration(duration), score(score) {}
+		: pos1(pos1), pos2(pos2), duration(duration), score(score), left_score(score), right_score(score) {}
+
+	Segment(size_t pos1, size_t pos2, size_t duration, double score, double left_score, double right_score)
+		: pos1(pos1), pos2(pos2), duration(duration), score(score), left_score(left_score), right_score(right_score) {}
 
 	int public_score() const {
-		//return round(100 * (1 - score / 16));
-		return round(100 * pow(score, 1.4) / pow(10, 1.4));
+		//return std::max(0, int(100 - std::round(score * (100.0 / 14.0))));
+		//return std::max(0, int(100 - std::round(score * (100.0 / 14.0))));
+		return std::round(score * 100);
+	}
+
+	Segment merged(const Segment &other) {
+		assert(pos1 + duration == other.pos1);
+		assert(pos2 + duration == other.pos2);
+		const auto new_duration = duration + other.duration;
+		const auto new_score = (score * duration + other.score * other.duration) / new_duration;
+		return Segment(pos1, pos2, new_duration, new_score, score, other.score);
 	}
 
 };

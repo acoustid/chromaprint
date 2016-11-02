@@ -19,6 +19,7 @@ const char *g_help =
 	"Compare two audio fingerprints.\n"
 	"\n"
 	"Options:\n"
+	"  -files Input arguments are file names, not fingerprints\n"
 	"  -json  Print the output in JSON format\n"
 	"  -text  Print the output in readable text format\n"
 	;
@@ -70,7 +71,10 @@ static std::string ReadFile(std::string file_name) {
 	}
 }
 
-static std::string GetFingerprint(const std::string &value) {
+static std::string GetFingerprint(const std::string &value, bool is_file) {
+	if (is_file) {
+		return ReadFile(value);
+	}
 	if (value.size() > 1 && value[0] == '@') {
 		return ReadFile(value.substr(1));
 	}
@@ -86,9 +90,9 @@ void PrintJson(ChromaprintMatcherContext *ctx) {
 		chromaprint_matcher_get_segment_position_ms(ctx, i, &pos1, &pos2, &duration);
 		chromaprint_matcher_get_segment_score(ctx, i, &score);
 		printf("    {\n");
-		printf("      \"pos1\": %d\n", pos1);
-		printf("      \"pos2\": %d\n", pos2);
-		printf("      \"duration\": %d\n", duration);
+		printf("      \"pos1\": %d,\n", pos1);
+		printf("      \"pos2\": %d,\n", pos2);
+		printf("      \"duration\": %d,\n", duration);
 		printf("      \"score\": %d\n", score);
 		if (i + 1 == num_segments) {
 			printf("    }\n");
@@ -124,19 +128,20 @@ void PrintText(ChromaprintMatcherContext *ctx) {
 	printf("%s\t%s\t%s\t%s\n", "POSITION 1", "POSITION 2", "SCORE", "DURATION");
 	for (int i = 0; i < num_segments; i++) {
 		int pos1, pos1_ms, pos2, pos2_ms, duration, duration_ms, score;
-		chromaprint_matcher_get_segment_position_ms(ctx, i, &pos1, &pos2, &duration);
+		chromaprint_matcher_get_segment_position(ctx, i, &pos1, &pos2, &duration);
 		chromaprint_matcher_get_segment_position_ms(ctx, i, &pos1_ms, &pos2_ms, &duration_ms);
 		chromaprint_matcher_get_segment_score(ctx, i, &score);
-		printf("%s\t%s\t%d\t%s\n",
-			FormatTimeRange(pos1, pos1 + duration).c_str(),
-			FormatTimeRange(pos2, pos2 + duration).c_str(),
-			score, FormatTime(duration).c_str());
+		printf("%s\t%s\t%d\t%s (%d)\n",
+			FormatTimeRange(pos1_ms, pos1_ms + duration_ms).c_str(),
+			FormatTimeRange(pos2_ms, pos2_ms + duration_ms).c_str(),
+			score, FormatTime(duration_ms).c_str(), duration);
 	}
 }
 
 int main(int argc, char **argv) {
 	Format format = TEXT;
 	std::vector<std::string> file_names;
+	bool read_files = false;
 	bool no_more_options = false;
 	for (int i = 1; i < argc; i++) {
 		if (!no_more_options) {
@@ -148,6 +153,9 @@ int main(int argc, char **argv) {
 				continue;
 			} else if (!strcmp(argv[i], "-json")) {
 				format = JSON;
+				continue;
+			} else if (!strcmp(argv[i], "-f") || !strcmp(argv[i], "-files")) {
+				read_files = true;
 				continue;
 			} else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "-help") || !strcmp(argv[i], "--help")) {
 				fprintf(stdout, g_help, argv[0]);
@@ -173,7 +181,7 @@ int main(int argc, char **argv) {
 
 	SCOPE_EXIT(chromaprint_matcher_free(ctx));
 
-	std::string fp1 = GetFingerprint(file_names[0]);
+	std::string fp1 = GetFingerprint(file_names[0], read_files);
 	if (fp1.empty()) {
 		fprintf(stderr, "ERROR: could not load the first fingerprint\n");
 		return 1;
@@ -184,7 +192,7 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	std::string fp2 = GetFingerprint(file_names[1]);
+	std::string fp2 = GetFingerprint(file_names[1], read_files);
 	if (fp2.empty()) {
 		fprintf(stderr, "ERROR: could not load the second fingerprint\n");
 		return 1;
