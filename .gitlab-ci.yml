@@ -3,6 +3,7 @@ image: ubuntu:latest
 build:
   stage: build
   before_script: 
-    - apt update && apt -y install cmake make gcc libgtest-dev libboost-dev libavcodec-dev libavformat-dev libavutil-dev
+    - apt update && apt -y install cmake make gcc g++ libgtest-dev libboost-dev libavcodec-dev libavformat-dev libavutil-dev
   script: 
-    - g++ helloworld.cpp -o mybinary
+    - cmake .
+    - make
