@@ -1,0 +1,16 @@
+image: ubuntu:latest
+
+cache:
+  paths:
+    - vendor/apt
+
+before_script:
+  - export DEBIAN_FRONTEND=noninteractive
+  - mkdir -p vendor/apt
+  - apt-get update -qq && apt-get -o dir::cache::archives="vendor/apt" install -y -qq cmake make gcc g++ libgtest-dev libboost-dev libavcodec-dev libavformat-dev libavutil-dev
+
+build:
+  stage: build
+  script: 
+    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON .
+    - make
