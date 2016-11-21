@@ -14,3 +14,5 @@ build:
   script: 
     - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON .
     - make
+  tags:
+    - docker
