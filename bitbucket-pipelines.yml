@@ -1,4 +1,4 @@
-image: acoustid/chromaprint-build
+image: docker.oxygene.sk/acoustid/chromaprint-build
 
 pipelines:
   default:
