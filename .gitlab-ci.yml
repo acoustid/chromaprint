@@ -1,18 +1,24 @@
-image: ubuntu:latest
+image: docker.oxygene.sk/acoustid/chromaprint-build
 
-cache:
-  paths:
-    - vendor/apt
+stages:
+  - test
+  - package
 
-before_script:
-  - export DEBIAN_FRONTEND=noninteractive
-  - mkdir -p vendor/apt
-  - apt-get update -qq && apt-get -o dir::cache::archives="vendor/apt" install -y -qq cmake make gcc g++ libgtest-dev libboost-dev libavcodec-dev libavformat-dev libavutil-dev
-
-build:
-  stage: build
-  script: 
-    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON .
+test:
+  stage: test
+  script:
+    - mkdir build.test
+    - cd build.test
+    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON ..
     - make
+    - make check
   tags:
     - docker
+
+package:linux-i686:
+  stage: package
+  script:
+    - mkdir build.linux-i686
+    - cd build.linux-i686
+    - wget 'https://code.oxygene.sk/acoustid/ffmpeg-build/builds/artifacts/master/download?job=build%3Alinux-i686'
+    - ls
