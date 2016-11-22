@@ -18,6 +18,9 @@ package:linux-i686:
   script:
     - mkdir build.linux-i686
     - cd build.linux-i686
-    - wget 'https://code.oxygene.sk/acoustid/ffmpeg-build/builds/artifacts/master/download?job=build%3Alinux-i686'
-    - unzip artifacts.zip
-    - ls
+    - wget -O artifacts.zip 'https://code.oxygene.sk/acoustid/ffmpeg-build/builds/artifacts/master/download?job=build%3Alinux-i686'
+    - mkdir ffmpeg
+    - unzip ../artifacts.zip
+    - cd ..
+    - rm artifacts.zip
+    - CC='gcc -m32' cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON -DBUILD_SHARED_LIBS=OFF -DFFMPEG_ROOT=`pwd`/ffmpeg ..
