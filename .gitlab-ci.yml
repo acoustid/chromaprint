@@ -4,16 +4,14 @@ stages:
   - test
   - package
 
-test:
-  stage: test
-  script:
-    - mkdir build.test
-    - cd build.test
-    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON ..
-    - make
-    - make check
-  tags:
-    - docker
+#test:
+#  stage: test
+#  script:
+#    - mkdir build.test
+#    - cd build.test
+#    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON ..
+#    - make
+#    - make check
 
 package:linux-i686:
   stage: package
@@ -21,4 +19,5 @@ package:linux-i686:
     - mkdir build.linux-i686
     - cd build.linux-i686
     - wget 'https://code.oxygene.sk/acoustid/ffmpeg-build/builds/artifacts/master/download?job=build%3Alinux-i686'
+    - unzip artifacts.zip
     - ls
