@@ -13,14 +13,26 @@ stages:
 #    - make
 #    - make check
 
-package:linux-i686:
+#package:linux-i686:
+#  stage: package
+#  script:
+#    - mkdir build.linux-i686
+#    - cd build.linux-i686
+#    - wget -O artifacts.zip 'https://code.oxygene.sk/acoustid/ffmpeg-build/builds/artifacts/master/download?job=build%3Alinux-i686'
+#    - unzip artifacts.zip
+#    - export FFMPEG_DIR=$(pwd)/$(ls -d ffmpeg-* | tail)
+#    - CFLAGS=-m32 CXXFLAGS=-m32 cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$(pwd)/install ..
+#    - make
+#    - make install
+
+package:linux-x86_64:
   stage: package
   script:
-    - mkdir build.linux-i686
-    - cd build.linux-i686
-    - wget -O artifacts.zip 'https://code.oxygene.sk/acoustid/ffmpeg-build/builds/artifacts/master/download?job=build%3Alinux-i686'
+    - mkdir build.linux-x86_64
+    - cd build.linux-x86_64
+    - wget -O artifacts.zip 'https://code.oxygene.sk/acoustid/ffmpeg-build/builds/artifacts/master/download?job=build%3Alinux-x86_64'
     - unzip artifacts.zip
     - export FFMPEG_DIR=$(pwd)/$(ls -d ffmpeg-* | tail)
-    - CFLAGS=-m32 CXXFLAGS=-m32 cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$(pwd)/install ..
+    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$(pwd)/install ..
     - make
     - make install
