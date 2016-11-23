@@ -7,7 +7,7 @@ set -eux
 
 BASE_DIR=$(cd $(dirname $0)/.. && pwd)
 
-TMP_BUILD_DIR=$(mktemp -d -p $BASE_DIR build.XXXXXXXX)
+TMP_BUILD_DIR=$BASE_DIR/$(mktemp -d build.XXXXXXXX)
 trap 'rm -rf $TMP_BUILD_DIR' EXIT
 
 cd $TMP_BUILD_DIR
