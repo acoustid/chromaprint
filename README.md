@@ -38,24 +38,28 @@ FFT Library
 -----------
 
 Chromaprint can use multiple FFT libraries -- FFmpeg, FFTW3, KissFFT and vDSP.
+
 FFmpeg is preferred on all systems except for macOS, where you should use
 the standard vDSP framework. These are the fastest options.
 
 FFTW3 can be also used, but this library is released under the GPL
 license, which makes also the resulting Chromaprint binary GPL licensed.
 
-KissFFT is the slowest option, but it's distributed with a permissive license and
-it's very easy to build on platforms like Android.
+KissFFT is the slowest option, but it's distributed with a permissive license
+and it's very easy to build on platforms that do not have packaged
+versions of FFmpeg or FFTW3. We ship a copy of KissFFT, so if
+the build system is unable to find another FFT library it will use
+that as a fallback.
 
-If you run simple `cmake .`, it will try to find the best library.
-If you have FFmpeg installed in a non-standard location,
-you can let CMake know using the `FFMPEG_ROOT` option:
+FFmpeg
+------
+
+FFmpeg is used both as a FFT library and for audio file decoding in `fpcalc`. If you have FFmpeg installed
+in a non-standard location, you can use the `FFMPEG_ROOT` option:
 
     $ cmake -DFFMPEG_ROOT=/path/to/local/ffmpeg/install .
 
-If you are on macOS, Chromaprint will use standard Accelerate framework
-with the vDSP library by default. It's very fast and requires you to install
-no external libraries.
+While we try to make sure things work also with libav, FFmpeg is preferred.
 
 API Documentation
 -----------------
