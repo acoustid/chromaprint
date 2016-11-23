@@ -4,41 +4,34 @@ stages:
   - test
   - package
 
-test avfft:
+.test: &test
   stage: test
   script:
-    - mkdir build.test
-    - cd build.test
-    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON -DWITH_AVFFT=ON .
+    - mkdir build.test.$$
+    - cd build.test.$$
+    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON -DWITH_AVFFT=ON $EXTRA_CMAKE_ARGS .
     - make
     - make check
+
+test avfft:
+  <<: *test
+  variables:
+    EXTRA_CMAKE_ARGS: -DWITH_AVFFT=ON
 
 test fftw3:
-  stage: test
-  script:
-    - mkdir build.test
-    - cd build.test
-    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON -DWITH_FFTW3=ON .
-    - make
-    - make check
+  <<: *test
+  variables:
+    EXTRA_CMAKE_ARGS: -DWITH_FFTW3=ON
 
 test fftw3f:
-  stage: test
-  script:
-    - mkdir build.test
-    - cd build.test
-    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON -DWITH_FFTW3F=ON .
-    - make
-    - make check
+  <<: *test
+  variables:
+    EXTRA_CMAKE_ARGS: -DWITH_FFTW3F=ON
 
 test kissfft:
-  stage: test
-  script:
-    - mkdir build.test
-    - cd build.test
-    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON -DWITH_KISSFFT=ON .
-    - make
-    - make check
+  <<: *test
+  variables:
+    EXTRA_CMAKE_ARGS: -DWITH_KISSFFT=ON
 
 .package: &package
   stage: package
