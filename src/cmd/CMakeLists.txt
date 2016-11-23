@@ -10,7 +10,7 @@ if(APPLE)
 endif()
 
 if(UNIX)
-    set(EXTRA_LIBS ${EXTRA_LIBS} -lpthread -lm)
+    set(EXTRA_LIBS ${EXTRA_LIBS} -pthread -lm)
 endif()
 
 set(CMAKE_REQUIRED_LIBRARIES
@@ -28,10 +28,10 @@ include_directories(
 
 set(fpcalc_LIBS
 	chromaprint
-	${EXTRA_LIBS}
-	${FFMPEG_LIBAVCODEC_LIBRARIES}
 	${FFMPEG_LIBAVFORMAT_LIBRARIES}
+	${FFMPEG_LIBAVCODEC_LIBRARIES}
 	${FFMPEG_LIBAVUTIL_LIBRARIES}
+	${EXTRA_LIBS}
 )
 
 if(FFMPEG_LIBSWRESAMPLE_FOUND)
