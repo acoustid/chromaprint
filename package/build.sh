@@ -27,6 +27,7 @@ CMAKE_ARGS=(
 STRIP=strip
 
 OSX_CC=/usr/local/bin/gcc-5
+OSX_CXX=/usr/local/bin/g++-5
 OSX_SDK=/Developer/SDKs/MacOSX10.4u.sdk
 OSX_VERSION=10.4
 
