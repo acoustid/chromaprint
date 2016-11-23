@@ -43,7 +43,6 @@ windows)
     ;;
 macos)
     CMAKE_ARGS+=(
-        -DCMAKE_TOOLCHAIN_FILE=$TMP_BUILD_DIR/toolchain.cmake
         -DCMAKE_C_COMPILER=$OSX_CC
         -DCMAKE_CXX_COMPILER=$OSX_CXX
         -DCMAKE_OSX_SYSROOT=$OSX_SDK
