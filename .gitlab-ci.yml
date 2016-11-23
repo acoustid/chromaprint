@@ -9,7 +9,7 @@ stages:
   script:
     - mkdir build.test.$$
     - cd build.test.$$
-    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON -DWITH_AVFFT=ON $EXTRA_CMAKE_ARGS .
+    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON -DWITH_AVFFT=ON $EXTRA_CMAKE_ARGS ..
     - make
     - make check
 
