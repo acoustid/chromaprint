@@ -23,6 +23,7 @@ test:
   artifacts:
     paths:
       - chromaprint-*-*
+    expire_in: 7d
 
 package linux i686: *package
 package linux x86_64: *package
