@@ -27,7 +27,11 @@ CMAKE_ARGS=(
 case $OS in
 windows)
     perl -pe "s!{EXTRA_PATHS}!$FFMPEG_DIR!g" $BASE_DIR/package/toolchain-mingw.cmake.in | perl -pe "s!{ARCH}!$ARCH!g" >toolchain.cmake
-    CMAKE_ARGS+=(-DCMAKE_TOOLCHAIN_FILE=$TMP_BUILD_DIR/toolchain.cmake)
+    CMAKE_ARGS+=(
+        -DCMAKE_TOOLCHAIN_FILE=$TMP_BUILD_DIR/toolchain.cmake
+        -DCMAKE_C_FLAGS='-static -static-libgcc -static-libstdc++'
+        -DCMAKE_CXX_FLAGS='-static -static-libgcc -static-libstdc++'
+    )
     ;;
 linux)
     case $ARCH in
