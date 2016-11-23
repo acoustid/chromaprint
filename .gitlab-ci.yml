@@ -7,8 +7,9 @@ stages:
 .test: &test
   stage: test
   script:
-    - mkdir build.test.$$
-    - cd build.test.$$
+    - JOB_NAME=($CI_BUILD_NAME)
+    - mkdir build.test.${JOB_NAME[1]}
+    - cd build.test.${JOB_NAME[1]}
     - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON $EXTRA_CMAKE_ARGS ..
     - make
     - make check
@@ -28,10 +29,15 @@ test fftw3f:
   variables:
     EXTRA_CMAKE_ARGS: -DWITH_FFTW3F=ON
 
-#test kissfft:
-#  <<: *test
-#  variables:
-#    EXTRA_CMAKE_ARGS: -DWITH_KISSFFT=ON
+test kissfft:
+  stage: test
+  script:
+    - mkdir build.test.kissfft
+    - cd build.test.kissfft
+    - git clone https://code.oxygene.sk/acoustid/kissfft.git
+    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON -DWITH_KISSFFT=ON -DKISSFFT_SOURCE_DIR=$(pwd)/kissfft ..
+    - make
+    - make check
 
 .package: &package
   stage: package
