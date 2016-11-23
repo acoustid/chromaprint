@@ -240,7 +240,7 @@ inline bool FFmpegAudioReader::Read(const int16_t **data, size_t *size) {
 	}
 
 	while (m_packet.size <= 0) {
-		av_free_packet(&m_packet0);
+		av_packet_unref(&m_packet0);
 		av_init_packet(&m_packet);
 		m_packet.data = nullptr;
 		m_packet.size = 0;
