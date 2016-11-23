@@ -13,7 +13,7 @@ test:
     - make
     - make check
 
-.package: &package
+.package-linux: &package-linux
   stage: package
   script:
     - JOB_NAME=($CI_BUILD_NAME)
@@ -32,9 +32,30 @@ test:
       - chromaprint-*-*
 
 package linux i686:
-  <<: *package
+  <<: *package-linux
   variables:
     CC: "gcc -m32"
     CXX: "g++ -m32"
 
-package linux x86_64: *package
+package linux x86_64: *package-linux
+
+.package-windows: &package-windows
+  stage: package
+  script:
+    - JOB_NAME=($CI_BUILD_NAME)
+    - OS=${JOB_NAME[1]}
+    - ARCH=${JOB_NAME[2]}
+    - mkdir build.$OS-$ARCH
+    - cd build.$OS-$ARCH
+    - wget -q -O artifacts.zip "https://code.oxygene.sk/acoustid/ffmpeg-build/builds/artifacts/master/download?job=build%3A$OS-$ARCH"
+    - unzip artifacts.zip
+    - export FFMPEG_DIR=$(pwd)/$(ls -d ffmpeg-* | tail)
+    - cmake -DCMAKE_BUILD_TYPE=Release DCMAKE_TOOLCHAIN_FILE=$CI_PROJECT_DIR/package/toolchain-mingw-$ARCH.cmake -DBUILD_TESTS=OFF -DBUILD_TOOLS=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$CI_PROJECT_DIR/chromaprint-$OS-$ARCH ..
+    - make
+    - make install
+  artifacts:
+    paths:
+      - chromaprint-*-*
+
+package windows i686: *package-windows
+package windows x86_64: *package-windows
