@@ -12,7 +12,7 @@ trap 'rm -rf $TMP_BUILD_DIR' EXIT
 
 cd $TMP_BUILD_DIR
 
-wget -q -O artifacts.zip "https://code.oxygene.sk/acoustid/ffmpeg-build/builds/artifacts/master/download?job=$OS+$ARCH"
+curl -s -o artifacts.zip "https://code.oxygene.sk/acoustid/ffmpeg-build/builds/artifacts/master/download?job=$OS+$ARCH"
 unzip artifacts.zip
 export FFMPEG_DIR=$TMP_BUILD_DIR/$(ls -d ffmpeg-* | tail)
 
