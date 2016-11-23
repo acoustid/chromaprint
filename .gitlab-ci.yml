@@ -4,35 +4,36 @@ stages:
   - test
   - package
 
-#test:
-#  stage: test
-#  script:
-#    - mkdir build.test
-#    - cd build.test
-#    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON ..
-#    - make
-#    - make check
+test:
+  stage: test
+  script:
+    - mkdir build.test
+    - cd build.test
+    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON ..
+    - make
+    - make check
 
-#package:linux-i686:
-#  stage: package
-#  script:
-#    - mkdir build.linux-i686
-#    - cd build.linux-i686
-#    - wget -O artifacts.zip 'https://code.oxygene.sk/acoustid/ffmpeg-build/builds/artifacts/master/download?job=build%3Alinux-i686'
-#    - unzip artifacts.zip
-#    - export FFMPEG_DIR=$(pwd)/$(ls -d ffmpeg-* | tail)
-#    - CFLAGS=-m32 CXXFLAGS=-m32 cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$(pwd)/install ..
-#    - make
-#    - make install
-
-package:linux-x86_64:
+.package: &package
   stage: package
   script:
-    - mkdir build.linux-x86_64
-    - cd build.linux-x86_64
-    - wget -O artifacts.zip 'https://code.oxygene.sk/acoustid/ffmpeg-build/builds/artifacts/master/download?job=build%3Alinux-x86_64'
+    - JOB_NAME=($CI_BUILD_NAME)
+    - OS=${JOB_NAME[1]}
+    - ARCH=${JOB_NAME[2]}
+    - mkdir build.$OS-$ARCH
+    - cd build.$OS-$ARCH
+    - wget -q -O artifacts.zip "https://code.oxygene.sk/acoustid/ffmpeg-build/builds/artifacts/master/download?job=build%3A$OS-$ARCH"
     - unzip artifacts.zip
     - export FFMPEG_DIR=$(pwd)/$(ls -d ffmpeg-* | tail)
-    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$(pwd)/install ..
+    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF -DBUILD_TOOLS=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$CI_PROJECT_DIR/chromaprint-$OS-$ARCH ..
     - make
     - make install
+  artifacts:
+    paths:
+      - chromaprint-*-*
+
+package linux i686: *package
+  variables:
+    CC: 'gcc -m32'
+    CXX: 'g++ -m32'
+
+package linux x86_64: *package
