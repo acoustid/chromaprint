@@ -24,6 +24,8 @@ CMAKE_ARGS=(
     -DBUILD_SHARED_LIBS=OFF
 )
 
+STRIP=strip
+
 case $OS in
 windows)
     perl -pe "s!{EXTRA_PATHS}!$FFMPEG_DIR!g" $BASE_DIR/package/toolchain-mingw.cmake.in | perl -pe "s!{ARCH}!$ARCH!g" >toolchain.cmake
@@ -32,6 +34,7 @@ windows)
         -DCMAKE_C_FLAGS='-static -static-libgcc -static-libstdc++'
         -DCMAKE_CXX_FLAGS='-static -static-libgcc -static-libstdc++'
     )
+    STRIP=$ARCH-w64-mingw32-strip
     ;;
 linux)
     case $ARCH in
@@ -56,3 +59,5 @@ cmake ${CMAKE_ARGS[@]} $BASE_DIR
 
 make
 make install
+
+$STRIP $BASE_DIR/chromaprint-$OS-$ARCH/bin/*
