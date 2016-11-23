@@ -99,11 +99,19 @@ private:
 inline FFmpegAudioReader::FFmpegAudioReader() {
 	av_log_set_level(AV_LOG_QUIET);
 	av_register_all();
+
+	av_init_packet(&m_packet);
+	m_packet.data = nullptr;
+	m_packet.size = 0;
+
+	m_packet0 = m_packet;
 }
 
 inline FFmpegAudioReader::~FFmpegAudioReader() {
 	Close();
 	av_dict_free(&m_input_opts);
+	av_freep(&m_convert_buffer[0]);
+	av_packet_unref(&m_packet0);
 }
 
 inline bool FFmpegAudioReader::SetInputFormat(const char *name) {
@@ -204,11 +212,14 @@ inline bool FFmpegAudioReader::Open(const std::string &file_name) {
 
 inline void FFmpegAudioReader::Close() {
 	av_frame_free(&m_frame);
+
 	m_stream_index = -1;
+
 	if (m_codec_ctx) {
 		avcodec_close(m_codec_ctx);
 		m_codec_ctx = nullptr;
 	}
+
 	if (m_format_ctx) {
 		avformat_close_input(&m_format_ctx);
 	}
