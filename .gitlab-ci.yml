@@ -34,6 +34,13 @@ test kissfft:
   variables:
     EXTRA_CMAKE_ARGS: -DWITH_KISSFFT=ON
 
+test vdsp:
+  <<: *test
+  variables:
+    EXTRA_CMAKE_ARGS: -DWITH_VDSP=ON -DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5
+  tags:
+    - osx
+
 .package: &package
   stage: package
   script:
