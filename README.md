@@ -1,21 +1,24 @@
 Chromaprint
 ===========
 
+Chromaprint is an audio fingerprint library developed for the [AcoustID][acoustid] project.
+
+[acoustid]: https://acoustid.org/
+
 Dependencies
 ------------
 
-The library itself only depends on a FFT library, which at the moment can
-be either [FFmpeg][1] (at least r22291, 0.6 is fine), [FFTW3][2] or if you are
-on iOS or OS X, you can use the Accelerate/vDSP framework. See the next
-section for details.
+The only require external dependency is a FFT library.
+This can be [FFmpeg][ffmpeg], [FFTW3][fftw] or [KissFFT][kissfft] or
+the [Accelerate/vDSP framework][vdsp] (macOS).
+See the next section for details.
 
-The `fpcalc` utility included in the package requires FFmpeg (can be older).
+The `fpcalc` utility included in the package needs FFmpeg for audio decoding.
 
-In order to build the test suite, you will need the [Google Test library][4].
-
-[1]: http://www.ffmpeg.org/
-[2]: http://www.fftw.org/
-[4]: http://code.google.com/p/googletest/
+[ffmpeg]: https://www.ffmpeg.org/
+[fftw]: http://www.fftw.org/
+[kissfft]: https://sourceforge.net/projects/kissfft/
+[vdsp]: https://developer.apple.com/reference/accelerate/1652565-vdsp
 
 Installing
 ----------
@@ -34,33 +37,28 @@ See below for other options.
 FFT Library
 -----------
 
-Chromaprint can use three FFT libraries, FFmpeg, FFTW3 and vDSP. FFmpeg is
-preffered, as it's a little faster for our purposes and it's LGPL-licensed,
-so it doesn't impact the license of Chromaprint. The FFT interface was added
-only recently though, so it might not be available in Linux distributions yet.
-FFTW3 can be used in this case, but this library is released under the GPL
+Chromaprint can use multiple FFT libraries -- FFmpeg, FFTW3, KissFFT and vDSP.
+FFmpeg is preferred on all systems except for macOS, where you should use
+the standard vDSP framework. These are the fastest options.
+
+FFTW3 can be also used, but this library is released under the GPL
 license, which makes also the resulting Chromaprint binary GPL licensed.
 
-If you run simple `cmake .`, it will try to find both FFmpeg and FFTW3 and
-select the first one it finds. If you have new FFmpeg installed in a separate
-location, you can let CMake know using the `FFMPEG_ROOT` option:
+KissFFT is the slowest option, but it's distributed with a permissive license and
+it's very easy to build on platforms like Android.
+
+If you run simple `cmake .`, it will try to find the best library.
+If you have FFmpeg installed in a non-standard location,
+you can let CMake know using the `FFMPEG_ROOT` option:
 
     $ cmake -DFFMPEG_ROOT=/path/to/local/ffmpeg/install .
 
-If you have new FFmpeg installed, but for some reason prefer to use FFTW3, you
-can use the `WITH_FFTW3` option:  
+If you are on macOS, Chromaprint will use standard Accelerate framework
+with the vDSP library by default. It's very fast and requires you to install
+no external libraries.
 
-    $ cmake -DWITH_FFTW3=ON .
-
-There is also a `WITH_AVFFT` option, but the script will select the FFmpeg FFT
-automatically if it's available, so it shouldn't be necessary to use it.
-
-If you are on Mac, you can use the standard Accelerate framework with the vDSP
-library. This requires you to install no external libraries. It will use
-vDSP by default on OS X (but there still is a `WITH_VDSP` option).
-
-Documentation
--------------
+API Documentation
+-----------------
 
 You can use Doxygen to generate a HTML version of the API documentation:
 
@@ -74,6 +72,10 @@ The test suite can be built and run using the following commands:
 
     $ cmake -DBUILD_TESTS=ON .
     $ make check
+
+In order to build the test suite, you will need the sources of the [Google Test][gtest] library.
+
+[gtest]: https://github.com/google/googletest
 
 Related Projects
 ----------------
