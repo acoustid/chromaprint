@@ -1,6 +1,8 @@
 Chromaprint
 ===========
 
+[![build status](https://code.oxygene.sk/acoustid/chromaprint/badges/master/build.svg)](https://code.oxygene.sk/acoustid/chromaprint/commits/master)
+
 Chromaprint is an audio fingerprint library developed for the [AcoustID][acoustid] project.
 
 [acoustid]: https://acoustid.org/
