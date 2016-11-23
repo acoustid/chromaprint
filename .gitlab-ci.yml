@@ -4,12 +4,39 @@ stages:
   - test
   - package
 
-test:
+test avfft:
   stage: test
   script:
     - mkdir build.test
     - cd build.test
-    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON ..
+    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON -DWITH_AVFFT=ON .
+    - make
+    - make check
+
+test fftw3:
+  stage: test
+  script:
+    - mkdir build.test
+    - cd build.test
+    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON -DWITH_FFTW3=ON .
+    - make
+    - make check
+
+test fftw3f:
+  stage: test
+  script:
+    - mkdir build.test
+    - cd build.test
+    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON -DWITH_FFTW3F=ON .
+    - make
+    - make check
+
+test kissfft:
+  stage: test
+  script:
+    - mkdir build.test
+    - cd build.test
+    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DBUILD_TOOLS=ON -DWITH_KISSFFT=ON .
     - make
     - make check
 
@@ -25,17 +52,14 @@ test:
       - chromaprint-*-*
     expire_in: 7d
 
+.package-macos: &package-macos
+  <<: *package
+  tags:
+    - osx
+
 package linux i686: *package
 package linux x86_64: *package
 package windows i686: *package
 package windows x86_64: *package
-
-package macos i386:
-  <<: *package
-  tags:
-    - osx
-
-package macos x86_64:
-  <<: *package
-  tags:
-    - osx
+package macos i386: *package-macos
+package macos x86_64: *package-macos
