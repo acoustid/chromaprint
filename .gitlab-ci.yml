@@ -31,9 +31,10 @@ test:
     paths:
       - chromaprint-*-*
 
-package linux i686: *package
+package linux i686:
+  <<: *package
   variables:
-    CC: 'gcc -m32'
-    CXX: 'g++ -m32'
+    CC: "gcc -m32"
+    CXX: "g++ -m32"
 
 package linux x86_64: *package
