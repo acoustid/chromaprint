@@ -20,9 +20,11 @@ public:
 		swr_free(&m_swr_ctx);
 	}
 
-	void SetLowQualityMode() {
+	void SetCompatibleMode() {
+		av_opt_set_int(m_swr_ctx, "resampler", SWR_ENGINE_SWR, 0);
 		av_opt_set_int(m_swr_ctx, "filter_size", 16, 0);
-		av_opt_set_int(m_swr_ctx, "phase_shift", 3, 0);
+		av_opt_set_int(m_swr_ctx, "phase_shift", 8, 0);
+		av_opt_set_int(m_swr_ctx, "linear_interp", 1, 0);
 		av_opt_set_double(m_swr_ctx, "cutoff", 0.8, 0);
 	}
 

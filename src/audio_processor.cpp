@@ -17,7 +17,7 @@ static const int kMaxBufferSize = 1024 * 32;
 
 // Resampler configuration
 static const int kResampleFilterLength = 16;
-static const int kResamplePhaseCount = 8;
+static const int kResamplePhaseShift = 8;
 static const int kResampleLinear = 0;
 static const double kResampleCutoff = 0.8;
 
@@ -134,7 +134,7 @@ bool AudioProcessor::Reset(int sample_rate, int num_channels)
 		m_resample_ctx = av_resample_init(
 			m_target_sample_rate, sample_rate,
 			kResampleFilterLength,
-			kResamplePhaseCount,
+			kResamplePhaseShift,
 			kResampleLinear,
 			kResampleCutoff);
 	}

@@ -190,7 +190,7 @@ inline bool FFmpegAudioReader::Open(const std::string &file_name) {
 
 	if (m_codec_ctx->sample_fmt != AV_SAMPLE_FMT_S16 || m_codec_ctx->channels != m_output_channels || m_codec_ctx->sample_rate != m_output_sample_rate) {
 		m_converter.reset(new FFmpegAudioProcessor());
-		m_converter->SetLowQualityMode();
+		m_converter->SetCompatibleMode();
 		m_converter->SetInputSampleFormat(m_codec_ctx->sample_fmt);
 		m_converter->SetInputSampleRate(m_codec_ctx->sample_rate);
 		m_converter->SetInputChannelLayout(m_codec_ctx->channel_layout);
