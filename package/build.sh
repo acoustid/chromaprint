@@ -58,7 +58,7 @@ linux)
             -DCMAKE_CXX_FLAGS='-m32'
         )
         ;;
-    x86_64)
+    x86_64|armhf)
         ;;
     *)
         echo "unsupported architecture ($ARCH)"

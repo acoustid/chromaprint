@@ -60,6 +60,7 @@ test vdsp:
 
 package linux i686: *package
 package linux x86_64: *package
+package linux armhf: *package
 package windows i686: *package
 package windows x86_64: *package
 package macos i386: *package-macos
