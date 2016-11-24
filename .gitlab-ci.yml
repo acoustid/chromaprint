@@ -53,15 +53,20 @@ test vdsp:
       - chromaprint-*-*
     expire_in: 7d
 
+package linux i686: *package
+package linux x86_64: *package
+package windows i686: *package
+package windows x86_64: *package
+
 .package-macos: &package-macos
   <<: *package
   tags:
     - osx
 
-package linux i686: *package
-package linux x86_64: *package
-package linux armhf: *package
-package windows i686: *package
-package windows x86_64: *package
 package macos i386: *package-macos
 package macos x86_64: *package-macos
+
+package linux armhf: *package
+  <<: *package
+  tags:
+    - raspberrypi
