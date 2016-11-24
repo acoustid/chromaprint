@@ -20,7 +20,7 @@ public:
 		avresample_free(&m_resample_ctx);
 	}
 
-	void SetShittyMode() {
+	void SetLowQualityMode() {
 		av_opt_set_int(m_resample_ctx, "filter_size", 16, 0);
 		av_opt_set_int(m_resample_ctx, "phase_shift", 3, 0);
 		av_opt_set_double(m_resample_ctx, "cutoff", 0.8, 0);
