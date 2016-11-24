@@ -12,7 +12,6 @@ set(chromaprint_SRCS
 	chroma_resampler.cpp
 	chroma_filter.cpp
 	spectrum.cpp
-	spectral_centroid.cpp
 	fft.cpp
 	fingerprinter.cpp
 	image_builder.cpp
