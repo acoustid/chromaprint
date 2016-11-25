@@ -115,6 +115,22 @@ public:
 		return DEFAULT_SAMPLE_RATE;
 	}
 
+	int item_duration() const {
+		return m_frame_size - m_frame_overlap;
+	}
+
+	double item_duration_in_seconds() const {
+		return item_duration() * 1.0 / sample_rate();
+	}
+
+	int delay() const {
+		return ((m_num_filter_coefficients - 1) + (m_max_filter_width - 1)) * item_duration() + m_frame_overlap;
+	}
+
+	double delay_in_seconds() const {
+		return delay() * 1.0 / sample_rate();
+	}
+
 private:
 	int m_num_classifiers;
 	int m_max_filter_width;

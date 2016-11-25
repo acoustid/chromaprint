@@ -53,6 +53,8 @@ public:
 	 */
 	int GetDuration() const;
 
+	int64_t GetTimestamp() const;
+
 	bool SetInputFormat(const char *name);
 	bool SetInputSampleRate(int sample_rate);
 	bool SetInputChannels(int channels);
@@ -89,6 +91,7 @@ private:
 	bool m_finished = false;
 	bool m_opened = false;
 	int m_got_frame = 0;
+	int64_t m_ts = 0;
 	AVPacket m_packet;
 	AVPacket m_packet0;
 
@@ -245,6 +248,10 @@ inline int FFmpegAudioReader::GetDuration() const {
 	return -1;
 }
 
+inline int64_t FFmpegAudioReader::GetTimestamp() const {
+	return m_ts;
+}
+
 inline bool FFmpegAudioReader::Read(const int16_t **data, size_t *size) {
 	if (!IsOpen() || IsFinished()) {
 		return false;
@@ -277,6 +284,8 @@ inline bool FFmpegAudioReader::Read(const int16_t **data, size_t *size) {
 		SetError("Error decoding audio frame", ret);
 		return false;
 	}
+
+	m_ts = av_frame_get_best_effort_timestamp(m_frame);
 
 	const int decoded = std::min(ret, m_packet.size);
 	m_packet.data += decoded;

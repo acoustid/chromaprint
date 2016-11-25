@@ -35,14 +35,11 @@ FingerprintMatcher::FingerprintMatcher(FingerprinterConfiguration *config)
 }
 
 double FingerprintMatcher::GetHashTime(size_t i) const {
-	const auto frame_step = m_config->frame_size() - m_config->frame_overlap();
-	return i * frame_step * 1.0 / m_config->sample_rate();
+	return m_config->item_duration_in_seconds() * i;
 }
 
 double FingerprintMatcher::GetHashDuration(size_t i) const {
-	const auto frame_size = m_config->frame_size();
-	const auto frame_step = frame_size - m_config->frame_overlap();
-	return ((i + (m_config->num_filter_coefficients() - 1) + (m_config->max_filter_width() - 1)) * frame_step + m_config->frame_overlap()) * 1.0 / m_config->sample_rate();
+	return GetHashTime(i) + m_config->delay_in_seconds();
 }
 
 bool FingerprintMatcher::Match(const std::vector<uint32_t> &fp1, const std::vector<uint32_t> &fp2)

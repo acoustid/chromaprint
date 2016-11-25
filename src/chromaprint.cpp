@@ -81,6 +81,26 @@ int chromaprint_get_sample_rate(ChromaprintContext *ctx)
 	return ctx ? ctx->fingerprinter.config()->sample_rate() : 0;
 }
 
+int chromaprint_get_item_duration(ChromaprintContext *ctx)
+{
+	return ctx ? ctx->fingerprinter.config()->item_duration() : 0;
+}
+
+int chromaprint_get_item_duration_ms(ChromaprintContext *ctx)
+{
+	return ctx ? ctx->fingerprinter.config()->item_duration_in_seconds() * 1000 : 0;
+}
+
+int chromaprint_get_delay(ChromaprintContext *ctx)
+{
+	return ctx ? ctx->fingerprinter.config()->delay() : 0;
+}
+
+int chromaprint_get_delay_ms(ChromaprintContext *ctx)
+{
+	return ctx ? ctx->fingerprinter.config()->delay_in_seconds() * 1000 : 0;
+}
+
 int chromaprint_start(ChromaprintContext *ctx, int sample_rate, int num_channels)
 {
 	FAIL_IF(!ctx, "context can't be NULL");

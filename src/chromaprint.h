@@ -176,6 +176,42 @@ CHROMAPRINT_API int chromaprint_get_num_channels(ChromaprintContext *ctx);
 CHROMAPRINT_API int chromaprint_get_sample_rate(ChromaprintContext *ctx);
 
 /**
+ * Get the duration of one item in the raw fingerprint in samples.
+ *
+ * @param[in] ctx Chromaprint context pointer
+ *
+ * @return duration in samples
+ */
+CHROMAPRINT_API int chromaprint_get_item_duration(ChromaprintContext *ctx);
+
+/**
+ * Get the duration of one item in the raw fingerprint in milliseconds.
+ *
+ * @param[in] ctx Chromaprint context pointer
+ *
+ * @return duration in milliseconds
+ */
+CHROMAPRINT_API int chromaprint_get_item_duration_ms(ChromaprintContext *ctx);
+
+/**
+ * Get the duration of internal buffers that the fingerprinting algorithm uses.
+ *
+ * @param[in] ctx Chromaprint context pointer
+ *
+ * @return duration in samples
+ */
+CHROMAPRINT_API int chromaprint_get_delay(ChromaprintContext *ctx);
+
+/**
+ * Get the duration of internal buffers that the fingerprinting algorithm uses.
+ *
+ * @param[in] ctx Chromaprint context pointer
+ *
+ * @return duration in milliseconds
+ */
+CHROMAPRINT_API int chromaprint_get_delay_ms(ChromaprintContext *ctx);
+
+/**
  * Restart the computation of a fingerprint with a new audio stream.
  *
  * @param[in] ctx Chromaprint context pointer
