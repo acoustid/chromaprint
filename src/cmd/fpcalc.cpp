@@ -2,8 +2,8 @@
 #include <cstdlib>
 #include <cstring>
 #include <sstream>
+#include <chrono>
 #include <chromaprint.h>
-#include <sys/time.h>
 #include "audio/ffmpeg_audio_reader.h"
 #include "utils/scope_exit.h"
 
@@ -208,11 +208,9 @@ void PrintResult(ChromaprintContext *ctx, FFmpegAudioReader &reader, bool first,
 }
 
 double GetCurrentTimestamp() {
-	struct timeval tv;
-	if (gettimeofday(&tv, NULL) != 0) {
-		return 0.0;
-	}
-	return tv.tv_sec + tv.tv_usec / 1000000.0;
+	const auto now = std::chrono::system_clock::now();
+	const auto usec = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch());
+	return usec.count() / 1000000.0;
 }
 
 void ProcessFile(ChromaprintContext *ctx, FFmpegAudioReader &reader, const char *file_name) {
