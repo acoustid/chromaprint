@@ -134,7 +134,7 @@ void PrintResult(ChromaprintContext *ctx, FFmpegAudioReader &reader) {
 			if (i > 0) {
 				ss << ',';
 			}
-			ss << int32_t(raw_fp_data[i]);
+			ss << raw_fp_data[i];
 		}
 		tmp_fp = ss.str();
 		fp = tmp_fp.c_str();
