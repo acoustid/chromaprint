@@ -187,7 +187,7 @@ void PrintResult(ChromaprintContext *ctx, FFmpegAudioReader &reader, bool first,
 			printf("DURATION=%.2f\nFINGERPRINT=%s\n", duration, fp);
 			break;
 		case JSON:
-			if (g_abs_ts) {
+			if (g_max_chunk_duration != 0) {
 				if (g_raw) {
 					printf("{\"timestamp\": %.2f, \"duration\": %.2f, \"fingerprint\": [%s]}\n", timestamp, duration, fp);
 				} else {
