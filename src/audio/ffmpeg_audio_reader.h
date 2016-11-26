@@ -53,6 +53,10 @@ public:
 	 */
 	int GetDuration() const;
 
+	/**
+	 * Get the estimated timestamp of the last read frame.
+	 * @return timestamp in milliseconds, -1 on error
+	 */
 	int64_t GetTimestamp() const;
 
 	bool SetInputFormat(const char *name);
@@ -249,7 +253,10 @@ inline int FFmpegAudioReader::GetDuration() const {
 }
 
 inline int64_t FFmpegAudioReader::GetTimestamp() const {
-	return m_ts;
+	if (m_ts != AV_NOPTS_VALUE) {
+		return 1000 * m_ts / AV_TIME_BASE;
+	}
+	return -1;
 }
 
 inline bool FFmpegAudioReader::Read(const int16_t **data, size_t *size) {
