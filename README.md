@@ -2,7 +2,10 @@
 
 [![build status](https://code.oxygene.sk/acoustid/chromaprint/badges/master/build.svg)](https://code.oxygene.sk/acoustid/chromaprint/commits/master)
 
-Chromaprint is an audio fingerprint library developed for the [AcoustID][acoustid] project.
+Chromaprint is an audio fingerprint library developed for the [AcoustID][acoustid] project. It's designed to identify near-identical audio
+and the fingerprints it generates are as compact as possible to achieve that. It's not a general purpose audio fingerprinting solution.
+It trades precision and robustness for search performance. The target use cases are full audio file identifcation,
+duplicate audio file detection and long audio stream monitoring.
 
 [acoustid]: https://acoustid.org/
 
