@@ -1,5 +1,4 @@
-Chromaprint
-===========
+# Chromaprint
 
 [![build status](https://code.oxygene.sk/acoustid/chromaprint/badges/master/build.svg)](https://code.oxygene.sk/acoustid/chromaprint/commits/master)
 
@@ -7,23 +6,7 @@ Chromaprint is an audio fingerprint library developed for the [AcoustID][acousti
 
 [acoustid]: https://acoustid.org/
 
-Dependencies
-------------
-
-The only require external dependency is a FFT library.
-This can be [FFmpeg][ffmpeg], [FFTW3][fftw] or [KissFFT][kissfft] or
-the [Accelerate/vDSP framework][vdsp] (macOS).
-See the next section for details.
-
-The `fpcalc` utility included in the package needs FFmpeg for audio decoding.
-
-[ffmpeg]: https://www.ffmpeg.org/
-[fftw]: http://www.fftw.org/
-[kissfft]: https://sourceforge.net/projects/kissfft/
-[vdsp]: https://developer.apple.com/reference/accelerate/1652565-vdsp
-
-Installing
-----------
+## Building
 
 The most common way to build Chromaprint is like this:
 
@@ -32,14 +15,15 @@ The most common way to build Chromaprint is like this:
     $ sudo make install
 
 This will build Chromaprint as a shared library and also include the `fpcalc`
-utility (which is used by MusicBrainz Picard, for example).
+utility (which is used by MusicBrainz Picard, for example). For this to work,
+you will need to have the FFmpeg libraries installed.
 
 See below for other options.
 
-FFT Library
------------
+### FFT Library
 
-Chromaprint can use multiple FFT libraries -- FFmpeg, FFTW3, KissFFT and vDSP.
+Chromaprint can use multiple FFT libraries -- [FFmpeg][ffmpeg], [FFTW3][fftw], [KissFFT][kissfft] or
+[vDSP][vdsp] (macOS).
 
 FFmpeg is preferred on all systems except for macOS, where you should use
 the standard vDSP framework. These are the fastest options.
@@ -53,26 +37,33 @@ versions of FFmpeg or FFTW3. We ship a copy of KissFFT, so if
 the build system is unable to find another FFT library it will use
 that as a fallback.
 
-FFmpeg
-------
+You can explicitly set which library to use with the `FFT_LIB` option.
+For example:
 
-FFmpeg is used both as a FFT library and for audio file decoding in `fpcalc`. If you have FFmpeg installed
-in a non-standard location, you can use the `FFMPEG_ROOT` option:
+    $ cmake -DFFT_LIB=kissfft .
+
+[ffmpeg]: https://www.ffmpeg.org/
+[fftw]: http://www.fftw.org/
+[kissfft]: https://sourceforge.net/projects/kissfft/
+[vdsp]: https://developer.apple.com/reference/accelerate/1652565-vdsp
+
+### FFmpeg
+
+FFmpeg is as a FFT library and also for audio decoding and resampling in `fpcalc`.
+If you have FFmpeg installed in a non-standard location, you can use the `FFMPEG_ROOT` option to specify where:
 
     $ cmake -DFFMPEG_ROOT=/path/to/local/ffmpeg/install .
 
 While we try to make sure things work also with libav, FFmpeg is preferred.
 
-API Documentation
------------------
+## API Documentation
 
 You can use Doxygen to generate a HTML version of the API documentation:
 
     $ make docs
     $ $BROWSER docs/html/index.html
 
-Unit Tests
-----------
+## Unit Tests
 
 The test suite can be built and run using the following commands:
 
@@ -83,8 +74,7 @@ In order to build the test suite, you will need the sources of the [Google Test]
 
 [gtest]: https://github.com/google/googletest
 
-Related Projects
-----------------
+## Related Projects
 
 Bindings, wrappers and reimplementations in other languages:
 
@@ -106,8 +96,7 @@ Integrations:
 
 If you know about a project that is not listed here, but should be, please let me know.
 
-Standing on the Shoulder of Giants
-----------------------------------
+## Standing on the Shoulders of Giants
 
 I've learned a lot while working on this project, which would not be possible
 without having information from past research. I've read many papers, but the

@@ -34,7 +34,7 @@ set(chromaprint_SRCS
 	avresample/resample2.c
 )
 
-if(WITH_AVFFT)
+if(USE_AVFFT)
 	set(chromaprint_SRCS fft_lib_avfft.cpp ${chromaprint_SRCS})
 	set(chromaprint_LINK_LIBS
 		${FFMPEG_LIBAVCODEC_LIBRARIES}
@@ -46,26 +46,26 @@ if(WITH_AVFFT)
 		${FFMPEG_LIBAVFORMAT_INCLUDE_DIRS}
 		${FFMPEG_LIBAVUTIL_INCLUDE_DIRS}
 	)
-endif(WITH_AVFFT)
+endif(USE_AVFFT)
 
-if(WITH_FFTW3)
+if(USE_FFTW3)
 	set(chromaprint_SRCS fft_lib_fftw3.cpp ${chromaprint_SRCS})
 	set(chromaprint_LINK_LIBS ${FFTW3_LIBRARIES})
 	include_directories(${FFTW3_INCLUDE_DIR})
-endif(WITH_FFTW3)
+endif(USE_FFTW3)
 
-if(WITH_FFTW3F)
+if(USE_FFTW3F)
 	set(chromaprint_SRCS fft_lib_fftw3.cpp ${chromaprint_SRCS})
 	set(chromaprint_LINK_LIBS ${FFTW3_FFTWF_LIBRARY})
 	include_directories(${FFTW3_INCLUDE_DIR})
-endif(WITH_FFTW3F)
+endif(USE_FFTW3F)
 
-if(WITH_VDSP)
+if(USE_VDSP)
 	set(chromaprint_SRCS fft_lib_vdsp.cpp ${chromaprint_SRCS})
 	set(chromaprint_LINK_LIBS ${ACCELERATE_LIBRARIES})
 endif()
 
-if(WITH_KISSFFT)
+if(USE_KISSFFT)
 	set(chromaprint_SRCS fft_lib_kissfft.cpp ${chromaprint_SRCS} ${KISSFFT_SOURCES})
 	include_directories(${KISSFFT_INCLUDE_DIRS})
 endif()

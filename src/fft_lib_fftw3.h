@@ -9,7 +9,7 @@
 #include "fft_frame.h"
 #include "utils.h"
 
-#ifdef WITH_FFTW3F
+#ifdef USE_FFTW3F
 #define FFTW_SCALAR float
 #define fftw_plan fftwf_plan
 #define fftw_plan_r2r_1d fftwf_plan_r2r_1d

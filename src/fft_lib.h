@@ -8,23 +8,23 @@
 #include <config.h>
 #endif
 
-#ifdef WITH_AVFFT
+#ifdef USE_AVFFT
 #include "fft_lib_avfft.h"
 #endif
 
-#ifdef WITH_FFTW3
+#ifdef USE_FFTW3
 #include "fft_lib_fftw3.h"
 #endif
 
-#ifdef WITH_FFTW3F
+#ifdef USE_FFTW3F
 #include "fft_lib_fftw3.h"
 #endif
 
-#ifdef WITH_VDSP
+#ifdef USE_VDSP
 #include "fft_lib_vdsp.h"
 #endif
 
-#ifdef WITH_KISSFFT
+#ifdef USE_KISSFFT
 #include "fft_lib_kissfft.h"
 #endif
 
