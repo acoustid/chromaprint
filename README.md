@@ -83,10 +83,11 @@ Bindings, wrappers and reimplementations in other languages:
  * [Ruby](https://github.com/TMXCredit/chromaprint)
  * [Perl](https://github.com/jonathanstowe/Audio-Fingerprint-Chromaprint)
  * [JavaScript](https://github.com/parshap/node-fpcalc)
- * [JavaScript](https://github.com/bjjb/chromaprint.js) (standalone reimplementation)
+ * [JavaScript](https://github.com/bjjb/chromaprint.js) (reimplementation)
  * [Go](https://github.com/go-fingerprint/gochroma)
- * [C#](https://github.com/wo80/AcoustID.NET) (standalone reimplementation)
- * [Pascal](https://github.com/CMCHTPC/ChromaPrint) (standalone reimplementation)
+ * [C#](https://github.com/wo80/AcoustID.NET) (reimplementation)
+ * [C#](https://github.com/protyposis/Aurio/tree/master/Aurio/Aurio/Matching/Chromaprint) (reimplementation)
+ * [Pascal](https://github.com/CMCHTPC/ChromaPrint) (reimplementation)
  * [C++/CLI](https://github.com/CyberSinh/Luminescence.Audio)
 
 Integrations:
