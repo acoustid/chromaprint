@@ -1,5 +1,10 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+if(CMAKE_COMPILER_IS_GNUCXX AND BUILD_SHARED_LIBS)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
+endif()
+
 set(chromaprint_SOURCES
 	audio_processor.cpp
 	chroma.cpp
@@ -71,14 +76,9 @@ set(chromaprint_LINK_LIBS ${chromaprint_LINK_LIBS} ${AUDIO_PROCESSOR_LIBRARIES})
 include_directories(${AUDIO_PROCESSOR_INCLUDE_DIRS})
 
 add_library(chromaprint_objs OBJECT ${chromaprint_SOURCES})
-set_target_properties(chromaprint_objs PROPERTIES
-	CXX_VISIBILITY_PRESET hidden
-	VISIBILITY_INLINES_HIDDEN TRUE
-	POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS}
-)
-#if(BUILD_SHARED_LIBS)
-#	set_target_properties(chromaprint_objs PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
-#endif()
+if(BUILD_SHARED_LIBS)
+	set_target_properties(chromaprint_objs PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+endif()
 
 add_library(chromaprint ${chromaprint_PUBLIC_SOURCES} ${chromaprint_PUBLIC_HEADERS} $<TARGET_OBJECTS:chromaprint_objs>)
 set_target_properties(chromaprint PROPERTIES
@@ -86,8 +86,6 @@ set_target_properties(chromaprint PROPERTIES
 	PUBLIC_HEADER ${chromaprint_PUBLIC_HEADERS}
     VERSION ${chromaprint_VERSION}
     SOVERSION ${chromaprint_SOVERSION}
-	CXX_VISIBILITY_PRESET hidden
-	VISIBILITY_INLINES_HIDDEN TRUE
 )
 if(BUILD_FRAMEWORK)
 	set_target_properties(chromaprint PROPERTIES FRAMEWORK TRUE)
