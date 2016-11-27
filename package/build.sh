@@ -73,6 +73,8 @@ esac
 
 cmake ${CMAKE_ARGS[@]} $BASE_DIR
 
+cat CMakeFiles/CMakeError.log
+
 make
 make install
 
