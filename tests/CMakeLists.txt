@@ -1,8 +1,13 @@
 find_package(GTest REQUIRED)
 
-add_subdirectory(${GTEST_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/gtest_build)
+include_directories(
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${GTEST_INCLUDE_DIRS}
+	${GTEST_SOURCE_DIR}
+)
 
 set(SRCS
+	${GTEST_SOURCE_DIR}/src/gtest-all.cc
 	main.cpp
 	test_api.cpp
 	test_utils.cpp
@@ -34,8 +39,7 @@ if(BUILD_TOOLS)
 endif()
 
 add_executable(all_tests ${SRCS} $<TARGET_OBJECTS:chromaprint_objs>)
-target_link_libraries(all_tests PRIVATE ${GTEST_BOTH_LIBRARIES} chromaprint)
-target_include_directories(all_tests PRIVATE ${GTEST_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(all_tests PRIVATE chromaprint)
 
 add_custom_target(check ${CMAKE_CURRENT_BINARY_DIR}/all_tests $ENV{GTEST_FLAGS} DEPENDS all_tests)
 
