@@ -5,8 +5,7 @@ if(CMAKE_COMPILER_IS_GNUCXX AND BUILD_SHARED_LIBS)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
 endif()
 
-set(chromaprint_SRCS
-	chromaprint.cpp
+set(chromaprint_SOURCES
 	audio_processor.cpp
 	chroma.cpp
 	chroma_resampler.cpp
@@ -34,8 +33,11 @@ set(chromaprint_SRCS
 	avresample/resample2.c
 )
 
+set(chromaprint_PUBLIC_SOURCES chromaprint.cpp)
+set(chromaprint_PUBLIC_HEADERS chromaprint.h)
+
 if(USE_AVFFT)
-	set(chromaprint_SRCS fft_lib_avfft.cpp ${chromaprint_SRCS})
+	set(chromaprint_SOURCES fft_lib_avfft.cpp ${chromaprint_SOURCES})
 	set(chromaprint_LINK_LIBS
 		${FFMPEG_LIBAVCODEC_LIBRARIES}
 		${FFMPEG_LIBAVFORMAT_LIBRARIES}
@@ -49,43 +51,41 @@ if(USE_AVFFT)
 endif(USE_AVFFT)
 
 if(USE_FFTW3)
-	set(chromaprint_SRCS fft_lib_fftw3.cpp ${chromaprint_SRCS})
+	set(chromaprint_SOURCES fft_lib_fftw3.cpp ${chromaprint_SOURCES})
 	set(chromaprint_LINK_LIBS ${FFTW3_LIBRARIES})
 	include_directories(${FFTW3_INCLUDE_DIR})
 endif(USE_FFTW3)
 
 if(USE_FFTW3F)
-	set(chromaprint_SRCS fft_lib_fftw3.cpp ${chromaprint_SRCS})
+	set(chromaprint_SOURCES fft_lib_fftw3.cpp ${chromaprint_SOURCES})
 	set(chromaprint_LINK_LIBS ${FFTW3_FFTWF_LIBRARY})
 	include_directories(${FFTW3_INCLUDE_DIR})
 endif(USE_FFTW3F)
 
 if(USE_VDSP)
-	set(chromaprint_SRCS fft_lib_vdsp.cpp ${chromaprint_SRCS})
+	set(chromaprint_SOURCES fft_lib_vdsp.cpp ${chromaprint_SOURCES})
 	set(chromaprint_LINK_LIBS ${ACCELERATE_LIBRARIES})
 endif()
 
 if(USE_KISSFFT)
-	set(chromaprint_SRCS fft_lib_kissfft.cpp ${chromaprint_SRCS} ${KISSFFT_SOURCES})
+	set(chromaprint_SOURCES fft_lib_kissfft.cpp ${chromaprint_SOURCES} ${KISSFFT_SOURCES})
 	include_directories(${KISSFFT_INCLUDE_DIRS})
 endif()
 
 set(chromaprint_LINK_LIBS ${chromaprint_LINK_LIBS} ${AUDIO_PROCESSOR_LIBRARIES})
 include_directories(${AUDIO_PROCESSOR_INCLUDE_DIRS})
 
-add_library(chromaprint_p STATIC ${chromaprint_SRCS})
-set_target_properties(chromaprint_p PROPERTIES
-	COMPILE_DEFINITIONS CHROMAPRINT_NODLL)
-target_link_libraries(chromaprint_p ${chromaprint_LINK_LIBS})
+add_library(chromaprint_objs OBJECT ${chromaprint_SOURCES})
+if(BUILD_SHARED_LIBS)
+	set_target_properties(chromaprint_objs PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+endif()
 
-set(chromaprint_HDRS chromaprint.h)
-
-add_library(chromaprint ${chromaprint_SRCS} ${chromaprint_SRCS} ${chromaprint_HDRS})
+add_library(chromaprint ${chromaprint_PUBLIC_SOURCES} ${chromaprint_PUBLIC_HEADERS} $<TARGET_OBJECTS:chromaprint_objs>)
 set_target_properties(chromaprint PROPERTIES
+	DEFINE_SYMBOL CHROMAPRINT_API_EXPORTS
+	PUBLIC_HEADER ${chromaprint_PUBLIC_HEADERS}
     VERSION ${chromaprint_VERSION}
     SOVERSION ${chromaprint_SOVERSION}
-	PUBLIC_HEADER ${chromaprint_HDRS}
-    DEFINE_SYMBOL CHROMAPRINT_API_EXPORTS
 )
 if(BUILD_FRAMEWORK)
 	set_target_properties(chromaprint PROPERTIES FRAMEWORK TRUE)

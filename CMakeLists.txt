@@ -1,32 +1,18 @@
 cmake_minimum_required(VERSION 2.8)
 
 if(POLICY CMP0048)
-    cmake_policy(SET CMP0048 OLD)
+    cmake_policy(SET CMP0048 NEW)
 endif()
 
-project(chromaprint C CXX)
-set(PROJECT_VERSION 1.3.1)
+project(chromaprint VERSION 2.0.0 LANGUAGES C CXX)
 
-# 1. If the library source code has changed at all since the last update, then increment revision.
-# 2. If any interfaces have been added, removed, or changed since the last update, increment current, and set revision to 0.
-# 3. If any interfaces have been added since the last public release, then increment age.
-# 4. If any interfaces have been removed since the last public release, then set age to 0. 
-set(chromaprint_SOVERSION_CURRENT  4)
-set(chromaprint_SOVERSION_REVISION 0)
-set(chromaprint_SOVERSION_AGE      3)
-
-math(EXPR chromaprint_SOVERSION_MAJOR "${chromaprint_SOVERSION_CURRENT} - ${chromaprint_SOVERSION_AGE}")
-math(EXPR chromaprint_SOVERSION_MINOR "${chromaprint_SOVERSION_AGE}")
-math(EXPR chromaprint_SOVERSION_PATCH "${chromaprint_SOVERSION_REVISION}")
+set(chromaprint_SOVERSION 2)
 
 set(AUDIO_PROCESSOR_LIB CACHE STRING "Library to use for audio processing")
 set_property(CACHE AUDIO_PROCESSOR_LIB PROPERTY STRINGS avresample swresample)
 
 set(FFT_LIB CACHE STRING "Library to use for FFT calculations")
 set_property(CACHE FFT_LIB PROPERTY STRINGS avfft fftw3 fftw3f kissfft vdsp)
-
-set(chromaprint_VERSION ${chromaprint_SOVERSION_MAJOR}.${chromaprint_SOVERSION_MINOR}.${chromaprint_SOVERSION_PATCH})
-set(chromaprint_SOVERSION ${chromaprint_SOVERSION_MAJOR})
 
 include(CMakePushCheckState)
 include(CheckFunctionExists)
@@ -50,8 +36,6 @@ add_definitions(
 	-D__STDC_LIMIT_MACROS
 	-D__STDC_CONSTANT_MACROS
 )
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 set(LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)")
 set(EXEC_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} CACHE PATH "Installation prefix for executables and object code libraries" FORCE)
@@ -208,6 +192,15 @@ if(NOT BUILD_FRAMEWORK)
 endif()
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+add_definitions(
+	-DHAVE_CONFIG_H
+	-D_SCL_SECURE_NO_WARNINGS
+	-D_USE_MATH_DEFINES
+	-D__STDC_LIMIT_MACROS
+	-D__STDC_CONSTANT_MACROS
+)
 
 add_subdirectory(src)
 
