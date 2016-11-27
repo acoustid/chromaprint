@@ -4,6 +4,10 @@ if(POLICY CMP0048)
     cmake_policy(SET CMP0048 NEW)
 endif()
 
+if(POLICY CMP0063)
+    cmake_policy(SET CMP0063 NEW)
+endif()
+
 project(chromaprint VERSION 2.0.0 LANGUAGES C CXX)
 
 set(chromaprint_SOVERSION 2)
