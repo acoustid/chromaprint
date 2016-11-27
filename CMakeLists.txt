@@ -28,16 +28,20 @@ set_property(CACHE FFT_LIB PROPERTY STRINGS avfft fftw3 fftw3f kissfft vdsp)
 set(chromaprint_VERSION ${chromaprint_SOVERSION_MAJOR}.${chromaprint_SOVERSION_MINOR}.${chromaprint_SOVERSION_PATCH})
 set(chromaprint_SOVERSION ${chromaprint_SOVERSION_MAJOR})
 
+include(CMakePushCheckState)
 include(CheckFunctionExists)
-set(CMAKE_REQUIRED_LIBRARIES -lm)
-check_function_exists(lrintf HAVE_LRINTF)
-check_function_exists(round HAVE_ROUND)
-
 include(CheckCXXCompilerFlag)
+
 check_cxx_compiler_flag("-std=c++11" COMPILER_SUPPORTS_CXX11)
 if(COMPILER_SUPPORTS_CXX11)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
+
+cmake_push_check_state(RESET)
+set(CMAKE_REQUIRED_LIBRARIES -lm)
+check_function_exists(lrintf HAVE_LRINTF)
+check_function_exists(round HAVE_ROUND)
+cmake_pop_check_state()
 
 add_definitions(
 	-DHAVE_CONFIG_H
@@ -78,6 +82,23 @@ set(TESTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests/)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
 find_package(FFmpeg)
+
+if(FFMPEG_LIBAVCODEC_FOUND)
+	cmake_push_check_state(RESET)
+	set(CMAKE_REQUIRED_LIBRARIES ${FFMPEG_LIBAVCODEC_LIBRARIES})
+	set(CMAKE_REQUIRED_INCLUDES ${FFMPEG_LIBAVCODEC_INCLUDE_DIRS})
+	check_function_exists(av_packet_unref HAVE_AV_PACKET_UNREF)
+	cmake_pop_check_state()
+endif()
+
+if(FFMPEG_LIBAVUTIL_FOUND)
+	cmake_push_check_state(RESET)
+	set(CMAKE_REQUIRED_LIBRARIES ${FFMPEG_LIBAVUTIL_LIBRARIES})
+	set(CMAKE_REQUIRED_INCLUDES ${FFMPEG_LIBAVUTIL_INCLUDE_DIRS})
+	check_function_exists(av_frame_alloc HAVE_AV_FRAME_ALLOC)
+	check_function_exists(av_frame_free HAVE_AV_FRAME_FREE)
+	cmake_pop_check_state()
+endif()
 
 if(NOT FFT_LIB OR FFT_LIB STREQUAL "fftw3" OR FFT_LIB STREQUAL "fftw3f")
 	find_package(FFTW3)

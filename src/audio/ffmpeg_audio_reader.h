@@ -4,6 +4,10 @@
 #ifndef CHROMAPRINT_AUDIO_FFMPEG_AUDIO_READER_H_
 #define CHROMAPRINT_AUDIO_FFMPEG_AUDIO_READER_H_
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "debug.h"
 #include "utils/scope_exit.h"
 #include <cstdlib>
@@ -19,8 +23,15 @@ extern "C" {
 
 #include "audio/ffmpeg_audio_processor.h"
 
-#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(55, 28, 1)
+#ifndef HAVE_AV_PACKET_UNREF
+#define av_packet_unref av_free_packet
+#endif
+
+#ifndef HAVE_AV_FRAME_ALLOC
 #define av_frame_alloc avcodec_alloc_frame
+#endif
+
+#ifndef HAVE_AV_FRAME_FREE
 #define av_frame_free avcodec_free_frame
 #endif
 
@@ -52,12 +63,6 @@ public:
 	 * @return stream duration in milliseconds, -1 on error
 	 */
 	int GetDuration() const;
-
-	/**
-	 * Get the estimated timestamp of the last read frame.
-	 * @return timestamp in milliseconds, -1 on error
-	 */
-	int64_t GetTimestamp() const;
 
 	bool SetInputFormat(const char *name);
 	bool SetInputSampleRate(int sample_rate);
@@ -95,7 +100,6 @@ private:
 	bool m_finished = false;
 	bool m_opened = false;
 	int m_got_frame = 0;
-	int64_t m_ts = 0;
 	AVPacket m_packet;
 	AVPacket m_packet0;
 
@@ -252,13 +256,6 @@ inline int FFmpegAudioReader::GetDuration() const {
 	return -1;
 }
 
-inline int64_t FFmpegAudioReader::GetTimestamp() const {
-	if (m_ts != AV_NOPTS_VALUE) {
-		return 1000 * m_ts / AV_TIME_BASE;
-	}
-	return -1;
-}
-
 inline bool FFmpegAudioReader::Read(const int16_t **data, size_t *size) {
 	if (!IsOpen() || IsFinished()) {
 		return false;
@@ -291,8 +288,6 @@ inline bool FFmpegAudioReader::Read(const int16_t **data, size_t *size) {
 		SetError("Error decoding audio frame", ret);
 		return false;
 	}
-
-	m_ts = av_frame_get_best_effort_timestamp(m_frame);
 
 	const int decoded = std::min(ret, m_packet.size);
 	m_packet.data += decoded;
