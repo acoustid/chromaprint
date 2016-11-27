@@ -6,6 +6,7 @@
 
 #include "utils.h"
 #include "audio_consumer.h"
+#include <vector>
 
 struct AVResampleContext;
 
