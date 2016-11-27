@@ -32,6 +32,11 @@ if(COMPILER_SUPPORTS_CXX11)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
 
+if(CMAKE_COMPILER_IS_GNUCXX AND BUILD_SHARED_LIBS)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
+endif()
+
 cmake_push_check_state(RESET)
 set(CMAKE_REQUIRED_LIBRARIES -lm)
 check_function_exists(lrintf HAVE_LRINTF)

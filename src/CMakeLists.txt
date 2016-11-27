@@ -1,10 +1,5 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-if(CMAKE_COMPILER_IS_GNUCXX AND BUILD_SHARED_LIBS)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
-endif()
-
 set(chromaprint_SOURCES
 	audio_processor.cpp
 	chroma.cpp
