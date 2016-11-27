@@ -193,7 +193,7 @@ endif()
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/src)
 add_definitions(
 	-DHAVE_CONFIG_H
 	-D_SCL_SECURE_NO_WARNINGS
@@ -202,11 +202,16 @@ add_definitions(
 	-D__STDC_CONSTANT_MACROS
 )
 
+if(UNIX)
+	link_libraries(m)
+endif()
+
+find_package(Threads)
+link_libraries(${CMAKE_THREAD_LIBS_INIT})
+
 add_subdirectory(src)
 
 if(BUILD_TESTS)
-	find_package(Threads)
-	find_package(GTest REQUIRED)
 	add_subdirectory(tests)
 endif(BUILD_TESTS)
 

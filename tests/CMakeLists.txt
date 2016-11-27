@@ -1,6 +1,8 @@
+find_package(GTest REQUIRED)
+
 add_subdirectory(${GTEST_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/gtest_build)
 
-set(tests_SOURCES
+set(SRCS
 	main.cpp
 	test_api.cpp
 	test_utils.cpp
@@ -27,12 +29,13 @@ set(tests_SOURCES
 )
 
 if(BUILD_TOOLS)
-	set(tests_SOURCES ${tests_SOURCES} ../src/audio/ffmpeg_audio_reader_test.cpp)
+	set(SRCS ${SRCS} ../src/audio/ffmpeg_audio_reader_test.cpp)
+	link_libraries(fpcalc_libs)
 endif()
 
-add_executable(all_tests ${tests_SOURCES} $<TARGET_OBJECTS:chromaprint_objs>)
-target_link_libraries(all_tests PRIVATE ${GTEST_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} chromaprint)
-target_include_directories(all_tests PRIVATE ${GTEST_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../src)
+add_executable(all_tests ${SRCS} $<TARGET_OBJECTS:chromaprint_objs>)
+target_link_libraries(all_tests PRIVATE ${GTEST_BOTH_LIBRARIES} chromaprint)
+target_include_directories(all_tests PRIVATE ${GTEST_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_custom_target(check ${CMAKE_CURRENT_BINARY_DIR}/all_tests $ENV{GTEST_FLAGS} DEPENDS all_tests)
 
