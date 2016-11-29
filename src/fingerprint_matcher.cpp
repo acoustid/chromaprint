@@ -2,6 +2,7 @@
 // Distributed under the MIT license, see the LICENSE file for details.
 
 #include <algorithm>
+#include <numeric>
 #include <iostream>
 #include "fingerprint_matcher.h"
 #include "fingerprinter_configuration.h"
