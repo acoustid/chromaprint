@@ -50,7 +50,8 @@ test vdsp:
     - ./package/build.sh
   artifacts:
     paths:
-      - chromaprint-*-*
+      - chromaprint-*.zip
+      - chromaprint-*.tar.gz
     expire_in: 7d
 
 package linux i686: *package

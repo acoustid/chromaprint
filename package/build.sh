@@ -76,4 +76,18 @@ cmake ${CMAKE_ARGS[@]} $BASE_DIR
 make
 make install
 
-$STRIP $BASE_DIR/chromaprint-$OS-$ARCH/bin/*
+$STRIP $BASE_DIR/chromaprint-$OS-$ARCH/bin/fpcalc*
+
+FPCALC_DIR=chromaprint-fpcalc-$VERSION-$OS-$ARCH
+rm -rf $FPCALC_DIR
+mkdir $FPCALC_DIR
+cp $BASE_DIR/chromaprint-$OS-$ARCH/bin/fpcalc* $FPCALC_DIR
+
+case $OS in
+windows)
+    zip -r $BASE_DIR/$FPCALC_DIR.zip $FPCALC_DIR
+    ;;
+*)
+    tar -zcvf $BASE_DIR/$FPCALC_DIR.tar.gz $FPCALC_DIR
+    ;;
+esac
