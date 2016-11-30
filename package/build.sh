@@ -78,7 +78,7 @@ make install
 
 $STRIP $BASE_DIR/chromaprint-$OS-$ARCH/bin/fpcalc*
 
-if [ -n $CI_BUILD_TAG ]
+if [ -n ${CI_BUILD_TAG:-} ]
 then
     VERSION=$(echo $CI_BUILD_TAG | sed 's/^v//')
 else
