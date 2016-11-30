@@ -2,6 +2,8 @@
 
 : ${OS?}
 : ${ARCH?}
+: ${TAG:=}
+: ${BRANCH?}
 
 set -eux
 
@@ -78,11 +80,11 @@ make install
 
 $STRIP $BASE_DIR/chromaprint-$OS-$ARCH/bin/fpcalc*
 
-if [ -n ${CI_BUILD_TAG:-} ]
+if [ -n $TAG ]
 then
-    VERSION=$(echo $CI_BUILD_TAG | sed 's/^v//')
+    VERSION=$(echo $TAG | sed 's/^v//')
 else
-    VERSION=$CI_BUILD_REF_NAME-$(date +%Y%m%d%H%M)
+    VERSION=$BRANCH-$(date +%Y%m%d%H%M)
 fi
 
 FPCALC_DIR=chromaprint-fpcalc-$VERSION-$OS-$ARCH

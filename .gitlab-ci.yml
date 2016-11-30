@@ -47,6 +47,8 @@ test vdsp:
     - JOB_NAME=($CI_BUILD_NAME)
     - export OS=${JOB_NAME[1]}
     - export ARCH=${JOB_NAME[2]}
+    - export TAG=$CI_BUILD_TAG
+    - export BRANCH=$CI_BUILD_REF_NAME
     - ./package/build.sh
   artifacts:
     paths:
