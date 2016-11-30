@@ -80,12 +80,14 @@ make install
 
 $STRIP $BASE_DIR/chromaprint-$OS-$ARCH/bin/fpcalc*
 
-if [ -n $TAG ]
-then
+case $TAG in
+v*)
     VERSION=$(echo $TAG | sed 's/^v//')
-else
+    ;;
+*)
     VERSION=$BRANCH-$(date +%Y%m%d%H%M)
-fi
+    ;;
+esac
 
 FPCALC_DIR=chromaprint-fpcalc-$VERSION-$OS-$ARCH
 rm -rf $FPCALC_DIR
