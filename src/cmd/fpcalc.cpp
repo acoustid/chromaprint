@@ -402,8 +402,8 @@ int main(int win32_argc, char **win32_argv)
 	for (i = 0; i < argc; i++) {
 		buffsize += WideCharToMultiByte(CP_UTF8, 0, argv[i], -1, NULL, 0, NULL, NULL);
 	}
-	utf8_argv = av_mallocz(sizeof(char *) * (argc + 1) + buffsize);
-	utf8_argv_ptr = (char *)utf8_argv + sizeof(char *) * (argc + 1);
+	utf8_argv = (char **) av_mallocz(sizeof(char *) * (argc + 1) + buffsize);
+	utf8_argv_ptr = (char *) utf8_argv + sizeof(char *) * (argc + 1);
 	for (i = 0; i < argc; i++) {
 		utf8_argv[i] = &utf8_argv_ptr[offset];
 		offset += WideCharToMultiByte(CP_UTF8, 0, argv[i], -1, &utf8_argv_ptr[offset], buffsize - offset, NULL, NULL);
