@@ -10,12 +10,12 @@ endif()
 
 project(chromaprint C CXX)
 
-set(chromaprint_VERSION_MAJOR 2)
-set(chromaprint_VERSION_MINOR 0)
+set(chromaprint_VERSION_MAJOR 1)
+set(chromaprint_VERSION_MINOR 4)
 set(chromaprint_VERSION_PATCH 0)
 set(chromaprint_VERSION "${chromaprint_VERSION_MAJOR}.${chromaprint_VERSION_MINOR}.${chromaprint_VERSION_PATCH}")
 
-set(chromaprint_SOVERSION 2)
+set(chromaprint_SOVERSION 1)
 
 set(AUDIO_PROCESSOR_LIB CACHE STRING "Library to use for audio processing")
 set_property(CACHE AUDIO_PROCESSOR_LIB PROPERTY STRINGS avresample swresample)
