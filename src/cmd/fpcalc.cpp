@@ -219,6 +219,10 @@ void ProcessFile(ChromaprintContext *ctx, FFmpegAudioReader &reader, const char 
 		ts = GetCurrentTimestamp();
 	}
 
+	if (!strcmp(file_name, "-")) {
+		file_name = "pipe:0";
+	}
+
 	if (!reader.Open(file_name)) {
 		fprintf(stderr, "ERROR: %s\n", reader.GetError().c_str());
 		exit(2);
