@@ -7,6 +7,10 @@
 #include "audio/ffmpeg_audio_reader.h"
 #include "utils/scope_exit.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 using namespace chromaprint;
 
 enum Format {
@@ -351,7 +355,7 @@ void ProcessFile(ChromaprintContext *ctx, FFmpegAudioReader &reader, const char 
 	}
 }
 
-int main(int argc, char **argv) {
+int fpcalc_main(int argc, char **argv) {
 	ParseOptions(argc, argv);
 
 	FFmpegAudioReader reader;
@@ -386,3 +390,30 @@ int main(int argc, char **argv) {
 
 	return 0;
 }
+
+#ifdef _WIN32
+int main(int win32_argc, char **win32_argv)
+{
+	int i, argc = 0, buffsize = 0, offset = 0;
+	char **utf8_argv, *utf8_argv_ptr;
+	wchar_t **argv;
+	argv = CommandLineToArgvW(GetCommandLineW(), &argc);
+	buffsize = 0;
+	for (i = 0; i < argc; i++) {
+		buffsize += WideCharToMultiByte(CP_UTF8, 0, argv[i], -1, NULL, 0, NULL, NULL);
+	}
+	utf8_argv = av_mallocz(sizeof(char *) * (argc + 1) + buffsize);
+	utf8_argv_ptr = (char *)utf8_argv + sizeof(char *) * (argc + 1);
+	for (i = 0; i < argc; i++) {
+		utf8_argv[i] = &utf8_argv_ptr[offset];
+		offset += WideCharToMultiByte(CP_UTF8, 0, argv[i], -1, &utf8_argv_ptr[offset], buffsize - offset, NULL, NULL);
+	}
+	LocalFree(argv);
+	return fpcalc_main(argc, utf8_argv);
+}
+#else
+int main(int argc, char **argv)
+{
+	return fpcalc_main(argc, argv);
+}
+#endif
