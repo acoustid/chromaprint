@@ -1,5 +1,5 @@
-Version 2.0 -- Unreleased
-=========================
+Version 1.4 -- December 3, 2016
+===============================
 
  - Fully streaming audio processing without any post-processing step for the fingerprint generation.
  - Many performance optimizations. Especially when processing long streams, operations should be faster and use less memory.
