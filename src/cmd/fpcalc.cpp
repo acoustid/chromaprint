@@ -271,7 +271,11 @@ void ProcessFile(ChromaprintContext *ctx, FFmpegAudioReader &reader, const char 
 		stream_size += frame_size;
 
 		if (frame_size == 0) {
-			break;
+			if (stream_done) {
+				break;
+			} else {
+				continue;
+			}
 		}
 
 		bool chunk_done = false;
