@@ -134,11 +134,13 @@ inline double FreqToBark(double f)
 	v = (v + (v >> 4)) & (T)~(T)0/255*15;                      \
 	c = (T)(v * ((T)~(T)0/255)) >> (sizeof(T) - 1) * CHAR_BIT; \
 
-//	#define CHROMAPRINT_POPCNT_IMPL_32 CHROMAPRINT_POPCNT_IMPL(uint32_t)
-//	#define CHROMAPRINT_POPCNT_IMPL_64 CHROMAPRINT_POPCNT_IMPL(uint64_t)
-
+#ifdef __GNUC__
 #define CHROMAPRINT_POPCNT_IMPL_32 c = __builtin_popcount(v);
 #define CHROMAPRINT_POPCNT_IMPL_64 c = __builtin_popcountll(v);
+#else
+#define CHROMAPRINT_POPCNT_IMPL_32 CHROMAPRINT_POPCNT_IMPL(uint32_t)
+#define CHROMAPRINT_POPCNT_IMPL_64 CHROMAPRINT_POPCNT_IMPL(uint64_t)
+#endif
 
 template<typename T, int Size, bool IsSigned>
 struct _CountSetBits_Impl {
