@@ -47,8 +47,6 @@ macos)
     CMAKE_ARGS+=(
         -DCMAKE_C_COMPILER=$OSX_CC
         -DCMAKE_CXX_COMPILER=$OSX_CXX
-        -DCMAKE_C_FLAGS='-static -static-libgcc -static-libstdc++'
-        -DCMAKE_CXX_FLAGS='-static -static-libgcc -static-libstdc++'
         -DCMAKE_OSX_SYSROOT=$OSX_SDK
         -DCMAKE_OSX_DEPLOYMENT_TARGET=$OSX_VERSION
         -DCMAKE_OSX_ARCHITECTURES=$ARCH
