@@ -15,6 +15,8 @@ set(chromaprint_VERSION_MINOR 4)
 set(chromaprint_VERSION_PATCH 0)
 set(chromaprint_VERSION "${chromaprint_VERSION_MAJOR}.${chromaprint_VERSION_MINOR}.${chromaprint_VERSION_PATCH}")
 
+set(PROJECT_VERSION "${chromaprint_VERSION}")
+
 set(chromaprint_SOVERSION 1)
 
 set(AUDIO_PROCESSOR_LIB CACHE STRING "Library to use for audio processing")
