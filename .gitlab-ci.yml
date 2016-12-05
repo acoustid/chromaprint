@@ -61,13 +61,10 @@ package linux x86_64: *package
 package windows i686: *package
 package windows x86_64: *package
 
-.package-macos: &package-macos
+package macos x86_64:
   <<: *package
   tags:
     - osx
-
-package macos i386: *package-macos
-package macos x86_64: *package-macos
 
 package linux armhf:
   <<: *package

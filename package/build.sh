@@ -28,11 +28,6 @@ CMAKE_ARGS=(
 
 STRIP=strip
 
-OSX_CC=/usr/local/bin/gcc-5
-OSX_CXX=/usr/local/bin/g++-5
-OSX_SDK=/Developer/SDKs/MacOSX10.4u.sdk
-OSX_VERSION=10.4
-
 case $OS in
 windows)
     perl -pe "s!{EXTRA_PATHS}!$FFMPEG_DIR!g" $BASE_DIR/package/toolchain-mingw.cmake.in | perl -pe "s!{ARCH}!$ARCH!g" >toolchain.cmake
@@ -45,11 +40,7 @@ windows)
     ;;
 macos)
     CMAKE_ARGS+=(
-        -DCMAKE_C_COMPILER=$OSX_CC
-        -DCMAKE_CXX_COMPILER=$OSX_CXX
-        -DCMAKE_OSX_SYSROOT=$OSX_SDK
-        -DCMAKE_OSX_DEPLOYMENT_TARGET=$OSX_VERSION
-        -DCMAKE_OSX_ARCHITECTURES=$ARCH
+        -DCMAKE_CXX_FLAGS='-stdlib=libc++'
     )
     ;;
 linux)
