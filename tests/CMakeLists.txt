@@ -39,7 +39,7 @@ if(BUILD_TOOLS)
 endif()
 
 add_executable(all_tests ${SRCS} $<TARGET_OBJECTS:chromaprint_objs>)
-target_link_libraries(all_tests PRIVATE chromaprint)
+target_link_libraries(all_tests PRIVATE chromaprint ${CMAKE_THREAD_LIBS_INIT})
 
 add_custom_target(check ${CMAKE_CURRENT_BINARY_DIR}/all_tests $ENV{GTEST_FLAGS} DEPENDS all_tests)
 

@@ -30,7 +30,6 @@ include(CheckFunctionExists)
 include(CheckCXXCompilerFlag)
 
 find_package(Threads)
-link_libraries(${CMAKE_THREAD_LIBS_INIT})
 
 check_cxx_compiler_flag("-std=c++11" COMPILER_SUPPORTS_CXX11)
 if(COMPILER_SUPPORTS_CXX11)
