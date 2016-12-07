@@ -68,7 +68,7 @@ linux)
     ;;
 esac
 
-cmake ${CMAKE_ARGS[@]} $BASE_DIR
+cmake "${CMAKE_ARGS[@]}" $BASE_DIR
 
 make
 make install
