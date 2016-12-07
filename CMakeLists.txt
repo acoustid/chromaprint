@@ -29,6 +29,9 @@ include(CMakePushCheckState)
 include(CheckFunctionExists)
 include(CheckCXXCompilerFlag)
 
+find_package(Threads)
+link_libraries(${CMAKE_THREAD_LIBS_INIT})
+
 check_cxx_compiler_flag("-std=c++11" COMPILER_SUPPORTS_CXX11)
 if(COMPILER_SUPPORTS_CXX11)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -85,7 +88,7 @@ find_package(FFmpeg)
 
 if(FFMPEG_LIBRARIES)
 	cmake_push_check_state(RESET)
-	set(CMAKE_REQUIRED_LIBRARIES ${FFMPEG_LIBRARIES} -lm)
+	set(CMAKE_REQUIRED_LIBRARIES ${FFMPEG_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} -lm)
 	check_function_exists(av_packet_unref HAVE_AV_PACKET_UNREF)
 	check_function_exists(av_frame_alloc HAVE_AV_FRAME_ALLOC)
 	check_function_exists(av_frame_free HAVE_AV_FRAME_FREE)
@@ -213,9 +216,6 @@ add_definitions(
 if(UNIX)
 	link_libraries(m)
 endif()
-
-find_package(Threads)
-link_libraries(${CMAKE_THREAD_LIBS_INIT})
 
 add_subdirectory(src)
 
