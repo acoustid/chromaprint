@@ -46,6 +46,7 @@ const char *g_help =
 	"  -json          Print the output in JSON format\n"
 	"  -text          Print the output in text format\n"
 	"  -plain         Print the just the fingerprint in text format\n"
+	"  -version       Print version information\n"
 	;
 
 static void ParseOptions(int &argc, char **argv) {
@@ -105,6 +106,9 @@ static void ParseOptions(int &argc, char **argv) {
 			g_abs_ts = true;
 		} else if (!strcmp(argv[i], "-raw")) {
 			g_raw = true;
+		} else if (!strcmp(argv[i], "-v") || !strcmp(argv[i], "-version")) {
+			fprintf(stdout, "fpcalc version %s\n", chromaprint_get_version());
+			exit(0);
 		} else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "-help") || !strcmp(argv[i], "--help")) {
 			fprintf(stdout, g_help, argv[0]);
 			exit(0);
