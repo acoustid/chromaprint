@@ -47,14 +47,14 @@ linux)
     case $ARCH in
     i686)
         CMAKE_ARGS+=(
-            -DCMAKE_C_FLAGS='-m32 -static-libgcc -static-libstdc++'
-            -DCMAKE_CXX_FLAGS='-m32 -static-libgcc -static-libstdc++'
+            -DCMAKE_C_FLAGS='-m32 -static -static-libgcc -static-libstdc++'
+            -DCMAKE_CXX_FLAGS='-m32 -static -static-libgcc -static-libstdc++'
         )
         ;;
     x86_64|armhf)
         CMAKE_ARGS+=(
-            -DCMAKE_C_FLAGS='-static-libgcc -static-libstdc++'
-            -DCMAKE_CXX_FLAGS='-static-libgcc -static-libstdc++'
+            -DCMAKE_C_FLAGS='-static -static-libgcc -static-libstdc++'
+            -DCMAKE_CXX_FLAGS='-static -static-libgcc -static-libstdc++'
         )
         ;;
     *)
