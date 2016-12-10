@@ -105,6 +105,9 @@ private:
 
 	int m_output_sample_rate = 0;
 	int m_output_channels = 0;
+
+	uint64_t m_nb_packets = 0;
+	int m_decode_error = 0;
 };
 
 inline FFmpegAudioReader::FFmpegAudioReader() {
@@ -217,6 +220,8 @@ inline bool FFmpegAudioReader::Open(const std::string &file_name) {
 	m_opened = true;
 	m_finished = false;
 	m_got_frame = 0;
+	m_nb_packets = 0;
+	m_decode_error = 0;
 
 	return true;
 }
@@ -261,33 +266,48 @@ inline bool FFmpegAudioReader::Read(const int16_t **data, size_t *size) {
 		return false;
 	}
 
-	while (m_packet.size <= 0) {
-		av_packet_unref(&m_packet0);
-		av_init_packet(&m_packet);
-		m_packet.data = nullptr;
-		m_packet.size = 0;
-		int ret = av_read_frame(m_format_ctx, &m_packet);
-		if (ret < 0) {
-			if (ret == AVERROR_EOF) {
-				m_finished = true;
-				break;
-			} else {
-				SetError("Error reading from the audio source", ret);
-				return false;
-			}
-		}
-		m_packet0 = m_packet;
-		if (m_packet.stream_index != m_stream_index) {
+	int ret;
+	while (true) {
+		while (m_packet.size <= 0) {
+			av_packet_unref(&m_packet0);
+			av_init_packet(&m_packet);
 			m_packet.data = nullptr;
 			m_packet.size = 0;
+			ret = av_read_frame(m_format_ctx, &m_packet);
+			if (ret < 0) {
+				if (ret == AVERROR_EOF) {
+					m_finished = true;
+					break;
+				} else {
+					SetError("Error reading from the audio source", ret);
+					return false;
+				}
+			}
+			m_packet0 = m_packet;
+			if (m_packet.stream_index != m_stream_index) {
+				m_packet.data = nullptr;
+				m_packet.size = 0;
+			}
 		}
+
+		m_nb_packets++;
+
+		ret = avcodec_decode_audio4(m_codec_ctx, m_frame, &m_got_frame, &m_packet);
+		if (ret < 0) {
+			if (m_decode_error || m_nb_packets > 1) {
+				SetError("Error decoding audio frame", ret);
+				return false;
+			}
+			m_decode_error = ret;
+			m_packet.data = nullptr;
+			m_packet.size = 0;
+			continue;
+		}
+
+		break;
 	}
 
-	int ret = avcodec_decode_audio4(m_codec_ctx, m_frame, &m_got_frame, &m_packet);
-	if (ret < 0) {
-		SetError("Error decoding audio frame", ret);
-		return false;
-	}
+	m_decode_error = 0;
 
 	const int decoded = std::min(ret, m_packet.size);
 	m_packet.data += decoded;
