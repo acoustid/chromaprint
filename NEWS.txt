@@ -1,3 +1,12 @@
+Version 1.4.1 -- UNRELEASED
+===========================
+
+ - Restored the -v/-version parameter for fpcalc that got accidentally removed in 1.4.
+ - Fixed processing of very short audio files. They were ignored in 1.4.
+ - Added missing version number to libchromaprint.pc.
+ - Mac OS X fpcalc builds are done with clang/libc++ and should work on 10.7+.
+ - Linux fpcalc builds are now fully static.
+
 Version 1.4 -- December 3, 2016
 ===============================
 
