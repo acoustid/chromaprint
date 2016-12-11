@@ -360,6 +360,9 @@ void ProcessFile(ChromaprintContext *ctx, FFmpegAudioReader &reader, const char 
 	if (chunk_size > 0) {
 		const auto chunk_duration = (chunk_size - extra_chunk_limit) * 1.0 / reader.GetSampleRate() + overlap;
 		PrintResult(ctx, reader, first_chunk, ts, chunk_duration);
+	} else if (first_chunk) {
+		fprintf(stderr, "ERROR: Not enough audio data\n");
+		exit(2);
 	}
 }
 
