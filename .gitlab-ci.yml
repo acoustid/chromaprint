@@ -56,12 +56,12 @@ test vdsp:
       - chromaprint-*.tar.gz
     expire_in: 7d
 
-.package-macos:
+.package-macos: &package-macos
   <<: *package
   tags:
     - osx
 
-.package-raspberrypi:
+.package-raspberrypi: &package-raspberrypi
   <<: *package
   tags:
     - raspberrypi
