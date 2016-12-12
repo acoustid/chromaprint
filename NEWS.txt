@@ -1,8 +1,9 @@
-Version 1.4.1 -- UNRELEASED
-===========================
+Version 1.4.1 -- December 12, 2016
+==================================
 
  - Restored the -v/-version parameter for fpcalc that got accidentally removed in 1.4.
- - Fixed processing of very short audio files. They were ignored in 1.4.
+ - Fixed processing of some short audio files. They were ignored in 1.4.
+ - The DURATION field in the default output of fpcalc is now printed as an integer again.
  - Added missing version number to libchromaprint.pc.
  - Mac OS X fpcalc builds are done with clang/libc++ and should work on 10.7+.
  - Linux fpcalc builds are now fully static.
