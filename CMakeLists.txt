@@ -41,6 +41,10 @@ if(CMAKE_COMPILER_IS_GNUCXX AND BUILD_SHARED_LIBS)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
 endif()
 
+if(CMAKE_COMPILER_IS_GNUCXX AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+	add_definitions(-D_GLIBCXX_DEBUG)
+endif()
+
 cmake_push_check_state(RESET)
 set(CMAKE_REQUIRED_LIBRARIES -lm)
 check_function_exists(lrintf HAVE_LRINTF)
