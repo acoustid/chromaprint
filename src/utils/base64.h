@@ -110,15 +110,10 @@ inline OutputIt Base64Decode(InputIt first, InputIt last, OutputIt dest)
 		const unsigned char b2 = kBase64CharsReversed[*src++ & 255];
 		*dest++ = (b0 << 2) | (b1 >> 4);
 		*dest++ = ((b1 << 4) & 255) | (b2 >> 2);
-		*dest++ = ((b2 << 6) & 255);
 	} else if (size == 2) {
 		const unsigned char b0 = kBase64CharsReversed[*src++ & 255];
 		const unsigned char b1 = kBase64CharsReversed[*src++ & 255];
 		*dest++ = (b0 << 2) | (b1 >> 4);
-		*dest++ = ((b1 << 4) & 255);
-	} else if (size == 1) {
-		const unsigned char b0 = kBase64CharsReversed[*src++ & 255];
-		*dest++ = (b0 << 2);
 	}
 	return dest;
 }
