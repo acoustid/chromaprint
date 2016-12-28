@@ -81,6 +81,7 @@ public:
 	bool IsFinished() const { return m_finished && !m_got_frame; }
 
 	std::string GetError() const { return m_error; }
+	int GetErrorCode() const { return m_error_code; }
 
 private:
 	inline void SetError(const char *format, int errnum = 0);
@@ -97,6 +98,7 @@ private:
 	AVFrame *m_frame = nullptr;
 	int m_stream_index = -1;
 	std::string m_error;
+	int m_error_code = 0;
 	bool m_finished = false;
 	bool m_opened = false;
 	int m_got_frame = 0;
@@ -363,6 +365,7 @@ inline void FFmpegAudioReader::SetError(const char *message, int errnum) {
 			m_error += ")";
 		}
 	}
+	m_error_code = errnum;
 	DEBUG(m_error);
 }
 
