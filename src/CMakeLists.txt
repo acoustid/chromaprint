@@ -65,9 +65,6 @@ if(USE_KISSFFT)
 	include_directories(${KISSFFT_INCLUDE_DIRS})
 endif()
 
-set(chromaprint_LINK_LIBS ${chromaprint_LINK_LIBS} ${AUDIO_PROCESSOR_LIBRARIES})
-include_directories(${AUDIO_PROCESSOR_INCLUDE_DIRS})
-
 add_library(chromaprint_objs OBJECT ${chromaprint_SOURCES})
 if(BUILD_SHARED_LIBS)
 	set_target_properties(chromaprint_objs PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
