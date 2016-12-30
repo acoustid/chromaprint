@@ -289,15 +289,15 @@ inline bool FFmpegAudioReader::Read(const int16_t **data, size_t *size) {
 			if (m_packet.stream_index != m_stream_index) {
 				m_packet.data = nullptr;
 				m_packet.size = 0;
+			} else {
+				m_nb_packets++;
 			}
 		}
 
-		m_nb_packets++;
-
 		ret = avcodec_decode_audio4(m_codec_ctx, m_frame, &m_got_frame, &m_packet);
 		if (ret < 0) {
-			if (m_decode_error || m_nb_packets > 1) {
-				SetError("Error decoding audio frame", ret);
+			if (m_decode_error) {
+				SetError("Error decoding audio frame", m_decode_error);
 				return false;
 			}
 			m_decode_error = ret;
@@ -366,7 +366,6 @@ inline void FFmpegAudioReader::SetError(const char *message, int errnum) {
 		}
 	}
 	m_error_code = errnum;
-	DEBUG(m_error);
 }
 
 }; // namespace chromaprint

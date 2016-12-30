@@ -28,6 +28,7 @@ static double g_max_chunk_duration = 0;
 static bool g_overlap = false;
 static bool g_raw = false;
 static bool g_abs_ts = false;
+static bool g_ignore_errors = false;
 
 const char *g_help =
 	"Usage: %s [OPTIONS] FILE [FILE...]\n"
@@ -106,6 +107,8 @@ static void ParseOptions(int &argc, char **argv) {
 			g_abs_ts = true;
 		} else if (!strcmp(argv[i], "-raw")) {
 			g_raw = true;
+		} else if (!strcmp(argv[i], "-ignore-errors")) {
+			g_ignore_errors = true;
 		} else if (!strcmp(argv[i], "-v") || !strcmp(argv[i], "-version")) {
 			fprintf(stdout, "fpcalc version %s\n", chromaprint_get_version());
 			exit(0);
@@ -255,13 +258,16 @@ void ProcessFile(ChromaprintContext *ctx, FFmpegAudioReader &reader, const char 
 	}
 
 	bool first_chunk = true;
+	bool read_failed = false;
+	bool got_results = false;
 
 	while (!reader.IsFinished()) {
 		const int16_t *frame_data = nullptr;
 		size_t frame_size = 0;
 		if (!reader.Read(&frame_data, &frame_size)) {
 			fprintf(stderr, "ERROR: %s\n", reader.GetError().c_str());
-			exit(2);
+			read_failed = true;
+			break;
 		}
 
 		bool stream_done = false;
@@ -307,6 +313,7 @@ void ProcessFile(ChromaprintContext *ctx, FFmpegAudioReader &reader, const char 
 
 			const auto chunk_duration = (chunk_size - extra_chunk_limit) * 1.0 / reader.GetSampleRate() + overlap;
 			PrintResult(ctx, reader, first_chunk, ts, chunk_duration);
+			got_results = true;
 
 			if (g_abs_ts) {
 				ts = GetCurrentTimestamp();
@@ -360,9 +367,16 @@ void ProcessFile(ChromaprintContext *ctx, FFmpegAudioReader &reader, const char 
 	if (chunk_size > 0) {
 		const auto chunk_duration = (chunk_size - extra_chunk_limit) * 1.0 / reader.GetSampleRate() + overlap;
 		PrintResult(ctx, reader, first_chunk, ts, chunk_duration);
+		got_results = true;
 	} else if (first_chunk) {
 		fprintf(stderr, "ERROR: Not enough audio data\n");
 		exit(2);
+	}
+
+	if (!g_ignore_errors) {
+		if (read_failed) {
+			exit(got_results ? 3 : 2);
+		}
 	}
 }
 
