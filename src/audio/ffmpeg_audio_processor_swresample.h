@@ -25,6 +25,7 @@ public:
 		av_opt_set_int(m_swr_ctx, "filter_size", 16, 0);
 		av_opt_set_int(m_swr_ctx, "phase_shift", 8, 0);
 		av_opt_set_int(m_swr_ctx, "linear_interp", 1, 0);
+		av_opt_set_int(m_swr_ctx, "tsf", AV_SAMPLE_FMT_S16P, 0);
 		av_opt_set_double(m_swr_ctx, "cutoff", 0.8, 0);
 	}
 
