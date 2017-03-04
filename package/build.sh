@@ -70,8 +70,8 @@ esac
 
 cmake "${CMAKE_ARGS[@]}" $BASE_DIR
 
-make
-make install
+make VERBOSE=1
+make install VERBOSE=1
 
 $STRIP $BASE_DIR/chromaprint-$OS-$ARCH/bin/fpcalc*
 
