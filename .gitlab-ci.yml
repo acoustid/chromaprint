@@ -11,8 +11,8 @@ stages:
     - mkdir build.test.${JOB_NAME[1]}
     - cd build.test.${JOB_NAME[1]}
     - cmake -DCMAKE_BUILD_TYPE=Release -DFFT_LIB=${JOB_NAME[1]} -DBUILD_TESTS=ON $EXTRA_CMAKE_ARGS ..
-    - make
-    - make check
+    - make VERBOSE=1
+    - make check VERBOSE=1
 
 test avfft:
   <<: *test
