@@ -37,7 +37,7 @@ test kissfft:
 test vdsp:
   <<: *test
   variables:
-    EXTRA_CMAKE_ARGS: -DCMAKE_CXX_FLAGS='-stdlib=libc++' -DGTEST_ROOT=/usr/local/src/gtest-1.7.0
+    EXTRA_CMAKE_ARGS: -DCMAKE_CXX_FLAGS='-stdlib=libc++' -DGTEST_ROOT=/usr/local/src/googletest/googletest/
   tags:
     - osx
 
