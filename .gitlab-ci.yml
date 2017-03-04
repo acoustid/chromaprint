@@ -61,14 +61,15 @@ test vdsp:
   tags:
     - osx
 
-.package-raspberrypi: &package-raspberrypi
+.package-linux-armhf: &package-linux-armhf
   <<: *package
   tags:
-    - raspberrypi
+    - linux
+    - armhf
 
 package linux i686: *package
 package linux x86_64: *package
-package linux armhf: *package-raspberrypi
+package linux armhf: *package-linux-armhf
 package windows i686: *package
 package windows x86_64: *package
 package macos x86_64: *package-macos
