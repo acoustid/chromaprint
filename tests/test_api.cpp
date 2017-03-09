@@ -168,8 +168,8 @@ TEST(API, TestMatcher)
 	ASSERT_NE(nullptr, ctx);
 	SCOPE_EXIT(chromaprint_matcher_free(ctx));
 
-	ASSERT_EQ(1, chromaprint_matcher_set_fingerprint(ctx, 0, fp_roar1));
-	ASSERT_EQ(1, chromaprint_matcher_set_fingerprint(ctx, 1, fp_roar2));
+	ASSERT_EQ(1, chromaprint_matcher_set_fingerprint(ctx, 0, fp_roar1, 1));
+	ASSERT_EQ(1, chromaprint_matcher_set_fingerprint(ctx, 1, fp_roar2, 1));
 	ASSERT_EQ(1, chromaprint_matcher_run(ctx));
 
 	int num_segments;

@@ -187,7 +187,7 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	if (!chromaprint_matcher_set_fingerprint(ctx, 0, fp1.c_str())) {
+	if (!chromaprint_matcher_set_fingerprint(ctx, 0, fp1.c_str(), 1)) {
 		fprintf(stderr, "ERROR: could not load the first fingerprint\n");
 		return 1;
 	}
@@ -198,7 +198,7 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	if (!chromaprint_matcher_set_fingerprint(ctx, 1, fp2.c_str())) {
+	if (!chromaprint_matcher_set_fingerprint(ctx, 1, fp2.c_str(), 1)) {
 		fprintf(stderr, "ERROR: could not load the second fingerprint\n");
 		return 1;
 	}
