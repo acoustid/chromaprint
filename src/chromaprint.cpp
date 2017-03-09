@@ -199,6 +199,108 @@ int chromaprint_hash_fingerprint(const uint32_t *fp, int size, uint32_t *hash)
 	return 1;
 }
 
+ChromaprintMatcherContext *chromaprint_matcher_new()
+{
+	return new ChromaprintMatcherContext();
+}
+
+void chromaprint_matcher_free(ChromaprintMatcherContext *ctx)
+{
+	if (ctx) {
+		delete ctx;
+	}
+}
+
+int chromaprint_matcher_set_fingerprint(ChromaprintMatcherContext *ctx, int idx, const char *fp)
+{
+	FAIL_IF(!ctx, "context can't be NULL");
+	FAIL_IF(idx < 0 || idx > 1, "idx can be only 0 or 1");
+
+	int algorithm;
+	ctx->fp[idx] = ctx->decompressor.Decompress(Base64Decode(fp), &algorithm);
+
+	if (ctx->algorithm == -1) {
+		ctx->matcher.reset(new FingerprintMatcher(CreateFingerprinterConfiguration(algorithm)));
+	} else {
+		FAIL_IF(algorithm != ctx->algorithm, "invalid fingerprint algorithm");
+	}
+
+	return 1;
+}
+
+int chromaprint_matcher_set_raw_fingerprint(ChromaprintMatcherContext *ctx, int idx, const uint32_t *fp, int size, int algorithm)
+{
+	FAIL_IF(!ctx, "context can't be NULL");
+	FAIL_IF(idx < 0 || idx > 1, "idx can be only 0 or 1");
+
+	if (ctx->algorithm == -1) {
+		ctx->matcher.reset(new FingerprintMatcher(CreateFingerprinterConfiguration(algorithm)));
+	} else {
+		FAIL_IF(algorithm != ctx->algorithm, "invalid fingerprint algorithm");
+	}
+
+	ctx->fp[idx].assign(fp, fp + size);
+	return 1;
+}
+
+int chromaprint_matcher_run(ChromaprintMatcherContext *ctx)
+{
+	FAIL_IF(!ctx, "context can't be NULL");
+	FAIL_IF(ctx->fp[0].empty(), "fingerprint 0 is empty");
+	FAIL_IF(ctx->fp[1].empty(), "fingerprint 1 is empty");
+
+	return ctx->matcher->Match(ctx->fp[0], ctx->fp[1]) ? 1 : 0;
+}
+
+int chromaprint_matcher_get_num_segments(ChromaprintMatcherContext *ctx, int *num_segments)
+{
+	FAIL_IF(!ctx, "context can't be NULL");
+	FAIL_IF(!num_segments, "num_segments can't be NULL");
+
+	*num_segments = ctx->matcher->segments().size();
+	return 1;
+}
+
+int chromaprint_matcher_get_segment_position(ChromaprintMatcherContext *ctx, int idx, int *pos1, int *pos2, int *duration)
+{
+	FAIL_IF(!ctx, "context can't be NULL");
+
+	const auto &segments = ctx->matcher->segments();
+	const int num_segments = segments.size();
+	FAIL_IF(idx < 0 || idx >= num_segments, "invalid idx");
+
+	*pos1 = segments[idx].pos1;
+	*pos2 = segments[idx].pos2;
+	*duration = segments[idx].duration;
+	return 1;
+}
+
+int chromaprint_matcher_get_segment_position_ms(ChromaprintMatcherContext *ctx, int idx, int *pos1, int *pos2, int *duration)
+{
+	FAIL_IF(!ctx, "context can't be NULL");
+
+	const auto &segments = ctx->matcher->segments();
+	const int num_segments = segments.size();
+	FAIL_IF(idx < 0 || idx >= num_segments, "invalid idx");
+
+	*pos1 = round(1000 * ctx->matcher->GetHashTime(segments[idx].pos1));
+	*pos2 = round(1000 * ctx->matcher->GetHashTime(segments[idx].pos2));
+	*duration = round(1000 * ctx->matcher->GetHashTime(segments[idx].duration));
+	return 1;
+}
+
+int chromaprint_matcher_get_segment_score(ChromaprintMatcherContext *ctx, int idx, int *score)
+{
+	FAIL_IF(!ctx, "context can't be NULL");
+
+	const auto &segments = ctx->matcher->segments();
+	const int num_segments = segments.size();
+	FAIL_IF(idx < 0 || idx >= num_segments, "invalid idx");
+
+	*score = segments[idx].public_score();
+	return 1;
+}
+
 void chromaprint_dealloc(void *ptr)
 {
 	free(ptr);

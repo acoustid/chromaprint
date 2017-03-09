@@ -34,3 +34,11 @@ if(fpcalc_LINK_FLAGS)
 endif()
 
 install(TARGETS fpcalc RUNTIME DESTINATION ${BIN_INSTALL_DIR})
+
+add_executable(fpcmp fpcmp.cpp)
+target_link_libraries(fpcmp PRIVATE fpcalc_libs)
+if(fpcalc_LINK_FLAGS)
+	set_target_properties(fpcmp PROPERTIES LINK_FLAGS ${fpcalc_LINK_FLAGS})
+endif()
+
+install(TARGETS fpcmp RUNTIME DESTINATION ${BIN_INSTALL_DIR})
