@@ -422,7 +422,7 @@ CHROMAPRINT_API void chromaprint_matcher_free(ChromaprintMatcherContext *ctx);
  *
  * @return 0 on error, 1 on success
  */
-CHROMAPRINT_API int chromaprint_matcher_set_fingerprint(ChromaprintMatcherContext *ctx, int idx, const char *fp, int base64);
+CHROMAPRINT_API int chromaprint_matcher_set_fingerprint(ChromaprintMatcherContext *ctx, int idx, const char *fp, int size, int base64);
 
 /**
  * Set one of the two fingerprints to be matched.

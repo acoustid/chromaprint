@@ -211,7 +211,7 @@ void chromaprint_matcher_free(ChromaprintMatcherContext *ctx)
 	}
 }
 
-int chromaprint_matcher_set_fingerprint(ChromaprintMatcherContext *ctx, int idx, const char *fp, int base64)
+int chromaprint_matcher_set_fingerprint(ChromaprintMatcherContext *ctx, int idx, const char *fp, int size, int base64)
 {
 	FAIL_IF(!ctx, "context can't be NULL");
 	FAIL_IF(idx < 0 || idx > 1, "idx can be only 0 or 1");
@@ -220,7 +220,7 @@ int chromaprint_matcher_set_fingerprint(ChromaprintMatcherContext *ctx, int idx,
 	if (base64) {
 		ctx->fp[idx] = ctx->decompressor.Decompress(Base64Decode(fp), &algorithm);
 	} else {
-		ctx->fp[idx] = ctx->decompressor.Decompress(fp, &algorithm);
+		ctx->fp[idx] = ctx->decompressor.Decompress(std::string(fp, size), &algorithm);
 	}
 
 	if (ctx->algorithm == -1) {
