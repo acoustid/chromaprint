@@ -29,9 +29,9 @@ struct Segment
 		: pos1(pos1), pos2(pos2), duration(duration), score(score), left_score(left_score), right_score(right_score) {}
 
 	int public_score() const {
+		return std::max(0, int(100 - std::round(score * (100.0 / 14.0))));
 		//return std::max(0, int(100 - std::round(score * (100.0 / 14.0))));
-		//return std::max(0, int(100 - std::round(score * (100.0 / 14.0))));
-		return int(100 * pow(score, 1.4) / pow(10, 1.4) + 0.5);
+		//return int(100 * pow(score, 1.4) / pow(10, 1.4) + 0.5);
 		//return int(score * 100 + 0.5);
 	}
 

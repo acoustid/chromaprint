@@ -144,7 +144,7 @@ bool FingerprintMatcher::Match(const uint32_t fp1_data[], size_t fp1_size, const
 		std::vector<size_t> gradient_peaks;
 		for (size_t i = 0; i < size; i++) {
 			const auto gi = gradient[i];
-			if (i > 0 && i < size - 1 && gi > 0.15 && gi >= gradient[i - 1] && gi >= gradient[i + 1]) {
+			if (i > 0 && i < size - 1 && gi > 0.09 && gi >= gradient[i - 1] && gi >= gradient[i + 1]) {
 				if (gradient_peaks.empty() || gradient_peaks.back() + 1 < i) {
 					gradient_peaks.push_back(i);
 				}
