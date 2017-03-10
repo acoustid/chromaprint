@@ -184,7 +184,7 @@ TEST(API, TestMatcher)
 
 	int score;
 	ASSERT_EQ(1, chromaprint_matcher_get_segment_score(ctx, 0, &score));
-	ASSERT_EQ(7, score);
+	ASSERT_EQ(90, score);
 }
 
 }; // namespace chromaprint
