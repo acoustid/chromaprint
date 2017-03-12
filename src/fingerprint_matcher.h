@@ -35,6 +35,12 @@ struct Segment
 		//return int(score * 100 + 0.5);
 	}
 
+	bool can_merge(const Segment &other, double threshold) const {
+		const auto a = pos1 + duration == other.pos1;
+		const auto b = pos2 + duration == other.pos2;
+		return a && b && (std::abs(other.score - score) < threshold);
+	}
+
 	Segment merged(const Segment &other) {
 		assert(pos1 + duration == other.pos1);
 		assert(pos2 + duration == other.pos2);

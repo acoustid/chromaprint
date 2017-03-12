@@ -159,9 +159,10 @@ bool FingerprintMatcher::Match(const uint32_t fp1_data[], size_t fp1_size, const
 			if (score < m_match_threshold) {
 				bool added = false;
 				if (!m_segments.empty()) {
+					auto s = Segment(offset1 + begin, offset2 + begin, duration, score);
 					auto &s1 = m_segments.back();
-					if (std::abs(s1.score - score) < 0.7) {
-						s1 = s1.merged(Segment(offset1 + begin, offset2 + begin, duration, score));
+					if (s1.can_merge(s, 0.7)) {
+						s1 = s1.merged(s);
 						added = true;
 					}
 				}
