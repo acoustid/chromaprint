@@ -216,6 +216,8 @@ void PrintResult(ChromaprintContext *ctx, FFmpegAudioReader &reader, bool first,
 			printf("%s\n", fp);
 			break;
 	}
+
+	fflush(stdout);
 }
 
 double GetCurrentTimestamp() {

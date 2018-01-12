@@ -1,3 +1,11 @@
+Version 1.4.3 -- January 12, 2017
+==================================
+
+ - Allow one packet to have decoding error
+ - Print output even if there is a decoding error, exit with error code 3 instead of 2 in such case
+ - Add new option -ignore-errors to change the error code 3 to 0
+ - Periotically flush output when working on a stream
+
 Version 1.4.2 -- December 28, 2016
 ==================================
 
