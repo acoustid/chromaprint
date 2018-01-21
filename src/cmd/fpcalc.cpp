@@ -29,6 +29,8 @@ static bool g_overlap = false;
 static bool g_raw = false;
 static bool g_abs_ts = false;
 static bool g_ignore_errors = false;
+static ChromaprintAlgorithm g_algorithm = CHROMAPRINT_ALGORITHM_DEFAULT;
+
 
 const char *g_help =
 	"Usage: %s [OPTIONS] FILE [FILE...]\n"
@@ -41,6 +43,7 @@ const char *g_help =
 	"  -channels NUM  Set the number of channels in the input audio\n"
 	"  -length SECS   Restrict the duration of the processed input audio (default 120)\n"
 	"  -chunk SECS    Split the input audio into chunks of this duration\n"
+	"  -algorithm NUM Set the algorigthm method (default 2)\n"
 	"  -overlap       Overlap the chunks slightly to make sure audio on the edges is fingerprinted\n"
 	"  -ts            Output UNIX timestamps for chunked results, useful when fingerprinting real-time audio stream\n"
 	"  -raw           Output fingerprints in the uncompressed format\n"
@@ -95,6 +98,15 @@ static void ParseOptions(int &argc, char **argv) {
 				exit(2);
 			}
 			i++;
+        } else if ((!strcmp(argv[i], "-algorithm") || !strcmp(argv[i], "-a")) && i + 1 < argc) {
+            auto value = atoi(argv[i + 1]);
+            if (value >= 1 && value <= 5) {
+                g_algorithm = (ChromaprintAlgorithm)(value - 1);
+            } else {
+                fprintf(stderr, "ERROR: The argument for %s must be 1 - 5\n", argv[i]);
+                exit(2);
+            }
+            i++;
 		} else if (!strcmp(argv[i], "-text")) {
 			g_format = TEXT;
 		} else if (!strcmp(argv[i], "-json")) {
@@ -405,7 +417,7 @@ int fpcalc_main(int argc, char **argv) {
 		}
 	}
 
-	ChromaprintContext *chromaprint_ctx = chromaprint_new(CHROMAPRINT_ALGORITHM_DEFAULT);
+	ChromaprintContext *chromaprint_ctx = chromaprint_new(g_algorithm);
 	SCOPE_EXIT(chromaprint_free(chromaprint_ctx));
 
 	reader.SetOutputChannels(chromaprint_get_num_channels(chromaprint_ctx));
