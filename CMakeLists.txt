@@ -12,7 +12,7 @@ project(chromaprint C CXX)
 
 set(chromaprint_VERSION_MAJOR 1)
 set(chromaprint_VERSION_MINOR 4)
-set(chromaprint_VERSION_PATCH 3)
+set(chromaprint_VERSION_PATCH 4)
 set(chromaprint_VERSION "${chromaprint_VERSION_MAJOR}.${chromaprint_VERSION_MINOR}.${chromaprint_VERSION_PATCH}")
 
 set(PROJECT_VERSION "${chromaprint_VERSION}")

@@ -84,7 +84,7 @@ typedef struct ChromaprintMatcherContextPrivate ChromaprintMatcherContext;
 
 #define CHROMAPRINT_VERSION_MAJOR 1
 #define CHROMAPRINT_VERSION_MINOR 4
-#define CHROMAPRINT_VERSION_PATCH 3
+#define CHROMAPRINT_VERSION_PATCH 4
 
 enum ChromaprintAlgorithm {
 	CHROMAPRINT_ALGORITHM_TEST1 = 0,
