@@ -1,21 +1,11 @@
 cmake_minimum_required(VERSION 3.0)
 
-if(POLICY CMP0042)
-	cmake_policy(SET CMP0042 NEW)
-endif()
-
-if(POLICY CMP0048)
-    cmake_policy(SET CMP0048 OLD)
-endif()
-
-project(chromaprint C CXX)
-
 set(chromaprint_VERSION_MAJOR 1)
 set(chromaprint_VERSION_MINOR 4)
 set(chromaprint_VERSION_PATCH 4)
 set(chromaprint_VERSION "${chromaprint_VERSION_MAJOR}.${chromaprint_VERSION_MINOR}.${chromaprint_VERSION_PATCH}")
 
-set(PROJECT_VERSION "${chromaprint_VERSION}")
+project(chromaprint LANGUAGES C CXX VERSION "${chromaprint_VERSION}")
 
 set(chromaprint_SOVERSION 1)
 
