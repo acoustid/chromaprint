@@ -21,6 +21,8 @@ include(CheckCXXCompilerFlag)
 
 find_package(Threads)
 
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+
 check_cxx_compiler_flag("-std=c++11" COMPILER_SUPPORTS_CXX11)
 if(COMPILER_SUPPORTS_CXX11)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -60,7 +62,6 @@ if(APPLE)
 	set(FRAMEWORK_INSTALL_DIR "/Library/Frameworks" CACHE STRING "Directory to install frameworks to")
 endif()
 
-option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(BUILD_TOOLS "Build command line tools" OFF)
 option(BUILD_TESTS "Build test suite" OFF)
 
