@@ -122,7 +122,12 @@ static void ParseOptions(int &argc, char **argv) {
 		} else if (!strcmp(argv[i], "-ignore-errors")) {
 			g_ignore_errors = true;
 		} else if (!strcmp(argv[i], "-v") || !strcmp(argv[i], "-version")) {
-			fprintf(stdout, "fpcalc version %s\n", chromaprint_get_version());
+#if defined(USE_SWRESAMPLE)
+#define RESAMPLE_LIB_IDENT_IDENT LIBSWRESAMPLE_IDENT
+#else
+#define RESAMPLE_LIB_IDENT_IDENT LIBAVRESAMPLE_IDENT
+#endif
+			fprintf(stdout, "fpcalc version %s (FFmpeg %s %s %s)\n", chromaprint_get_version(), LIBAVCODEC_IDENT, LIBAVFORMAT_IDENT, RESAMPLE_LIB_IDENT_IDENT);
 			exit(0);
 		} else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "-help") || !strcmp(argv[i], "--help")) {
 			fprintf(stdout, g_help, argv[0]);
