@@ -92,6 +92,7 @@ Bindings, wrappers and reimplementations in other languages:
  * [C#](https://github.com/protyposis/Aurio/tree/master/Aurio/Aurio/Matching/Chromaprint) (reimplementation)
  * [Pascal](https://github.com/CMCHTPC/ChromaPrint) (reimplementation)
  * [C++/CLI](https://github.com/CyberSinh/Luminescence.Audio)
+ * [Vala](https://github.com/GNOME/vala-extra-vapis/blob/master/libchromaprint.vapi)
 
 Integrations:
 
