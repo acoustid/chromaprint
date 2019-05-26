@@ -1,3 +1,8 @@
+Version 1.5.0 -- UNRELEASED
+===========================
+
+ - Add support for fpcalc -raw -signed, which helps with easier PostgreSQL integration
+
 Version 1.4.4 -- February 10, 2018
 ==================================
 

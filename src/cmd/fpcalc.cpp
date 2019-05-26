@@ -27,6 +27,7 @@ static double g_max_duration = 120;
 static double g_max_chunk_duration = 0;
 static bool g_overlap = false;
 static bool g_raw = false;
+static bool g_signed = false;
 static bool g_abs_ts = false;
 static bool g_ignore_errors = false;
 static ChromaprintAlgorithm g_algorithm = CHROMAPRINT_ALGORITHM_DEFAULT;
@@ -47,6 +48,7 @@ const char *g_help =
 	"  -overlap       Overlap the chunks slightly to make sure audio on the edges is fingerprinted\n"
 	"  -ts            Output UNIX timestamps for chunked results, useful when fingerprinting real-time audio stream\n"
 	"  -raw           Output fingerprints in the uncompressed format\n"
+	"  -signed        Change the uncompressed format from unsigned integers to signed (for pg_acoustid compatibility)\n"
 	"  -json          Print the output in JSON format\n"
 	"  -text          Print the output in text format\n"
 	"  -plain         Print the just the fingerprint in text format\n"
@@ -119,6 +121,8 @@ static void ParseOptions(int &argc, char **argv) {
 			g_abs_ts = true;
 		} else if (!strcmp(argv[i], "-raw")) {
 			g_raw = true;
+		} else if (!strcmp(argv[i], "-signed")) {
+			g_signed = true;
 		} else if (!strcmp(argv[i], "-ignore-errors")) {
 			g_ignore_errors = true;
 		} else if (!strcmp(argv[i], "-v") || !strcmp(argv[i], "-version")) {
@@ -180,7 +184,11 @@ void PrintResult(ChromaprintContext *ctx, FFmpegAudioReader &reader, bool first,
 			if (i > 0) {
 				ss << ',';
 			}
-			ss << raw_fp_data[i];
+            if (g_signed) {
+                ss << static_cast<int32_t>(raw_fp_data[i]);
+            } else {
+                ss << raw_fp_data[i];
+            }
 		}
 		tmp_fp = ss.str();
 		fp = tmp_fp.c_str();
