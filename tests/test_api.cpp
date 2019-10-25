@@ -157,6 +157,19 @@ TEST(API, TestDecodeFingerprintOutOfRange)
 	chromaprint_decode_fingerprint(encoded, strlen(encoded), &fp, &length, &algorithm, 1);
 }
 
+TEST(API, TestDecodeFingerprintEmpty)
+{
+	uint32_t *fp;
+	int length, algorithm;
+
+	const char *encoded = "AQAAAA";
+
+	auto ret = chromaprint_decode_fingerprint(encoded, strlen(encoded), &fp, &length, &algorithm, 1);
+	ASSERT_EQ(1, ret);
+	ASSERT_EQ(0, length);
+	ASSERT_EQ(1, algorithm);
+}
+
 TEST(API, TestDecodeFingerprintNull)
 {
 	uint32_t *fp;
