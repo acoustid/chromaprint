@@ -34,6 +34,9 @@ windows)
         -DCMAKE_TOOLCHAIN_FILE=$TMP_BUILD_DIR/toolchain.cmake
         -DCMAKE_C_FLAGS='-static -static-libgcc -static-libstdc++'
         -DCMAKE_CXX_FLAGS='-static -static-libgcc -static-libstdc++'
+        -DHAVE_AV_PACKET_UNREF=1
+        -DHAVE_AV_FRAME_ALLOC=1
+        -DHAVE_AV_FRAME_FREE=1
     )
     STRIP=$ARCH-w64-mingw32-strip
     ;;
