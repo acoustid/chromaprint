@@ -31,6 +31,24 @@ jobs:
         make VERBOSE=1
         make check VERBOSE=1
 
+  test-macos:
+    runs-on: macos-latest
+    env:
+      FFT_LIB: vdsp
+    steps:
+    - uses: actions/checkout@v1
+    - name: Download googletest sources
+      run: |
+        git clone https://github.com/google/googletest.git "$GITHUB_WORKSPACE/googletest"
+        echo "::set-env name=GTEST_ROOT::$GITHUB_WORKSPACE/googletest/googletest"
+    - name: Test with ${{ env.FFT_LIB }}
+      run: |
+        mkdir build.test.$FFT_LIB
+        cd build.test.$FFT_LIB
+        cmake -DCMAKE_BUILD_TYPE=Release -DFFT_LIB=$FFT_LIB -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS='-stdlib=libc++' ..
+        make VERBOSE=1
+        make check VERBOSE=1
+
   package:
     runs-on: ubuntu-latest
     strategy:
