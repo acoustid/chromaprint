@@ -154,6 +154,7 @@ jobs:
           for dir in $dirs
           do
             name=$(basename $dir)
+            chmod +x $dir/fpcalc
             tar cvzf release/$name.tar.gz $dir
           done
       - name: Make zips
