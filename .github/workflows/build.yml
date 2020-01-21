@@ -86,7 +86,7 @@ jobs:
     - name: Archive artifacts
       uses: actions/upload-artifact@v1
       with:
-        name: chromaprint-${{ env.OS }}-${{ env.ARCH }}
+        name: chromaprint-fpcalc-${{ env.OS }}-${{ env.ARCH }}
         path: chromaprint-${{ env.OS }}-${{ env.ARCH }}/bin/
 
   package-macos:
@@ -107,7 +107,7 @@ jobs:
     - name: Archive artifacts
       uses: actions/upload-artifact@v1
       with:
-        name: chromaprint-${{ env.OS }}-${{ env.ARCH }}
+        name: chromaprint-fpcalc-${{ env.OS }}-${{ env.ARCH }}
         path: chromaprint-${{ env.OS }}-${{ env.ARCH }}/bin/
 
   release:
@@ -118,36 +118,39 @@ jobs:
       - package-macos
     steps:
       - uses: actions/checkout@v1
+      - name: Set version
+        run: |
+          TAG=${GITHUB_REF##*/}
+          echo "::set-env name=TAG::$TAG"
+          echo "::set-env name=VERSION::$(echo $TAG | sed 's/^v//')"
       - uses: actions/download-artifact@v1
         with:
-          name: chromaprint-linux-x86_64
-          path: artifacts/chromaprint-linux-x86_64/
+          name: chromaprint-fpcalc-linux-x86_64
+          path: artifacts/chromaprint-fpcalc-${{ env.VERSION }}-linux-x86_64/
       - uses: actions/download-artifact@v1
         with:
-          name: chromaprint-linux-i686
-          path: artifacts/chromaprint-linux-i686/
+          name: chromaprint-fpcalc-linux-i686
+          path: artifacts/chromaprint-fpcalc-${{ env.VERSION }}-linux-i686/
       - uses: actions/download-artifact@v1
         with:
-          name: chromaprint-windows-x86_64
-          path: artifacts/chromaprint-windows-x86_64/
+          name: chromaprint-fpcalc-windows-x86_64
+          path: artifacts/chromaprint-fpcalc-${{ env.VERSION }}-windows-x86_64/
       - uses: actions/download-artifact@v1
         with:
-          name: chromaprint-windows-i686
-          path: artifacts/chromaprint-windows-i686/
+          name: chromaprint-fpcalc-windows-i686
+          path: artifacts/chromaprint-fpcalc-${{ env.VERSION }}-windows-i686/
       - uses: actions/download-artifact@v1
         with:
-          name: chromaprint-macos-x86_64
-          path: artifacts/chromaprint-macos-x86_64/
+          name: chromaprint-fpcalc-macos-x86_64
+          path: artifacts/chromaprint-fpcalc-${{ env.VERSION }}-macos-x86_64/
       - name: Make source tarball
         run: |
           mkdir artifacts/release/
-          TAG=${GITHUB_REF##*/}
-          VERSION=$(echo $TAG | sed 's/^v//')
           git archive --format=tar.gz --prefix=chromaprint-$TAG/ $TAG > artifacts/release/chromaprint-$VERSION.tar.gz
       - name: Make tarballs
         run: |
           cd artifacts/
-          dirs=$(find . -name 'chromaprint-macos-*' -o -name 'chromaprint-linux-*' -type d)
+          dirs=$(find . -name 'chromaprint-fpcalc-*-macos-*' -o -name 'chromaprint-fpcalc-*-linux-*' -type d)
           for dir in $dirs
           do
             name=$(basename $dir)
@@ -156,11 +159,11 @@ jobs:
       - name: Make zips
         run: |
           cd artifacts/
-          dirs=$(find . -name 'chromaprint-windows-*' -type d)
+          dirs=$(find . -name 'chromaprint-fpcalc-*-windows-*' -type d)
           for dir in $dirs
           do
             name=$(basename $dir)
-            zip release/$name.zip $dir
+            zip release/$name.zip $dir/*
           done
       - name: Release
         uses: softprops/action-gh-release@v1
