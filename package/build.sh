@@ -14,8 +14,7 @@ trap 'rm -rf $TMP_BUILD_DIR' EXIT
 
 cd $TMP_BUILD_DIR
 
-curl -s -L "https://code.oxygene.sk/acoustid/ffmpeg-build/builds/artifacts/master/download?job=$OS+$ARCH" > artifacts.zip
-unzip artifacts.zip
+curl -s -L "https://github.com/acoustid/ffmpeg-build/releases/download/v4.2.2-2/ffmpeg-4.2.2-audio-$OS-$ARCH.tar.gz" | tar xz
 export FFMPEG_DIR=$TMP_BUILD_DIR/$(ls -d ffmpeg-* | tail)
 
 CMAKE_ARGS=(
@@ -35,6 +34,9 @@ windows)
         -DCMAKE_TOOLCHAIN_FILE=$TMP_BUILD_DIR/toolchain.cmake
         -DCMAKE_C_FLAGS='-static -static-libgcc -static-libstdc++'
         -DCMAKE_CXX_FLAGS='-static -static-libgcc -static-libstdc++'
+        -DHAVE_AV_PACKET_UNREF=1
+        -DHAVE_AV_FRAME_ALLOC=1
+        -DHAVE_AV_FRAME_FREE=1
     )
     STRIP=$ARCH-w64-mingw32-strip
     ;;
