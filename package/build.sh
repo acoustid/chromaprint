@@ -53,11 +53,20 @@ linux)
             -DCMAKE_CXX_FLAGS='-m32 -static -static-libgcc -static-libstdc++'
         )
         ;;
-    x86_64|armhf)
+    x86_64)
         CMAKE_ARGS+=(
             -DCMAKE_C_FLAGS='-static -static-libgcc -static-libstdc++'
             -DCMAKE_CXX_FLAGS='-static -static-libgcc -static-libstdc++'
         )
+        ;;
+    arm*)
+        perl -pe "s!{EXTRA_PATHS}!$FFMPEG_DIR!g" $BASE_DIR/package/toolchain-armhf.cmake.in | perl -pe "s!{ARCH}!$ARCH!g" >toolchain.cmake
+        CMAKE_ARGS+=(
+            -DCMAKE_TOOLCHAIN_FILE=$TMP_BUILD_DIR/toolchain.cmake
+            -DCMAKE_C_FLAGS='-static -static-libgcc -static-libstdc++'
+            -DCMAKE_CXX_FLAGS='-static -static-libgcc -static-libstdc++'
+        )
+        STRIP=arm-linux-gnueabihf-strip
         ;;
     *)
         echo "unsupported architecture ($ARCH)"
