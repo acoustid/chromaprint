@@ -71,10 +71,6 @@ jobs:
       OS: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v1
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install libgtest-dev
     - name: Install multilib dependencies
       if: matrix.arch == 'i686'
       run: sudo apt-get install gcc-multilib g++-multilib
