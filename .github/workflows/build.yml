@@ -59,10 +59,12 @@ jobs:
         arch:
         - x86_64
         - i686
-        include:
-        - os: linux
+        - armv7
+        - armv8
+        exclude:
+        - os: windows
           arch: armv7
-        - os: linux
+        - os: windows
           arch: armv8
     env:
       ARCH: ${{ matrix.arch }}
