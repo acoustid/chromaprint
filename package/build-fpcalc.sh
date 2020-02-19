@@ -2,19 +2,19 @@
 
 : ${OS?}
 : ${ARCH?}
-: ${TAG:=}
-: ${BRANCH?}
 
 set -eux
 
 BASE_DIR=$(cd $(dirname $0)/.. && pwd)
+
+cd $BASE_DIR
 
 TMP_BUILD_DIR=$BASE_DIR/$(mktemp -d build.XXXXXXXX)
 trap 'rm -rf $TMP_BUILD_DIR' EXIT
 
 cd $TMP_BUILD_DIR
 
-curl -s -L "https://github.com/acoustid/ffmpeg-build/releases/download/v4.2.2-3/ffmpeg-4.2.2-audio-$OS-$ARCH.tar.gz" | tar xz
+curl -s -L "https://github.com/acoustid/ffmpeg-build/releases/download/v4.2.2-4/ffmpeg-4.2.2-audio-$OS-$ARCH.tar.gz" | tar xz
 export FFMPEG_DIR=$TMP_BUILD_DIR/$(ls -d ffmpeg-* | tail)
 
 CMAKE_ARGS=(
@@ -34,9 +34,6 @@ windows)
         -DCMAKE_TOOLCHAIN_FILE=$TMP_BUILD_DIR/toolchain.cmake
         -DCMAKE_C_FLAGS='-static -static-libgcc -static-libstdc++'
         -DCMAKE_CXX_FLAGS='-static -static-libgcc -static-libstdc++'
-        -DHAVE_AV_PACKET_UNREF=1
-        -DHAVE_AV_FRAME_ALLOC=1
-        -DHAVE_AV_FRAME_FREE=1
     )
     STRIP=$ARCH-w64-mingw32-strip
     ;;
@@ -79,32 +76,16 @@ linux)
     ;;
 esac
 
+if [ $OS != macos ]
+then
+	export LDFLAGS=-Wl,-Bsymbolic
+fi
+
 cmake "${CMAKE_ARGS[@]}" $BASE_DIR
 
 make VERBOSE=1
 make install VERBOSE=1
 
 $STRIP $BASE_DIR/chromaprint-$OS-$ARCH/bin/fpcalc*
-
-case $TAG in
-v*)
-    VERSION=$(echo $TAG | sed 's/^v//')
-    ;;
-*)
-    VERSION=$BRANCH-$(date +%Y%m%d%H%M)
-    ;;
-esac
-
-FPCALC_DIR=chromaprint-fpcalc-$VERSION-$OS-$ARCH
-rm -rf $FPCALC_DIR
-mkdir $FPCALC_DIR
-cp $BASE_DIR/chromaprint-$OS-$ARCH/bin/fpcalc* $FPCALC_DIR
-
-case $OS in
-windows)
-    zip -r $BASE_DIR/$FPCALC_DIR.zip $FPCALC_DIR
-    ;;
-*)
-    tar -zcvf $BASE_DIR/$FPCALC_DIR.tar.gz $FPCALC_DIR
-    ;;
-esac
+mv $BASE_DIR/chromaprint-$OS-$ARCH/bin/fpcalc* $BASE_DIR/chromaprint-$OS-$ARCH
+rmdir $BASE_DIR/chromaprint-$OS-$ARCH/bin
