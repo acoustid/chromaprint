@@ -88,4 +88,4 @@ make install VERBOSE=1
 
 $STRIP $BASE_DIR/chromaprint-$OS-$ARCH/bin/fpcalc*
 mv $BASE_DIR/chromaprint-$OS-$ARCH/bin/fpcalc* $BASE_DIR/chromaprint-$OS-$ARCH
-rmdir $BASE_DIR/chromaprint-$OS-$ARCH/bin
+rm -rf $BASE_DIR/chromaprint-$OS-$ARCH/{bin,lib,include}
