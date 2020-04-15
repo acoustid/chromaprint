@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.3)
 
 set(chromaprint_VERSION_MAJOR 1)
-set(chromaprint_VERSION_MINOR 4)
-set(chromaprint_VERSION_PATCH 4)
+set(chromaprint_VERSION_MINOR 5)
+set(chromaprint_VERSION_PATCH 0)
 set(chromaprint_VERSION "${chromaprint_VERSION_MAJOR}.${chromaprint_VERSION_MINOR}.${chromaprint_VERSION_PATCH}")
 
 project(chromaprint LANGUAGES C CXX VERSION "${chromaprint_VERSION}")
