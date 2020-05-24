@@ -25,7 +25,6 @@ set(chromaprint_SOURCES
 	utils/scope_exit.h
 	utils/rolling_integral_image.h
 	audio/audio_slicer.h
-	avresample/resample2.c
 )
 
 set(chromaprint_PUBLIC_SOURCES chromaprint.cpp)
@@ -63,6 +62,10 @@ endif()
 if(USE_KISSFFT)
 	set(chromaprint_SOURCES fft_lib_kissfft.cpp ${chromaprint_SOURCES} ${KISSFFT_SOURCES})
 	include_directories(${KISSFFT_INCLUDE_DIRS})
+endif()
+
+if (USE_INTERNAL_AVRESAMPLE)
+  set(chromaprint_SOURCES avresample/resample2.c ${chromaprint_SOURCES})
 endif()
 
 add_library(chromaprint_objs OBJECT ${chromaprint_SOURCES})
