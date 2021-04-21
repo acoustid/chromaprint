@@ -4,9 +4,16 @@
 #include <assert.h>
 #include <algorithm>
 #include <stdio.h>
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#if USE_INTERNAL_AVRESAMPLE
 extern "C" {
 #include "avresample/avcodec.h"
 }
+#endif
+
 #include "debug.h"
 #include "audio_processor.h"
 
@@ -15,11 +22,13 @@ namespace chromaprint {
 static const int kMinSampleRate = 1000;
 static const int kMaxBufferSize = 1024 * 32;
 
+#if USE_INTERNAL_AVRESAMPLE
 // Resampler configuration
 static const int kResampleFilterLength = 16;
 static const int kResamplePhaseShift = 8;
 static const int kResampleLinear = 0;
 static const double kResampleCutoff = 0.8;
+#endif
 
 AudioProcessor::AudioProcessor(int sample_rate, AudioConsumer *consumer)
 	: m_buffer(kMaxBufferSize),
@@ -33,9 +42,11 @@ AudioProcessor::AudioProcessor(int sample_rate, AudioConsumer *consumer)
 
 AudioProcessor::~AudioProcessor()
 {
+#if USE_INTERNAL_AVRESAMPLE
 	if (m_resample_ctx) {
 		av_resample_close(m_resample_ctx);
 	}
+#endif
 }
 
 void AudioProcessor::LoadMono(const int16_t *input, int length)
@@ -90,27 +101,30 @@ int AudioProcessor::Load(const int16_t *input, int length)
 
 void AudioProcessor::Resample()
 {
-	if (!m_resample_ctx) {
+#if USE_INTERNAL_AVRESAMPLE
+	if (m_resample_ctx) {
+		int consumed = 0;
+		int length = av_resample(m_resample_ctx, m_resample_buffer.data(), m_buffer.data(), &consumed, m_buffer_offset, kMaxBufferSize, 1);
+		if (length > kMaxBufferSize) {
+			DEBUG("chromaprint::AudioProcessor::Resample() -- Resampling overwrote output buffer.");
+			length = kMaxBufferSize;
+		}
+		m_consumer->Consume(m_resample_buffer.data(), length);
+		int remaining = m_buffer_offset - consumed;
+		if (remaining > 0) {
+			std::copy(m_buffer.begin() + consumed, m_buffer.begin() + m_buffer_offset, m_buffer.begin());
+		}
+		else if (remaining < 0) {
+			DEBUG("chromaprint::AudioProcessor::Resample() -- Resampling overread input buffer.");
+			remaining = 0;
+		}
+		m_buffer_offset = remaining;
+	} else
+#endif
+	{
 		m_consumer->Consume(m_buffer.data(), m_buffer_offset);
 		m_buffer_offset = 0;
-		return;
 	}
-	int consumed = 0;
-	int length = av_resample(m_resample_ctx, m_resample_buffer.data(), m_buffer.data(), &consumed, m_buffer_offset, kMaxBufferSize, 1);
-	if (length > kMaxBufferSize) {
-		DEBUG("chromaprint::AudioProcessor::Resample() -- Resampling overwrote output buffer.");
-		length = kMaxBufferSize;
-	}
-	m_consumer->Consume(m_resample_buffer.data(), length);
-	int remaining = m_buffer_offset - consumed;
-	if (remaining > 0) {
-		std::copy(m_buffer.begin() + consumed, m_buffer.begin() + m_buffer_offset, m_buffer.begin());
-	}
-	else if (remaining < 0) {
-		DEBUG("chromaprint::AudioProcessor::Resample() -- Resampling overread input buffer.");
-		remaining = 0;
-	}
-	m_buffer_offset = remaining;
 }
 
 
@@ -126,6 +140,8 @@ bool AudioProcessor::Reset(int sample_rate, int num_channels)
 		return false;
 	}
 	m_buffer_offset = 0;
+
+#if USE_INTERNAL_AVRESAMPLE
 	if (m_resample_ctx) {
 		av_resample_close(m_resample_ctx);
 		m_resample_ctx = 0;
@@ -138,6 +154,13 @@ bool AudioProcessor::Reset(int sample_rate, int num_channels)
 			kResampleLinear,
 			kResampleCutoff);
 	}
+#else
+	if (sample_rate != m_target_sample_rate) {
+		DEBUG("chromaprint::AudioProcessor::Reset() -- Cannot resample from " << sample_rate
+		           << " to " << m_target_sample_rate << " without internal avresample.");
+		return false;
+	}
+#endif
 	m_num_channels = num_channels;
 	return true;
 }
