@@ -44,7 +44,7 @@ const char *g_help =
 	"  -channels NUM  Set the number of channels in the input audio\n"
 	"  -length SECS   Restrict the duration of the processed input audio (default 120)\n"
 	"  -chunk SECS    Split the input audio into chunks of this duration\n"
-	"  -algorithm NUM Set the algorigthm method (default 2)\n"
+	"  -algorithm NUM Set the algorithm method (default 2)\n"
 	"  -overlap       Overlap the chunks slightly to make sure audio on the edges is fingerprinted\n"
 	"  -ts            Output UNIX timestamps for chunked results, useful when fingerprinting real-time audio stream\n"
 	"  -raw           Output fingerprints in the uncompressed format\n"
