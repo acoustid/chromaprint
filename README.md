@@ -93,6 +93,7 @@ Bindings, wrappers and reimplementations in other languages:
  * [Scala/JVM](https://github.com/mgdigital/Chromaprint.scala) (reimplementation)
  * [C++/CLI](https://github.com/CyberSinh/Luminescence.Audio)
  * [Vala](https://github.com/GNOME/vala-extra-vapis/blob/master/libchromaprint.vapi)
+ * [Swift](https://github.com/wallisch/ChromaSwift)
 
 Integrations:
 
