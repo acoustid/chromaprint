@@ -137,7 +137,7 @@ int chromaprint_get_raw_fingerprint(ChromaprintContext *ctx, uint32_t **data, in
 	const auto fingerprint = ctx->fingerprinter.GetFingerprint();
 	*data = (uint32_t *) malloc(sizeof(uint32_t) * fingerprint.size());
 	FAIL_IF(!*data, "can't allocate memory for the result");
-	*size = fingerprint.size();
+	*size = int(fingerprint.size());
 	std::copy(fingerprint.begin(), fingerprint.end(), *data);
 	return 1;
 }
@@ -146,7 +146,7 @@ int chromaprint_get_raw_fingerprint_size(ChromaprintContext *ctx, int *size)
 {
 	FAIL_IF(!ctx, "context can't be NULL");
 	const auto fingerprint = ctx->fingerprinter.GetFingerprint();
-	*size = fingerprint.size();
+	*size = int(fingerprint.size());
 	return 1;
 }
 
@@ -172,7 +172,7 @@ int chromaprint_encode_fingerprint(const uint32_t *fp, int size, int algorithm, 
 		encoded = Base64Encode(encoded);
 	}
 	*encoded_fp = (char *) malloc(encoded.size() + 1);
-	*encoded_size = encoded.size();	
+	*encoded_size = int(encoded.size());
 	std::copy(encoded.data(), encoded.data() + encoded.size() + 1, *encoded_fp);
 	return 1;
 }
@@ -195,7 +195,7 @@ int chromaprint_decode_fingerprint(const char *encoded_fp, int encoded_size, uin
 		return 0;
 	}
 	*fp = (uint32_t *) malloc(sizeof(uint32_t) * uncompressed.size());
-	*size = uncompressed.size();
+	*size = int(uncompressed.size());
 	if (algorithm) {
 		*algorithm = algo;
 	}
