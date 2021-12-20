@@ -15,6 +15,7 @@ trap 'rm -rf $TMP_BUILD_DIR' EXIT
 cd $TMP_BUILD_DIR
 
 FFMPEG_BUILD_VERSION=v4.4.1-1
+FFMPEG_VERSION=4.4.1
 
 case $OS-$ARCH in
   macos-arm64)
@@ -31,7 +32,7 @@ case $OS-$ARCH in
     ;;
 esac
 
-curl -s -L "https://github.com/acoustid/ffmpeg-build/releases/download/$FFMPEG_BUILD_VERSION/ffmpeg-$FFMPEG_BUILD_VERSION-audio-$TARGET.tar.gz" | tar xz
+curl -s -L "https://github.com/acoustid/ffmpeg-build/releases/download/$FFMPEG_BUILD_VERSION/ffmpeg-$FFMPEG_VERSION-audio-$TARGET.tar.gz" | tar xz
 export FFMPEG_DIR=$TMP_BUILD_DIR/$(ls -d ffmpeg-* | tail)
 
 CMAKE_ARGS=(
