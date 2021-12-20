@@ -35,6 +35,8 @@ esac
 curl -s -L "https://github.com/acoustid/ffmpeg-build/releases/download/$FFMPEG_BUILD_VERSION/ffmpeg-$FFMPEG_VERSION-audio-$TARGET.tar.gz" | tar xz
 export FFMPEG_DIR=$TMP_BUILD_DIR/$(ls -d ffmpeg-* | tail)
 
+find $FFMPEG_DIR
+
 CMAKE_ARGS=(
     -DCMAKE_INSTALL_PREFIX=$BASE_DIR/chromaprint-$OS-$ARCH
     -DCMAKE_BUILD_TYPE=Release
