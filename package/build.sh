@@ -16,7 +16,7 @@ cd $TMP_BUILD_DIR
 
 FFMPEG_BUILD_VERSION=v4.4.4-1
 
-case $OS-$ARCH
+case $OS-$ARCH in
   macos-arm64)
     TARGET=$ARCH-apple-macos11
     ;;
