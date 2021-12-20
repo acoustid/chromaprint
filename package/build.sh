@@ -60,7 +60,7 @@ windows)
     ;;
 macos)
     CMAKE_ARGS+=(
-        -DCMAKE_CXX_FLAGS="-stdlib=libc++ -target=$TARGET"
+        -DCMAKE_CXX_FLAGS="-stdlib=libc++ -target $TARGET"
     )
     ;;
 linux)
