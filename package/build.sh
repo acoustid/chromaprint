@@ -14,7 +14,24 @@ trap 'rm -rf $TMP_BUILD_DIR' EXIT
 
 cd $TMP_BUILD_DIR
 
-curl -s -L "https://github.com/acoustid/ffmpeg-build/releases/download/v4.2.2-3/ffmpeg-4.2.2-audio-$OS-$ARCH.tar.gz" | tar xz
+FFMPEG_BUILD_VERSION=v4.4.4-1
+
+case $OS-$ARCH
+  macos-arm64)
+    TARGET=$ARCH-apple-macos11
+    ;;
+  macos-x86_64)
+    TARGET=$ARCH-apple-macos10.8
+    ;;
+  windows-*)
+    TARGET=$ARCH-w64-mingw32
+    ;;
+  linux-*)
+    TARGET=$ARCH-linux-gnu
+    ;;
+esac
+
+curl -s -L "https://github.com/acoustid/ffmpeg-build/releases/download/$FFMPEG_BUILD_VERSION/ffmpeg-$FFMPEG_BUILD_VERSION-audio-$TARGET.tar.gz" | tar xz
 export FFMPEG_DIR=$TMP_BUILD_DIR/$(ls -d ffmpeg-* | tail)
 
 CMAKE_ARGS=(
@@ -42,7 +59,7 @@ windows)
     ;;
 macos)
     CMAKE_ARGS+=(
-        -DCMAKE_CXX_FLAGS='-stdlib=libc++'
+        -DCMAKE_CXX_FLAGS="-stdlib=libc++ -target=$TARGET"
     )
     ;;
 linux)
