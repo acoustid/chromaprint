@@ -14,7 +14,7 @@ trap 'rm -rf $TMP_BUILD_DIR' EXIT
 
 cd $TMP_BUILD_DIR
 
-FFMPEG_BUILD_VERSION=v4.4.4-1
+FFMPEG_BUILD_VERSION=v4.4.1-1
 
 case $OS-$ARCH in
   macos-arm64)
