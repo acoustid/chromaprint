@@ -1,13 +1,17 @@
-find_package(GTest REQUIRED)
+find_package(Threads REQUIRED)
+
+set(GTEST_DIR ../src/3rdparty/googletest/googletest)
+
+add_library(gtest STATIC ${GTEST_DIR}/src/gtest-all.cc)
+target_include_directories(gtest INTERFACE ${GTEST_DIR}/include)
+target_include_directories(gtest PRIVATE ${GTEST_DIR}/include ${GTEST_DIR})
+target_link_libraries(gtest Threads::Threads)
 
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}
-	${GTEST_INCLUDE_DIRS}
-	${GTEST_SOURCE_DIR}
 )
 
 set(SRCS
-	${GTEST_SOURCE_DIR}/src/gtest-all.cc
 	main.cpp
 	test_api.cpp
 	test_utils.cpp
@@ -39,7 +43,7 @@ if(BUILD_TOOLS)
 endif()
 
 add_executable(all_tests ${SRCS} $<TARGET_OBJECTS:chromaprint_objs>)
-target_link_libraries(all_tests PRIVATE chromaprint ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(all_tests PRIVATE chromaprint gtest)
 
 add_custom_target(check ${CMAKE_CURRENT_BINARY_DIR}/all_tests $ENV{GTEST_FLAGS} DEPENDS all_tests)
 
