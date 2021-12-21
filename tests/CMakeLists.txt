@@ -1,10 +1,9 @@
+find_package(GTest REQUIRED)
 find_package(Threads REQUIRED)
 
-set(GTEST_DIR ../src/3rdparty/googletest/googletest)
-
-add_library(gtest STATIC ${GTEST_DIR}/src/gtest-all.cc)
-target_include_directories(gtest INTERFACE ${GTEST_DIR}/include)
-target_include_directories(gtest PRIVATE ${GTEST_DIR}/include ${GTEST_DIR})
+add_library(gtest STATIC ${GTEST_SOURCES})
+target_include_directories(gtest INTERFACE ${GTEST_INCLUDE_DIRS})
+target_include_directories(gtest PRIVATE ${GTEST_INCLUDE_DIRS} ${GTEST_SOURCE_DIR})
 target_link_libraries(gtest Threads::Threads)
 
 include_directories(
