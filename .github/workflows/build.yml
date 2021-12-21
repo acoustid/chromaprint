@@ -21,8 +21,8 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install yasm cmake libavcodec-dev libavformat-dev libavutil-dev \
-          libavresample-dev libfftw3-dev libgtest-dev
+        sudo apt-get install cmake libavcodec-dev libavformat-dev libavutil-dev \
+          libavresample-dev libfftw3-dev
     - name: Test with ${{ env.FFT_LIB }}
       run: |
         mkdir build.test.$FFT_LIB
@@ -37,10 +37,6 @@ jobs:
       FFT_LIB: vdsp
     steps:
     - uses: actions/checkout@v1
-    - name: Download googletest sources
-      run: |
-        git clone https://github.com/google/googletest.git "$GITHUB_WORKSPACE/googletest"
-        echo "::set-env name=GTEST_ROOT::$GITHUB_WORKSPACE/googletest/googletest"
     - name: Test with ${{ env.FFT_LIB }}
       run: |
         mkdir build.test.$FFT_LIB
