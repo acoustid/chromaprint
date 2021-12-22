@@ -143,108 +143,61 @@ jobs:
         name: chromaprint-macos-universal
         path: artifacts/
 
-        #
-        #  package-windows:
-        #    runs-on: ubuntu-latest
-        #    strategy:
-        #      matrix:
-        #        arch:
-        #        - x86_64
-        #    env:
-        #      OS: windows
-        #      ARCH: ${{ matrix.arch }}
-        #    steps:
-        #    - uses: actions/checkout@v1
-        #    - name: Install dependencies
-        #      run: |
-        #        sudo apt-get update -y && \
-        #        sudo apt-get install -y mingw-w64
-        #    - name: Build
-        #      run: |
-        #        export BRANCH=${GITHUB_REF##*/}
-        #        ./package/build.sh
-        #    - name: Archive artifacts
-        #      uses: actions/upload-artifact@v1
-        #      with:
-        #        name: chromaprint-fpcalc-${{ env.OS }}-${{ env.ARCH }}
-        #        path: chromaprint-${{ env.OS }}-${{ env.ARCH }}/bin/
-        #
-        #  package-macos:
-        #    runs-on: macos-latest
-        #    env:
-        #      OS: macos
-        #      ARCH: x86_64
-        #    steps:
-        #    - uses: actions/checkout@v1
-        #    - name: Build
-        #      run: |
-        #        export BRANCH=${GITHUB_REF##*/}
-        #        ./package/build.sh
-        #    - name: Archive artifacts
-        #      uses: actions/upload-artifact@v1
-        #      with:
-        #        name: chromaprint-fpcalc-${{ env.OS }}-${{ env.ARCH }}
-        #        path: chromaprint-${{ env.OS }}-${{ env.ARCH }}/bin/
-        #
-        #  release:
-        #    runs-on: ubuntu-latest
-        #    if: startsWith(github.ref, 'refs/tags/v')
-        #    needs:
-        #      - package
-        #      - package-macos
-        #    steps:
-        #      - uses: actions/checkout@v1
-        #      - name: Set version
-        #        run: |
-        #          TAG=${GITHUB_REF##*/}
-        #          echo "::set-env name=TAG::$TAG"
-        #          echo "::set-env name=VERSION::$(echo $TAG | sed 's/^v//')"
-        #      - uses: actions/download-artifact@v1
-        #        with:
-        #          name: chromaprint-fpcalc-linux-x86_64
-        #          path: artifacts/chromaprint-fpcalc-${{ env.VERSION }}-linux-x86_64/
-        #      - uses: actions/download-artifact@v1
-        #        with:
-        #          name: chromaprint-fpcalc-linux-i686
-        #          path: artifacts/chromaprint-fpcalc-${{ env.VERSION }}-linux-i686/
-        #      - uses: actions/download-artifact@v1
-        #        with:
-        #          name: chromaprint-fpcalc-windows-x86_64
-        #          path: artifacts/chromaprint-fpcalc-${{ env.VERSION }}-windows-x86_64/
-        #      - uses: actions/download-artifact@v1
-        #        with:
-        #          name: chromaprint-fpcalc-windows-i686
-        #          path: artifacts/chromaprint-fpcalc-${{ env.VERSION }}-windows-i686/
-        #      - uses: actions/download-artifact@v1
-        #        with:
-        #          name: chromaprint-fpcalc-macos-x86_64
-        #          path: artifacts/chromaprint-fpcalc-${{ env.VERSION }}-macos-x86_64/
-        #      - name: Make source tarball
-        #        run: |
-        #          mkdir artifacts/release/
-        #          git archive --format=tar.gz --prefix=chromaprint-$TAG/ $TAG > artifacts/release/chromaprint-$VERSION.tar.gz
-        #      - name: Make tarballs
-        #        run: |
-        #          cd artifacts/
-        #          dirs=$(find . -name 'chromaprint-fpcalc-*-macos-*' -o -name 'chromaprint-fpcalc-*-linux-*' -type d)
-        #          for dir in $dirs
-        #          do
-        #            name=$(basename $dir)
-        #            chmod +x $dir/fpcalc
-        #            tar cvzf release/$name.tar.gz $dir
-        #          done
-        #      - name: Make zips
-        #        run: |
-        #          cd artifacts/
-        #          dirs=$(find . -name 'chromaprint-fpcalc-*-windows-*' -type d)
-        #          for dir in $dirs
-        #          do
-        #            name=$(basename $dir)
-        #            zip release/$name.zip $dir/*
-        #          done
-        #      - name: Release
-        #        uses: softprops/action-gh-release@v1
-        #        with:
-        #          files: artifacts/release/*
-        #        env:
-        #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  release:
+    runs-on: ubuntu-latest
+    needs:
+      - package-linux
+      - package-windows
+      - package-macos
+      - package-macos-universal
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set version
+        id: version
+        run: |
+          case $GITHUB_REF in
+            ref/tags/v*)
+              VERSION=${GITHUB_REF//refs\/tags\/v/}
+              ;;
+            *)
+              VERSION=${GITHUB_REF##*/}-${GITHUB_SHA:0:12}
+              ;;
+          esac
+          echo "::set-output name=VERSION::$VERSION"
+
+      - uses: actions/download-artifact@v2
+
+      - name: Make source tarball
+        run: |
+          mkdir -p artifacts/
+          git archive --format=tar.gz --prefix=chromaprint-${{ steps.version.outputs.VERSION }}/ $GITHUB_REF > artifacts/chromaprint-${{ steps.version.outputs.VERSION }}.tar.gz
+
+      - name: Make binary tarballs
+        run: |
+          for dir in chromaprint-{linux,macos,windows}-*
+          do
+            name=$(echo $(basename $dir) | sed "s/chromaprint-/chromaprint-fpcalc-${{ steps.version.outputs.VERSION }}-/")
+            mkdir -p tmp/$name
+            mv $dir/bin/fpcalc* tmp/$name
+            chmod +x tmp/$name/fpcalc*
+            if [ -e tmp/$name/fpcalc.exe ]
+            then
+              (cd tmp && zip ../artifacts/$name.zip $name/)
+            else
+              tar cvzf artifacts/$name.tar.gz -C tmp $name
+            fi
+            rm -rf tmp
+          done
+
+      - name: List tarballs
+        run: |
+          find artifacts/
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          files: artifacts/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
