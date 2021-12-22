@@ -177,7 +177,7 @@ jobs:
         run: |
           for dir in chromaprint-{linux,macos,windows}-*
           do
-            name=$(echo $(basename $dir) | sed "s/chromaprint-/chromaprint-fpcalc-${{ steps.version.outputs.VERSION }}-/"
+            name=$(echo $(basename $dir) | sed "s/chromaprint-/chromaprint-fpcalc-${{ steps.version.outputs.VERSION }}-/")
             mkdir -p tmp/$name
             mv $dir/bin/fpcalc* tmp/$name
             chmod +x tmp/$name/fpcalc*
