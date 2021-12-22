@@ -194,29 +194,10 @@ jobs:
         run: |
           find artifacts/
 
-        #      - name: Make tarballs
-        #        run: |
-        #          cd artifacts/
-        #          dirs=$(find . -name 'chromaprint-fpcalc-*-macos-*' -o -name 'chromaprint-fpcalc-*-linux-*' -type d)
-        #          for dir in $dirs
-        #          do
-        #            name=$(basename $dir)
-        #            chmod +x $dir/fpcalc
-        #            tar cvzf release/$name.tar.gz $dir
-        #          done
-        #      - name: Make zips
-        #        run: |
-        #          cd artifacts/
-        #          dirs=$(find . -name 'chromaprint-fpcalc-*-windows-*' -type d)
-        #          for dir in $dirs
-        #          do
-        #            name=$(basename $dir)
-        #            zip release/$name.zip $dir/*
-        #          done
-        #      - name: Release
-        #        uses: softprops/action-gh-release@v1
-        #        if: startsWith(github.ref, 'refs/tags/v')
-        #        with:
-        #          files: artifacts/release/*
-        #        env:
-        #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          files: artifacts/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
