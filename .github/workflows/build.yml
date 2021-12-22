@@ -152,6 +152,7 @@ jobs:
       - package-macos-universal
     steps:
       - uses: actions/checkout@v2
+
       - name: Set version
         id: version
         run: |
@@ -165,16 +166,16 @@ jobs:
           esac
           echo "::set-output name=VERSION::$VERSION"
 
-      - name: Make source tarball
-        run: |
-          mkdir artifacts/release/
-          git archive --format=tar.gz --prefix=chromaprint-${{ steps.version.outputs.VERSION }}/ $GITHUB_REF > artifacts/release/chromaprint-${{ steps.version.outputs.VERSION }}.tar.gz
-
       - uses: actions/download-artifact@v2
 
       - name: Make binary tarballs
         run: |
           find .
+
+      - name: Make source tarball
+        run: |
+          mkdir -p artifacts/release/
+          git archive --format=tar.gz --prefix=chromaprint-${{ steps.version.outputs.VERSION }}/ $GITHUB_REF > artifacts/release/chromaprint-${{ steps.version.outputs.VERSION }}.tar.gz
 
         #      - name: Make tarballs
         #        run: |
