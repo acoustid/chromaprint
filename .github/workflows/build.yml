@@ -181,7 +181,12 @@ jobs:
             mkdir -p tmp/$name
             mv $dir/bin/fpcalc* tmp/$name
             chmod +x tmp/$name/fpcalc*
-            tar cvzf artifacts/$name.tar.gz -C tmp $name
+            if [ -e tmp/$name/fpcalc.exe ]
+            then
+              (cd tmp && zip ../artifacts/$name.zip $name/)
+            else
+              tar cvzf artifacts/$name.tar.gz -C tmp $name
+            fi
             rm -rf tmp
           done
 
