@@ -143,86 +143,37 @@ jobs:
         name: chromaprint-macos-universal
         path: artifacts/
 
-        #
-        #  package-windows:
-        #    runs-on: ubuntu-latest
-        #    strategy:
-        #      matrix:
-        #        arch:
-        #        - x86_64
-        #    env:
-        #      OS: windows
-        #      ARCH: ${{ matrix.arch }}
-        #    steps:
-        #    - uses: actions/checkout@v1
-        #    - name: Install dependencies
-        #      run: |
-        #        sudo apt-get update -y && \
-        #        sudo apt-get install -y mingw-w64
-        #    - name: Build
-        #      run: |
-        #        export BRANCH=${GITHUB_REF##*/}
-        #        ./package/build.sh
-        #    - name: Archive artifacts
-        #      uses: actions/upload-artifact@v1
-        #      with:
-        #        name: chromaprint-fpcalc-${{ env.OS }}-${{ env.ARCH }}
-        #        path: chromaprint-${{ env.OS }}-${{ env.ARCH }}/bin/
-        #
-        #  package-macos:
-        #    runs-on: macos-latest
-        #    env:
-        #      OS: macos
-        #      ARCH: x86_64
-        #    steps:
-        #    - uses: actions/checkout@v1
-        #    - name: Build
-        #      run: |
-        #        export BRANCH=${GITHUB_REF##*/}
-        #        ./package/build.sh
-        #    - name: Archive artifacts
-        #      uses: actions/upload-artifact@v1
-        #      with:
-        #        name: chromaprint-fpcalc-${{ env.OS }}-${{ env.ARCH }}
-        #        path: chromaprint-${{ env.OS }}-${{ env.ARCH }}/bin/
-        #
-        #  release:
-        #    runs-on: ubuntu-latest
-        #    if: startsWith(github.ref, 'refs/tags/v')
-        #    needs:
-        #      - package
-        #      - package-macos
-        #    steps:
-        #      - uses: actions/checkout@v1
-        #      - name: Set version
-        #        run: |
-        #          TAG=${GITHUB_REF##*/}
-        #          echo "::set-env name=TAG::$TAG"
-        #          echo "::set-env name=VERSION::$(echo $TAG | sed 's/^v//')"
-        #      - uses: actions/download-artifact@v1
-        #        with:
-        #          name: chromaprint-fpcalc-linux-x86_64
-        #          path: artifacts/chromaprint-fpcalc-${{ env.VERSION }}-linux-x86_64/
-        #      - uses: actions/download-artifact@v1
-        #        with:
-        #          name: chromaprint-fpcalc-linux-i686
-        #          path: artifacts/chromaprint-fpcalc-${{ env.VERSION }}-linux-i686/
-        #      - uses: actions/download-artifact@v1
-        #        with:
-        #          name: chromaprint-fpcalc-windows-x86_64
-        #          path: artifacts/chromaprint-fpcalc-${{ env.VERSION }}-windows-x86_64/
-        #      - uses: actions/download-artifact@v1
-        #        with:
-        #          name: chromaprint-fpcalc-windows-i686
-        #          path: artifacts/chromaprint-fpcalc-${{ env.VERSION }}-windows-i686/
-        #      - uses: actions/download-artifact@v1
-        #        with:
-        #          name: chromaprint-fpcalc-macos-x86_64
-        #          path: artifacts/chromaprint-fpcalc-${{ env.VERSION }}-macos-x86_64/
-        #      - name: Make source tarball
-        #        run: |
-        #          mkdir artifacts/release/
-        #          git archive --format=tar.gz --prefix=chromaprint-$TAG/ $TAG > artifacts/release/chromaprint-$VERSION.tar.gz
+  release:
+    runs-on: ubuntu-latest
+    needs:
+      - package
+      - package-macos
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set version
+        id: version
+        run: |
+          case $GITHUB_REF do
+            ref/tags/v*)
+              VERSION=${GITHUB_REF//refs\/tags\/v/}
+              ;;
+            *)
+              VERSION=${GITHUB_REF##*/}-${GITHUB_SHA:0:12}
+              ;;
+          esac
+          echo "::set-output name=VERSION::$VERSION"
+
+      - name: Make source tarball
+        run: |
+          mkdir artifacts/release/
+          git archive --format=tar.gz --prefix=chromaprint-${{ steps.version.outputs.VERSION }}/ $GITHUB_REF > artifacts/release/chromaprint-${{ steps.version.outputs.VERSION }}.tar.gz
+
+      - uses: actions/download-artifact@v2
+
+      - name: Make binary tarballs
+        run: |
+          find .
+
         #      - name: Make tarballs
         #        run: |
         #          cd artifacts/
@@ -244,6 +195,7 @@ jobs:
         #          done
         #      - name: Release
         #        uses: softprops/action-gh-release@v1
+        #        if: startsWith(github.ref, 'refs/tags/v')
         #        with:
         #          files: artifacts/release/*
         #        env:

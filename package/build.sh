@@ -145,5 +145,7 @@ CMAKE_ARGS+=(
 
 cmake "${CMAKE_ARGS[@]}" $BASE_DIR
 
+VERSION=${GITHUB_REF##*/}
+
 make
 make install/strip
