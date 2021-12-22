@@ -146,8 +146,10 @@ jobs:
   release:
     runs-on: ubuntu-latest
     needs:
-      - package
+      - package-linux
+      - package-windows
       - package-macos
+      - package-macos-universal
     steps:
       - uses: actions/checkout@v2
       - name: Set version
