@@ -61,7 +61,7 @@ if(APPLE)
 endif()
 
 option(BUILD_TOOLS "Build command line tools" OFF)
-option(BUILD_TESTS "Build test suite" OFF)
+option(BUILD_TESTS "Build test suite" ON)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
@@ -191,7 +191,10 @@ endif()
 
 if(NOT BUILD_FRAMEWORK)
 	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libchromaprint.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/libchromaprint.pc)
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libchromaprint.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
+	install(
+        FILES ${CMAKE_CURRENT_BINARY_DIR}/libchromaprint.pc
+        DESTINATION ${LIB_INSTALL_DIR}/pkgconfig
+        COMPONENT chromaprint)
 endif()
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
