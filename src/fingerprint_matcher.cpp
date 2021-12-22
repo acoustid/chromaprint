@@ -116,7 +116,7 @@ bool FingerprintMatcher::Match(const uint32_t fp1_data[], size_t fp1_size, const
 	m_segments.clear();
 
 	for (const auto &item : m_best_alignments) {
-		const int offset_diff = item.second - fp2_size;
+		const int offset_diff = int(item.second - fp2_size);
 
 		const size_t offset1 = offset_diff > 0 ? offset_diff : 0;
 		const size_t offset2 = offset_diff < 0 ? -offset_diff : 0;

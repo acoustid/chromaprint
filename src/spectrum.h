@@ -22,7 +22,7 @@ public:
 	void Consume(const FFTFrame &frame);
 
 protected:
-	int NumBands() const { return m_bands.size() - 1; }
+	int NumBands() const { return int(m_bands.size() - 1); }
 	int FirstIndex(int band) const { return m_bands[band]; }
 	int LastIndex(int band) const { return m_bands[band + 1]; }
 
