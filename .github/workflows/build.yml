@@ -155,7 +155,7 @@ jobs:
       - name: Set version
         id: version
         run: |
-          case $GITHUB_REF do
+          case $GITHUB_REF in
             ref/tags/v*)
               VERSION=${GITHUB_REF//refs\/tags\/v/}
               ;;
