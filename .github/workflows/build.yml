@@ -175,7 +175,6 @@ jobs:
 
       - name: Make binary tarballs
         run: |
-          set -eux
           for dir in chromaprint-{linux,macos,windows}-*
           do
             name=$(echo $(basename $dir) | sed "s/chromaprint-/chromaprint-fpcalc-${{ steps.version.outputs.VERSION }}-/")

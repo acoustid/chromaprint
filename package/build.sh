@@ -96,53 +96,6 @@ CMAKE_ARGS+=(
     -DCMAKE_INSTALL_PREFIX=$BASE_DIR/artifacts
 )
 
-#case $OS in
-#windows)
-#    perl -pe "s!{EXTRA_PATHS}!$FFMPEG_DIR!g" $BASE_DIR/package/toolchain-mingw.cmake.in | perl -pe "s!{ARCH}!$ARCH!g" >toolchain.cmake
-#    CMAKE_ARGS+=(
-#        -DCMAKE_TOOLCHAIN_FILE=$TMP_BUILD_DIR/toolchain.cmake
-#        -DCMAKE_C_FLAGS='-static -static-libgcc -static-libstdc++'
-#        -DCMAKE_CXX_FLAGS='-static -static-libgcc -static-libstdc++'
-#        -DHAVE_AV_PACKET_UNREF=1
-#        -DHAVE_AV_FRAME_ALLOC=1
-#        -DHAVE_AV_FRAME_FREE=1
-#    )
-#    STRIP=$ARCH-w64-mingw32-strip
-#    ;;
-#linux)
-#    case $ARCH in
-#    i686)
-#        CMAKE_ARGS+=(
-#            -DCMAKE_C_FLAGS='-m32 -static -static-libgcc -static-libstdc++'
-#            -DCMAKE_CXX_FLAGS='-m32 -static -static-libgcc -static-libstdc++'
-#        )
-#        ;;
-#    x86_64)
-#        CMAKE_ARGS+=(
-#            -DCMAKE_C_FLAGS='-static -static-libgcc -static-libstdc++'
-#            -DCMAKE_CXX_FLAGS='-static -static-libgcc -static-libstdc++'
-#        )
-#        ;;
-#    arm*)
-#        perl -pe "s!{EXTRA_PATHS}!$FFMPEG_DIR!g" $BASE_DIR/package/toolchain-armhf.cmake.in | perl -pe "s!{ARCH}!$ARCH!g" >toolchain.cmake
-#        CMAKE_ARGS+=(
-#            -DCMAKE_TOOLCHAIN_FILE=$TMP_BUILD_DIR/toolchain.cmake
-#            -DCMAKE_C_FLAGS='-static -static-libgcc -static-libstdc++'
-#            -DCMAKE_CXX_FLAGS='-static -static-libgcc -static-libstdc++'
-#        )
-#        STRIP=arm-linux-gnueabihf-strip
-#        ;;
-#    *)
-#        echo "unsupported architecture ($ARCH)"
-#        exit 1
-#    esac
-#    ;;
-#*)
-#    echo "unsupported OS ($OS)"
-#    exit 1
-#    ;;
-#esac
-
 cmake "${CMAKE_ARGS[@]}" $BASE_DIR
 
 VERSION=${GITHUB_REF##*/}
