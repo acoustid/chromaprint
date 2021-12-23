@@ -171,7 +171,7 @@ jobs:
       - name: Make source tarball
         run: |
           mkdir -p artifacts/
-          git archive --format=tar.gz --prefix=chromaprint-${{ steps.version.outputs.VERSION }}/ $GITHUB_REF > artifacts/chromaprint-${{ steps.version.outputs.VERSION }}.tar.gz
+          git archive --format=tar.gz --prefix=chromaprint-${{ steps.version.outputs.VERSION }}/ $GITHUB_SHA > artifacts/chromaprint-${{ steps.version.outputs.VERSION }}.tar.gz
 
       - name: Make binary tarballs
         run: |
