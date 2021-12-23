@@ -157,7 +157,7 @@ jobs:
         id: version
         run: |
           case $GITHUB_REF in
-            ref/tags/v*)
+            refs/tags/v*)
               VERSION=${GITHUB_REF//refs\/tags\/v/}
               ;;
             *)
@@ -183,7 +183,7 @@ jobs:
             chmod +x tmp/$name/fpcalc*
             if [ -e tmp/$name/fpcalc.exe ]
             then
-              (cd tmp && zip ../artifacts/$name.zip $name/)
+              (cd tmp && zip -r ../artifacts/$name.zip $name)
             else
               tar cvzf artifacts/$name.tar.gz -C tmp $name
             fi
@@ -192,7 +192,7 @@ jobs:
 
       - name: List tarballs
         run: |
-          find artifacts/
+          ls -l artifacts/
 
       - name: Release
         uses: softprops/action-gh-release@v1
