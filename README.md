@@ -82,7 +82,8 @@ Bindings, wrappers and reimplementations in other languages:
  * [Python](https://github.com/beetbox/pyacoustid)
  * [Rust](https://github.com/jameshurst/rust-chromaprint)
  * [Ruby](https://github.com/TMXCredit/chromaprint)
- * [Perl](https://github.com/jonathanstowe/Audio-Fingerprint-Chromaprint)
+ * [Perl](https://metacpan.org/pod/Audio::Chromaprint)
+ * [Raku](https://github.com/jonathanstowe/Audio-Fingerprint-Chromaprint)
  * [JavaScript](https://github.com/parshap/node-fpcalc)
  * [JavaScript](https://github.com/bjjb/chromaprint.js) (reimplementation)
  * [Go](https://github.com/go-fingerprint/gochroma)
@@ -90,8 +91,8 @@ Bindings, wrappers and reimplementations in other languages:
  * [C#](https://github.com/protyposis/Aurio/tree/master/Aurio/Aurio/Matching/Chromaprint) (reimplementation)
  * [Pascal](https://github.com/CMCHTPC/ChromaPrint) (reimplementation)
  * [Scala/JVM](https://github.com/mgdigital/Chromaprint.scala) (reimplementation)
- * [C++/CLI](https://github.com/CyberSinh/Luminescence.Audio)
  * [Vala](https://github.com/GNOME/vala-extra-vapis/blob/master/libchromaprint.vapi)
+ * [Swift](https://github.com/wallisch/ChromaSwift)
 
 Integrations:
 

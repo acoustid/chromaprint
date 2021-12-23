@@ -1,3 +1,11 @@
+Version 1.5.1 -- December 23, 2021
+==================================
+
+ - No functional source code changes.
+ - Fixed some compiler warnings.
+ - Rebuilt the fpcalc binaries with FFmpeg 4.4.1.
+ - Added support for fat binaries on macOS, with support for both Intel and Apple silicon.
+
 Version 1.5.0 -- April 15, 2020
 ===============================
 

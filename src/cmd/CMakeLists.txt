@@ -37,4 +37,7 @@ if(fpcalc_LINK_FLAGS)
 	set_target_properties(fpcalc PROPERTIES LINK_FLAGS ${fpcalc_LINK_FLAGS})
 endif()
 
-install(TARGETS fpcalc RUNTIME DESTINATION ${BIN_INSTALL_DIR})
+install(
+    TARGETS fpcalc
+    RUNTIME DESTINATION ${BIN_INSTALL_DIR}
+    COMPONENT fpcalc)

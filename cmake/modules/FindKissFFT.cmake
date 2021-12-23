@@ -50,7 +50,7 @@ find_path(KISSFFT_SOURCE_DIR
     PATHS
         $ENV{KISSFFT_ROOT}
         ${KISSFFT_ROOT}
-        ${CMAKE_SOURCE_DIR}/vendor/kissfft
+        ${CMAKE_SOURCE_DIR}/src/3rdparty/kissfft
     NO_DEFAULT_PATH
     DOC "Kiss FFT tools headers"
 )

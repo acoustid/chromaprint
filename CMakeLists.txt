@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.3)
 
 set(chromaprint_VERSION_MAJOR 1)
 set(chromaprint_VERSION_MINOR 5)
-set(chromaprint_VERSION_PATCH 0)
+set(chromaprint_VERSION_PATCH 1)
 set(chromaprint_VERSION "${chromaprint_VERSION_MAJOR}.${chromaprint_VERSION_MINOR}.${chromaprint_VERSION_PATCH}")
 
 project(chromaprint LANGUAGES C CXX VERSION "${chromaprint_VERSION}")
@@ -19,6 +19,7 @@ option(USE_INTERNAL_AVRESAMPLE "Use internal copy of avresample from ffmpeg for 
 
 include(CMakePushCheckState)
 include(CheckFunctionExists)
+include(CheckSymbolExists)
 include(CheckCXXCompilerFlag)
 
 find_package(Threads)
@@ -39,8 +40,8 @@ endif()
 
 cmake_push_check_state(RESET)
 set(CMAKE_REQUIRED_LIBRARIES -lm)
-check_function_exists(lrintf HAVE_LRINTF)
-check_function_exists(round HAVE_ROUND)
+check_symbol_exists(lrintf math.h HAVE_LRINTF)
+check_symbol_exists(round math.h HAVE_ROUND)
 cmake_pop_check_state()
 
 add_definitions(
@@ -63,7 +64,7 @@ if(APPLE)
 endif()
 
 option(BUILD_TOOLS "Build command line tools" OFF)
-option(BUILD_TESTS "Build test suite" OFF)
+option(BUILD_TESTS "Build test suite" ON)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
@@ -193,7 +194,10 @@ endif()
 
 if(NOT BUILD_FRAMEWORK)
 	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libchromaprint.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/libchromaprint.pc)
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libchromaprint.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
+	install(
+        FILES ${CMAKE_CURRENT_BINARY_DIR}/libchromaprint.pc
+        DESTINATION ${LIB_INSTALL_DIR}/pkgconfig
+        COMPONENT chromaprint)
 endif()
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
