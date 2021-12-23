@@ -8,6 +8,7 @@
 
 #cmakedefine USE_SWRESAMPLE 1
 #cmakedefine USE_AVRESAMPLE 1
+#cmakedefine USE_INTERNAL_AVRESAMPLE 1
 
 #cmakedefine USE_AVFFT 1
 #cmakedefine USE_FFTW3 1

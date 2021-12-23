@@ -15,6 +15,8 @@ set_property(CACHE AUDIO_PROCESSOR_LIB PROPERTY STRINGS avresample swresample)
 set(FFT_LIB CACHE STRING "Library to use for FFT calculations")
 set_property(CACHE FFT_LIB PROPERTY STRINGS avfft fftw3 fftw3f kissfft vdsp)
 
+option(USE_INTERNAL_AVRESAMPLE "Use internal copy of avresample from ffmpeg for input conversion" ON)
+
 include(CMakePushCheckState)
 include(CheckFunctionExists)
 include(CheckSymbolExists)
