@@ -175,6 +175,7 @@ jobs:
 
       - name: Make binary tarballs
         run: |
+          set -eux
           for dir in chromaprint-{linux,macos,windows}-*
           do
             name=$(echo $(basename $dir) | sed "s/chromaprint-/chromaprint-fpcalc-${{ steps.version.outputs.VERSION }}-/")
@@ -183,7 +184,7 @@ jobs:
             chmod +x tmp/$name/fpcalc*
             if [ -e tmp/$name/fpcalc.exe ]
             then
-              (cd tmp && zip ../artifacts/$name.zip $name/)
+              (cd tmp && zip -r ../artifacts/$name.zip $name)
             else
               tar cvzf artifacts/$name.tar.gz -C tmp $name
             fi
@@ -192,7 +193,7 @@ jobs:
 
       - name: List tarballs
         run: |
-          find artifacts/
+          ls -l artifacts/
 
       - name: Release
         uses: softprops/action-gh-release@v1
