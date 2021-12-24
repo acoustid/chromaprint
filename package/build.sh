@@ -68,7 +68,7 @@ case $OS in
                     -DCMAKE_OSX_DEPLOYMENT_TARGET="10.9"
                     -DCMAKE_OSX_ARCHITECTURES="x86_64"
                 )
-                TARGET=x86_64-apple-macos10.8
+                TARGET=x86_64-apple-macos10.9
                 ;;
             arm64)
                 CMAKE_ARGS+=(
