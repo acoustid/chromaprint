@@ -8,7 +8,7 @@ set -eux
 BASE_DIR=$(cd $(dirname $0)/.. && pwd)
 
 FFMPEG_VERSION=4.4.1
-FFMPEG_BUILD_TAG=v4.4.1-1
+FFMPEG_BUILD_TAG=v4.4.1-2
 
 TMP_BUILD_DIR=$BASE_DIR/$(mktemp -d build.XXXXXXXX)
 trap 'rm -rf $TMP_BUILD_DIR' EXIT
@@ -65,7 +65,7 @@ case $OS in
         case $ARCH in
             x86_64)
                 CMAKE_ARGS+=(
-                    -DCMAKE_OSX_DEPLOYMENT_TARGET="10.8"
+                    -DCMAKE_OSX_DEPLOYMENT_TARGET="10.9"
                     -DCMAKE_OSX_ARCHITECTURES="x86_64"
                 )
                 TARGET=x86_64-apple-macos10.8
