@@ -90,7 +90,7 @@ case $OS in
 esac
 
 curl -s -L "https://github.com/acoustid/ffmpeg-build/releases/download/$FFMPEG_BUILD_TAG/ffmpeg-$FFMPEG_VERSION-audio-$TARGET.tar.gz" | tar xz
-mv ffmpeg-*/ffmpeg-*/* $FFMPEG_DIR
+mv ffmpeg-*/* $FFMPEG_DIR
 
 CMAKE_ARGS+=(
     -DCMAKE_INSTALL_PREFIX=$BASE_DIR/artifacts
