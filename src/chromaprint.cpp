@@ -65,6 +65,12 @@ void chromaprint_free(ChromaprintContext *ctx)
 	}
 }
 
+int chromaprint_get_algorithm(ChromaprintContext *ctx)
+{
+	FAIL_IF(!ctx, "context can't be NULL");
+    return ctx->algorithm;
+}
+
 int chromaprint_set_option(ChromaprintContext *ctx, const char *name, int value)
 {
 	FAIL_IF(!ctx, "context can't be NULL");
