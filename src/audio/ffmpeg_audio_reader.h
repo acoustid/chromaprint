@@ -74,7 +74,7 @@ private:
 	uint8_t *m_convert_buffer[1] = { nullptr };
 	int m_convert_buffer_nb_samples = 0;
 
-	AVInputFormat *m_input_fmt = nullptr;
+	const AVInputFormat *m_input_fmt = nullptr;
 	AVDictionary *m_input_opts = nullptr;
 
 	AVFormatContext *m_format_ctx = nullptr;
@@ -153,7 +153,7 @@ inline bool FFmpegAudioReader::Open(const std::string &file_name) {
 		return false;
 	}
 
-	AVCodec *codec;
+	const AVCodec *codec;
 	ret = av_find_best_stream(m_format_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, &codec, 0);
 	if (ret < 0) {
 		SetError("Could not find any audio stream in the file", ret);
@@ -161,7 +161,13 @@ inline bool FFmpegAudioReader::Open(const std::string &file_name) {
 	}
 	m_stream_index = ret;
 
+#if LIBAVCODEC_VERSION_MAJOR >= 59
+	const AVCodec *streamcodec = avcodec_find_decoder(m_format_ctx->streams[m_stream_index]->codecpar->codec_id);
+	m_codec_ctx = avcodec_alloc_context3(streamcodec);
+	avcodec_parameters_to_context(m_codec_ctx, m_format_ctx->streams[m_stream_index]->codecpar);
+#else
 	m_codec_ctx = m_format_ctx->streams[m_stream_index]->codec;
+#endif
 	m_codec_ctx->request_sample_fmt = AV_SAMPLE_FMT_S16;
 
 	ret = avcodec_open2(m_codec_ctx, codec, nullptr);
@@ -278,7 +284,21 @@ inline bool FFmpegAudioReader::Read(const int16_t **data, size_t *size) {
 			}
 		}
 
+#if LIBAVCODEC_VERSION_MAJOR < 59
 		ret = avcodec_decode_audio4(m_codec_ctx, m_frame, &m_got_frame, &m_packet);
+#else
+		ret = avcodec_receive_frame(m_codec_ctx, m_frame);
+		if (ret == 0)
+			m_got_frame = true;
+		if(ret == AVERROR(EAGAIN))
+			ret = 0;
+		if (ret == 0)
+			ret = avcodec_send_packet(m_codec_ctx, &m_packet);
+		if (ret == AVERROR(EAGAIN))
+			ret = 0;
+		if (ret >= 0)
+			ret = m_packet.size;
+#endif
 		if (ret < 0) {
 			if (m_decode_error) {
 				SetError("Error decoding audio frame", m_decode_error);
