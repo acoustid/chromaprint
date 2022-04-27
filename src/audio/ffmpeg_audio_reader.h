@@ -85,7 +85,7 @@ private:
 	int m_error_code = 0;
 	bool m_finished = false;
 	bool m_opened = false;
-    bool m_processing_frame = false;
+	bool m_processing_frame = false;
 	int m_got_frame = 0;
 
 	int m_output_sample_rate = 0;
@@ -140,16 +140,16 @@ inline bool FFmpegAudioReader::Open(const std::string &file_name) {
 	}
 
 	const AVCodec *codec;
-    ret = av_find_best_stream(m_format_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, &codec, 0);
+	ret = av_find_best_stream(m_format_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, &codec, 0);
 	if (ret < 0) {
 		SetError("Could not find any audio stream in the file", ret);
 		return false;
 	}
 	m_stream_index = ret;
 
-    const AVCodec *stream_codec = avcodec_find_decoder(m_format_ctx->streams[m_stream_index]->codecpar->codec_id);
-    m_codec_ctx = avcodec_alloc_context3(stream_codec);
-    avcodec_parameters_to_context(m_codec_ctx, m_format_ctx->streams[m_stream_index]->codecpar);
+	const AVCodec *stream_codec = avcodec_find_decoder(m_format_ctx->streams[m_stream_index]->codecpar->codec_id);
+	m_codec_ctx = avcodec_alloc_context3(stream_codec);
+	avcodec_parameters_to_context(m_codec_ctx, m_format_ctx->streams[m_stream_index]->codecpar);
 	m_codec_ctx->request_sample_fmt = AV_SAMPLE_FMT_S16;
 
 	ret = avcodec_open2(m_codec_ctx, codec, nullptr);
@@ -193,7 +193,7 @@ inline bool FFmpegAudioReader::Open(const std::string &file_name) {
 
 	m_opened = true;
 	m_finished = false;
-    m_processing_frame = false;
+	m_processing_frame = false;
 	m_got_frame = 0;
 	m_nb_packets = 0;
 	m_decode_error = 0;
