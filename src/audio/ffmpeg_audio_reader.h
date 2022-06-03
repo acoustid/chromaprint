@@ -21,6 +21,12 @@ extern "C" {
 #include <libavutil/channel_layout.h>
 }
 
+#if (LIBAVFORMAT_VERSION_MAJOR >= 59)
+#define CONST59 const
+#else
+#define CONST59
+#endif
+
 #include "audio/ffmpeg_audio_processor.h"
 
 namespace chromaprint {
@@ -74,7 +80,7 @@ private:
 	uint8_t *m_convert_buffer[1] = { nullptr };
 	int m_convert_buffer_nb_samples = 0;
 
-	AVInputFormat *m_input_fmt = nullptr;
+	CONST59 AVInputFormat *m_input_fmt = nullptr;
 	AVDictionary *m_input_opts = nullptr;
 
 	AVFormatContext *m_format_ctx = nullptr;
@@ -86,8 +92,7 @@ private:
 	bool m_finished = false;
 	bool m_opened = false;
 	int m_got_frame = 0;
-	AVPacket m_packet;
-	AVPacket m_packet0;
+	AVPacket *m_packet;
 
 	int m_output_sample_rate = 0;
 	int m_output_channels = 0;
@@ -99,18 +104,15 @@ private:
 inline FFmpegAudioReader::FFmpegAudioReader() {
 	av_log_set_level(AV_LOG_QUIET);
 
-	av_init_packet(&m_packet);
-	m_packet.data = nullptr;
-	m_packet.size = 0;
-
-	m_packet0 = m_packet;
+	if (!(m_packet = av_packet_alloc()))
+		throw std::bad_alloc();
 }
 
 inline FFmpegAudioReader::~FFmpegAudioReader() {
 	Close();
 	av_dict_free(&m_input_opts);
 	av_freep(&m_convert_buffer[0]);
-	av_packet_unref(&m_packet0);
+	av_packet_free(&m_packet);
 }
 
 inline bool FFmpegAudioReader::SetInputFormat(const char *name) {
@@ -135,12 +137,6 @@ inline bool FFmpegAudioReader::Open(const std::string &file_name) {
 
 	Close();
 
-    av_init_packet(&m_packet);
-	m_packet.data = nullptr;
-	m_packet.size = 0;
-
-	m_packet0 = m_packet;
-
 	ret = avformat_open_input(&m_format_ctx, file_name.c_str(), m_input_fmt, &m_input_opts);
 	if (ret < 0) {
 		SetError("Could not open the input file", ret);
@@ -153,7 +149,7 @@ inline bool FFmpegAudioReader::Open(const std::string &file_name) {
 		return false;
 	}
 
-	AVCodec *codec;
+	CONST59 AVCodec *codec;
 	ret = av_find_best_stream(m_format_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, &codec, 0);
 	if (ret < 0) {
 		SetError("Could not find any audio stream in the file", ret);
@@ -161,7 +157,16 @@ inline bool FFmpegAudioReader::Open(const std::string &file_name) {
 	}
 	m_stream_index = ret;
 
-	m_codec_ctx = m_format_ctx->streams[m_stream_index]->codec;
+	if (!(m_codec_ctx = avcodec_alloc_context3(codec))) {
+		SetError("Could not allocate codec context", AVERROR(ENOMEM));
+		return false;
+	}
+
+	if ((ret = avcodec_parameters_to_context(m_codec_ctx, m_format_ctx->streams[m_stream_index]->codecpar)) < 0) {
+		SetError("Could not configure codec context", ret);
+		return false;
+	}
+
 	m_codec_ctx->request_sample_fmt = AV_SAMPLE_FMT_S16;
 
 	ret = avcodec_open2(m_codec_ctx, codec, nullptr);
@@ -218,13 +223,14 @@ inline void FFmpegAudioReader::Close() {
 	m_stream_index = -1;
 
 	if (m_codec_ctx) {
-		avcodec_close(m_codec_ctx);
-		m_codec_ctx = nullptr;
+		avcodec_free_context(&m_codec_ctx);
 	}
 
 	if (m_format_ctx) {
 		avformat_close_input(&m_format_ctx);
 	}
+
+	av_packet_unref(m_packet);
 }
 
 inline int FFmpegAudioReader::GetSampleRate() const {
@@ -254,50 +260,53 @@ inline bool FFmpegAudioReader::Read(const int16_t **data, size_t *size) {
 
 	int ret;
 	while (true) {
-		while (m_packet.size <= 0) {
-			av_packet_unref(&m_packet0);
-			av_init_packet(&m_packet);
-			m_packet.data = nullptr;
-			m_packet.size = 0;
-			ret = av_read_frame(m_format_ctx, &m_packet);
+		ret = avcodec_receive_frame(m_codec_ctx, m_frame);
+
+		if (ret < 0 && ret != AVERROR(EAGAIN)) {
+			if (ret == AVERROR_EOF) {
+				m_finished = true;
+				m_got_frame = false;
+				break;
+			}
+			if (m_decode_error) {
+				SetError("Error decoding audio frame", m_decode_error);
+				return false;
+			}
+			m_decode_error = ret;
+		} else if (ret >= 0) {
+			m_got_frame = 1;
+			break;
+		}
+
+		while (m_packet->size <= 0) {
+			ret = av_read_frame(m_format_ctx, m_packet);
 			if (ret < 0) {
 				if (ret == AVERROR_EOF) {
-					m_finished = true;
 					break;
 				} else {
 					SetError("Error reading from the audio source", ret);
 					return false;
 				}
 			}
-			m_packet0 = m_packet;
-			if (m_packet.stream_index != m_stream_index) {
-				m_packet.data = nullptr;
-				m_packet.size = 0;
+			if (m_packet->stream_index != m_stream_index) {
+				av_packet_unref(m_packet);
 			} else {
 				m_nb_packets++;
 			}
 		}
 
-		ret = avcodec_decode_audio4(m_codec_ctx, m_frame, &m_got_frame, &m_packet);
+		ret = avcodec_send_packet(m_codec_ctx, m_packet);
+		av_packet_unref(m_packet);
 		if (ret < 0) {
 			if (m_decode_error) {
 				SetError("Error decoding audio frame", m_decode_error);
 				return false;
 			}
 			m_decode_error = ret;
-			m_packet.data = nullptr;
-			m_packet.size = 0;
-			continue;
 		}
-
-		break;
 	}
 
 	m_decode_error = 0;
-
-	const int decoded = std::min(ret, m_packet.size);
-	m_packet.data += decoded;
-	m_packet.size -= decoded;
 
 	if (m_got_frame) {
 		if (m_converter) {
