@@ -17,7 +17,7 @@ jobs:
     env:
       FFT_LIB: ${{ matrix.fft }}
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
     - name: Install dependencies
       run: |
         sudo apt-get update
@@ -40,7 +40,7 @@ jobs:
     env:
       FFT_LIB: ${{ matrix.fft }}
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
     - name: Test with ${{ env.FFT_LIB }}
       run: |
         mkdir build.test.$FFT_LIB
@@ -59,7 +59,7 @@ jobs:
       OS: linux
       ARCH: ${{ matrix.arch }}
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
     - name: Build
       run: ./package/build.sh
     - name: Test
@@ -80,7 +80,7 @@ jobs:
       OS: windows
       ARCH: ${{ matrix.arch }}
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
     - name: Install dependencies
       run: |
         sudo apt-get update -y && \
@@ -104,7 +104,7 @@ jobs:
       OS: macos
       ARCH: ${{ matrix.arch }}
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
     - name: Build
       run: ./package/build.sh
     - name: Test
@@ -120,7 +120,7 @@ jobs:
     runs-on: macos-latest
     needs: package-macos
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
     - uses: actions/download-artifact@v2
       with:
         name: chromaprint-macos-x86_64
@@ -151,7 +151,7 @@ jobs:
       - package-macos
       - package-macos-universal
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set version
         id: version
