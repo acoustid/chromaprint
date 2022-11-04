@@ -10,13 +10,6 @@ include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-include_directories(
-	${FFMPEG_LIBAVFORMAT_INCLUDE_DIRS}
-	${FFMPEG_LIBAVCODEC_INCLUDE_DIRS}
-	${FFMPEG_LIBAVUTIL_INCLUDE_DIRS}
-	${AUDIO_PROCESSOR_INCLUDE_DIRS}
-)
-
 set(SRCS
 	main.cpp
 	test_api.cpp
@@ -45,6 +38,12 @@ set(SRCS
 
 if(BUILD_TOOLS)
 	set(SRCS ${SRCS} ../src/audio/ffmpeg_audio_reader_test.cpp)
+    include_directories(
+        ${FFMPEG_LIBAVFORMAT_INCLUDE_DIRS}
+        ${FFMPEG_LIBAVCODEC_INCLUDE_DIRS}
+        ${FFMPEG_LIBAVUTIL_INCLUDE_DIRS}
+        ${AUDIO_PROCESSOR_INCLUDE_DIRS}
+    )
 	link_libraries(fpcalc_libs)
 endif()
 
