@@ -69,6 +69,7 @@ jobs:
     - name: Build
       run: ./package/build.sh
     - name: Test
+      if: env.ARCH == 'x86_64'
       run: ./artifacts/bin/fpcalc -raw tests/data/test.mp3 | diff -u - tests/data/test.mp3.fpcalc.out
     - name: Archive artifacts
       uses: actions/upload-artifact@v2
