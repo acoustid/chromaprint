@@ -44,7 +44,7 @@ case $OS in
                 TARGET=$ARCH-linux-gnu
                 ;;
             arm64)
-                perl -pe "s!{EXTRA_PATHS}!$FFMPEG_DIR!g" $BASE_DIR/package/toolchain-mingw.cmake.in >toolchain.cmake
+                perl -pe "s!{EXTRA_PATHS}!$FFMPEG_DIR!g" $BASE_DIR/package/toolchain-aarch64.cmake.in >toolchain.cmake
                 CMAKE_ARGS+=(
                     -DCMAKE_TOOLCHAIN_FILE=$TMP_BUILD_DIR/toolchain.cmake
                 )
