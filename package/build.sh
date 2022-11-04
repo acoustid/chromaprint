@@ -7,8 +7,8 @@ set -eux
 
 BASE_DIR=$(cd $(dirname $0)/.. && pwd)
 
-FFMPEG_VERSION=4.4.1
-FFMPEG_BUILD_TAG=v4.4.1-2
+FFMPEG_VERSION=5.1.2
+FFMPEG_BUILD_TAG=v${FFMPEG_VERSION}-1
 
 TMP_BUILD_DIR=$BASE_DIR/$(mktemp -d build.XXXXXXXX)
 trap 'rm -rf $TMP_BUILD_DIR' EXIT
