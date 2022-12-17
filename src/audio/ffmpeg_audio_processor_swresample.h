@@ -29,7 +29,7 @@ public:
 	}
 
 	void SetInputChannelLayout(AVChannelLayout *channel_layout) {
-		av_opt_set_int(m_swr_ctx, "in_channel_layout", channel_layout->u.mask, 0);
+		av_opt_set_chlayout(m_swr_ctx, "in_chlayout", channel_layout, 0);
 	}
 
 	void SetInputSampleFormat(AVSampleFormat sample_format) {
@@ -41,7 +41,7 @@ public:
 	}
 
 	void SetOutputChannelLayout(AVChannelLayout *channel_layout) {
-		av_opt_set_int(m_swr_ctx, "out_channel_layout", channel_layout->u.mask, 0);
+		av_opt_set_chlayout(m_swr_ctx, "out_chlayout", channel_layout, 0);
 	}
 
 	void SetOutputSampleFormat(AVSampleFormat sample_format) {

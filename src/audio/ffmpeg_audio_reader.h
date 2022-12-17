@@ -301,9 +301,10 @@ inline bool FFmpegAudioReader::Read(const int16_t **data, size_t *size) {
 				} else {
 					m_has_more_frames = false;
 				}
+			} else {
+				SetError("Error decoding the audio source", ret);
+				return false;
 			}
-			SetError("Error decoding the audio source", ret);
-			return false;
 		}
 
 		if (m_frame->nb_samples > 0) {
