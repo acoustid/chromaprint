@@ -177,7 +177,10 @@ else()
 endif()
 
 if(NOT BUILD_FRAMEWORK)
-	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libchromaprint.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/libchromaprint.pc)
+	configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/libchromaprint.pc.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/libchromaprint.pc
+        @ONLY)
 	install(
         FILES ${CMAKE_CURRENT_BINARY_DIR}/libchromaprint.pc
         DESTINATION ${LIB_INSTALL_DIR}/pkgconfig
