@@ -9,6 +9,7 @@
 #include <chromaprint.h>
 #include "fingerprinter.h"
 #include "fingerprint_compressor.h"
+#include "fingerprint_compressor_v2.h"
 #include "fingerprint_decompressor.h"
 #include "fingerprint_matcher.h"
 #include "fingerprinter_configuration.h"
@@ -174,6 +175,19 @@ int chromaprint_encode_fingerprint(const uint32_t *fp, int size, int algorithm, 
 {
 	std::vector<uint32_t> uncompressed(fp, fp + size);
 	std::string encoded = CompressFingerprint(uncompressed, algorithm);
+	if (base64) {
+		encoded = Base64Encode(encoded);
+	}
+	*encoded_fp = (char *) malloc(encoded.size() + 1);
+	*encoded_size = int(encoded.size());
+	std::copy(encoded.data(), encoded.data() + encoded.size() + 1, *encoded_fp);
+	return 1;
+}
+
+int chromaprint_encode_fingerprint_v2(const uint32_t *fp, int size, int algorithm, char **encoded_fp, int *encoded_size, int base64)
+{
+	std::vector<uint32_t> uncompressed(fp, fp + size);
+	std::string encoded = CompressFingerprintV2(uncompressed, algorithm);
 	if (base64) {
 		encoded = Base64Encode(encoded);
 	}

@@ -14,6 +14,8 @@ set(chromaprint_SOURCES
 	silence_remover.cpp
 	fingerprint_calculator.cpp
 	fingerprint_compressor.cpp
+	fingerprint_compressor_v2.h
+	fingerprint_compressor_v2.cpp
 	fingerprint_decompressor.cpp
 	fingerprinter_configuration.cpp
 	fingerprint_matcher.h
