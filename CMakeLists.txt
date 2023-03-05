@@ -101,8 +101,6 @@ if(NOT FFT_LIB OR FFT_LIB STREQUAL "kissfft")
 	find_package(KissFFT)
 endif()
 
-find_package(Zstd REQUIRED)
-
 set(USE_VDSP OFF)
 set(USE_AVFFT OFF)
 set(USE_FFTW3 OFF)

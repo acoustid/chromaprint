@@ -68,8 +68,8 @@ if (USE_INTERNAL_AVRESAMPLE)
   set(chromaprint_SOURCES avresample/resample2.c ${chromaprint_SOURCES})
 endif()
 
-set(chromaprint_SOURCES ${chromaprint_SOURCES} ${ZSTD_SOURCES})
-include_directories(${ZSTD_INCLUDE_DIRS})
+set(chromaprint_SOURCES ${chromaprint_SOURCES} 3rdparty/zstd_single_file_lib/zstd.c)
+include_directories(3rdparty/zstd_single_file_lib)
 
 add_library(chromaprint_objs OBJECT ${chromaprint_SOURCES})
 if(BUILD_SHARED_LIBS)
