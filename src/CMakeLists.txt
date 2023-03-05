@@ -68,6 +68,9 @@ if (USE_INTERNAL_AVRESAMPLE)
   set(chromaprint_SOURCES avresample/resample2.c ${chromaprint_SOURCES})
 endif()
 
+set(chromaprint_SOURCES ${chromaprint_SOURCES} ${ZSTD_SOURCES})
+include_directories(${ZSTD_INCLUDE_DIRS})
+
 add_library(chromaprint_objs OBJECT ${chromaprint_SOURCES})
 if(BUILD_SHARED_LIBS)
 	set_target_properties(chromaprint_objs PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
