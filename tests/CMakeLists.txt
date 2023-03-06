@@ -24,6 +24,7 @@ set(SRCS
 	test_chroma_filter.cpp
 	test_chroma_resampler.cpp
 	test_fingerprint_compressor.cpp
+	test_fingerprint_compressor_v2.cpp
 	test_fingerprint_decompressor.cpp
 	test_fingerprint_matcher.cpp
 	test_silence_remover.cpp

@@ -9,6 +9,7 @@
 #include <chromaprint.h>
 #include "fingerprinter.h"
 #include "fingerprint_compressor.h"
+#include "fingerprint_compressor_v2.h"
 #include "fingerprint_decompressor.h"
 #include "fingerprint_matcher.h"
 #include "fingerprinter_configuration.h"
@@ -26,6 +27,7 @@ struct ChromaprintContextPrivate {
 	Fingerprinter fingerprinter;
 	FingerprintCompressor compressor;
 	std::string tmp_fingerprint;
+    bool use_encode_fingerprint_v2 { false };
 };
 
 struct ChromaprintMatcherContextPrivate {
@@ -130,7 +132,12 @@ int chromaprint_finish(ChromaprintContext *ctx)
 int chromaprint_get_fingerprint(ChromaprintContext *ctx, char **data)
 {
 	FAIL_IF(!ctx, "context can't be NULL");
-	ctx->compressor.Compress(ctx->fingerprinter.GetFingerprint(), ctx->algorithm, ctx->tmp_fingerprint);
+    if (ctx->use_encode_fingerprint_v2) {
+	    CompressFingerprintV2(ctx->fingerprinter.GetFingerprint(), ctx->algorithm, ctx->tmp_fingerprint);
+    }
+    else {
+	    ctx->compressor.Compress(ctx->fingerprinter.GetFingerprint(), ctx->algorithm, ctx->tmp_fingerprint);
+    }
 	*data = (char *) malloc(GetBase64EncodedSize(ctx->tmp_fingerprint.size()) + 1);
 	FAIL_IF(!*data, "can't allocate memory for the result");
 	Base64Encode(ctx->tmp_fingerprint.begin(), ctx->tmp_fingerprint.end(), *data, true);
@@ -174,6 +181,19 @@ int chromaprint_encode_fingerprint(const uint32_t *fp, int size, int algorithm, 
 {
 	std::vector<uint32_t> uncompressed(fp, fp + size);
 	std::string encoded = CompressFingerprint(uncompressed, algorithm);
+	if (base64) {
+		encoded = Base64Encode(encoded);
+	}
+	*encoded_fp = (char *) malloc(encoded.size() + 1);
+	*encoded_size = int(encoded.size());
+	std::copy(encoded.data(), encoded.data() + encoded.size() + 1, *encoded_fp);
+	return 1;
+}
+
+int chromaprint_encode_fingerprint_v2(const uint32_t *fp, int size, int algorithm, char **encoded_fp, int *encoded_size, int base64)
+{
+	std::vector<uint32_t> uncompressed(fp, fp + size);
+	std::string encoded = CompressFingerprintV2(uncompressed, algorithm);
 	if (base64) {
 		encoded = Base64Encode(encoded);
 	}

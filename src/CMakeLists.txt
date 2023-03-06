@@ -14,6 +14,8 @@ set(chromaprint_SOURCES
 	silence_remover.cpp
 	fingerprint_calculator.cpp
 	fingerprint_compressor.cpp
+	fingerprint_compressor_v2.h
+	fingerprint_compressor_v2.cpp
 	fingerprint_decompressor.cpp
 	fingerprinter_configuration.cpp
 	fingerprint_matcher.h
@@ -67,6 +69,9 @@ endif()
 if (USE_INTERNAL_AVRESAMPLE)
   set(chromaprint_SOURCES avresample/resample2.c ${chromaprint_SOURCES})
 endif()
+
+set(chromaprint_SOURCES ${chromaprint_SOURCES} 3rdparty/zstd/zstd.c)
+include_directories(3rdparty/zstd)
 
 add_library(chromaprint_objs OBJECT ${chromaprint_SOURCES})
 if(BUILD_SHARED_LIBS)
