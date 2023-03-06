@@ -27,6 +27,7 @@ struct ChromaprintContextPrivate {
 	Fingerprinter fingerprinter;
 	FingerprintCompressor compressor;
 	std::string tmp_fingerprint;
+    bool use_encode_fingerprint_v2 { false };
 };
 
 struct ChromaprintMatcherContextPrivate {
@@ -131,7 +132,12 @@ int chromaprint_finish(ChromaprintContext *ctx)
 int chromaprint_get_fingerprint(ChromaprintContext *ctx, char **data)
 {
 	FAIL_IF(!ctx, "context can't be NULL");
-	ctx->compressor.Compress(ctx->fingerprinter.GetFingerprint(), ctx->algorithm, ctx->tmp_fingerprint);
+    if (ctx->use_encode_fingerprint_v2) {
+	    CompressFingerprintV2(ctx->fingerprinter.GetFingerprint(), ctx->algorithm, ctx->tmp_fingerprint);
+    }
+    else {
+	    ctx->compressor.Compress(ctx->fingerprinter.GetFingerprint(), ctx->algorithm, ctx->tmp_fingerprint);
+    }
 	*data = (char *) malloc(GetBase64EncodedSize(ctx->tmp_fingerprint.size()) + 1);
 	FAIL_IF(!*data, "can't allocate memory for the result");
 	Base64Encode(ctx->tmp_fingerprint.begin(), ctx->tmp_fingerprint.end(), *data, true);

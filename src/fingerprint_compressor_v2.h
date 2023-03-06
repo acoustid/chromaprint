@@ -10,7 +10,18 @@
 
 namespace chromaprint {
 
-std::string CompressFingerprintV2(const std::vector<uint32_t> &data, int algorithm = 0);
+bool CompressFingerprintV2(const std::vector<uint32_t> &hashes, int algorithm, std::string &data);
+
+inline std::string CompressFingerprintV2(const std::vector<uint32_t> &hashes, int algorithm)
+{
+    std::string data;
+    bool res = CompressFingerprintV2(hashes, algorithm, data);
+    if (!res) {
+        data.clear();
+    }
+    return data;
+}
+
 std::vector<uint32_t> DecompressFingerprintV2(const std::string &data, int &algorithm);
 
 }; // namespace chromaprint

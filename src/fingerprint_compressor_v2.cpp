@@ -7,7 +7,7 @@
 
 namespace chromaprint {
 
-std::string CompressFingerprintV2(const std::vector<uint32_t> &hashes, int algorithm)
+bool CompressFingerprintV2(const std::vector<uint32_t> &hashes, int algorithm, std::string &compressed)
 {
     size_t num_hashes = hashes.size();
 
@@ -25,12 +25,11 @@ std::string CompressFingerprintV2(const std::vector<uint32_t> &hashes, int algor
         packed[i + 3 * num_hashes] = delta;
     }
 
-    std::string compressed;
     compressed.resize(ZSTD_compressBound(packed.size()) + 4);
 
     size_t compressed_size = ZSTD_compress(&compressed[0] + 4, compressed.size() - 4, &packed[0], packed.size(), 1);
     if (ZSTD_isError(compressed_size)) {
-        return std::string();
+        return false;
     }
 
     compressed.resize(compressed_size + 4);
@@ -39,8 +38,8 @@ std::string CompressFingerprintV2(const std::vector<uint32_t> &hashes, int algor
     compressed[1] = num_hashes >> 16;
     compressed[2] = num_hashes >> 8;
     compressed[3] = num_hashes;
-   
-    return compressed;
+
+    return true;
 }
 
 std::vector<uint32_t> DecompressFingerprintV2(const std::string &data, int &algorithm)

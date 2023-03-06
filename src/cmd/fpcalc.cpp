@@ -30,6 +30,7 @@ static bool g_raw = false;
 static bool g_signed = false;
 static bool g_abs_ts = false;
 static bool g_ignore_errors = false;
+static bool g_use_encode_fingerprint_v2 = false;
 static ChromaprintAlgorithm g_algorithm = CHROMAPRINT_ALGORITHM_DEFAULT;
 
 
@@ -125,6 +126,8 @@ static void ParseOptions(int &argc, char **argv) {
 			g_signed = true;
 		} else if (!strcmp(argv[i], "-ignore-errors")) {
 			g_ignore_errors = true;
+		} else if (!strcmp(argv[i], "-encode-fingerprint-v2")) {
+			g_use_encode_fingerprint_v2 = true;
 		} else if (!strcmp(argv[i], "-v") || !strcmp(argv[i], "-version")) {
 #if defined(USE_SWRESAMPLE)
 #define RESAMPLE_LIB_IDENT_IDENT LIBSWRESAMPLE_IDENT
