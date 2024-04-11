@@ -34,7 +34,9 @@ bool CompressFingerprintV2(const std::vector<uint32_t> &hashes, int algorithm, s
 
     compressed.resize(compressed_size + 4);
 
-    compressed[0] = algorithm;
+    int compression_version = 1;
+
+    compressed[0] = (compression_version & 0x3) << 6 | (algorithm & 0x3f);
     compressed[1] = num_hashes >> 16;
     compressed[2] = num_hashes >> 8;
     compressed[3] = num_hashes;
@@ -48,7 +50,12 @@ std::vector<uint32_t> DecompressFingerprintV2(const std::string &data, int &algo
         return std::vector<uint32_t>();
     }
 
-    algorithm = data[0];
+    int compression_version = (data[0] >> 6) & 0x3;
+    if (compression_version != 1) {
+        return std::vector<uint32_t>();
+    }
+
+    algorithm = data[0] & 0x3f;
     size_t num_hashes = (data[1] << 16) | (data[2] << 8) | data[3];
 
     std::string packed;

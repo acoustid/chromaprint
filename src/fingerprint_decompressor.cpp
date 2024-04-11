@@ -44,7 +44,12 @@ bool FingerprintDecompressor::Decompress(const std::string &input)
 		return false;
 	}
 
-	m_algorithm = input[0];
+        int compression_version = (input[0] >> 6) & 0x3;
+        if (compression_version != 0) {
+		return false;
+        }
+
+        m_algorithm = input[0] & 0x3f;
 
 	const size_t num_values =
 		((size_t)((unsigned char)(input[1])) << 16) |

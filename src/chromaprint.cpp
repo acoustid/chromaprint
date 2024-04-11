@@ -209,17 +209,19 @@ int chromaprint_decode_fingerprint(const char *encoded_fp, int encoded_size, uin
 	if (base64) {
 		encoded = Base64Decode(encoded);
 	}
-	std::vector<uint32_t> uncompressed;
 	int algo;
-	auto ok = DecompressFingerprint(encoded, uncompressed, algo);
-	if (!ok) {
-		*fp = nullptr;
-		*size = 0;
-		if (algorithm) {
-			*algorithm = 0;
-		}
-		return 0;
-	}
+	auto uncompressed = DecompressFingerprintV2(encoded, algo);
+        if (uncompressed.empty()) {
+                auto ok = DecompressFingerprint(encoded, uncompressed, algo);
+                if (!ok) {
+                        *fp = nullptr;
+                        *size = 0;
+                        if (algorithm) {
+                                *algorithm = 0;
+                        }
+                        return 0;
+                }
+        }
 	*fp = (uint32_t *) malloc(sizeof(uint32_t) * uncompressed.size());
 	*size = int(uncompressed.size());
 	if (algorithm) {
