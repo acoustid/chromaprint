@@ -128,11 +128,11 @@ jobs:
     needs: package-macos
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v4.1.7
       with:
         name: chromaprint-macos-x86_64
         path: single-arch/x86_64
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v4.1.7
       with:
         name: chromaprint-macos-arm64
         path: single-arch/arm64
@@ -173,7 +173,7 @@ jobs:
           esac
           echo "::set-output name=VERSION::$VERSION"
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4.1.7
 
       - name: Make source tarball
         run: |
