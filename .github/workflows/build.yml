@@ -72,7 +72,7 @@ jobs:
       if: env.ARCH == 'x86_64'
       run: ./artifacts/bin/fpcalc -raw tests/data/test.mp3 | diff -u - tests/data/test.mp3.fpcalc.out
     - name: Archive artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: chromaprint-${{ env.OS }}-${{ env.ARCH }}
         path: artifacts/
@@ -95,7 +95,7 @@ jobs:
     - name: Build
       run: ./package/build.sh
     - name: Archive artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: chromaprint-${{ env.OS }}-${{ env.ARCH }}
         path: artifacts/
@@ -118,7 +118,7 @@ jobs:
       run: ./artifacts/bin/fpcalc -raw tests/data/test.mp3 | diff -u - tests/data/test.mp3.fpcalc.out
       if: ${{ matrix.arch == 'x86_64' }}
     - name: Archive artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: chromaprint-${{ env.OS }}-${{ env.ARCH }}
         path: artifacts/
@@ -145,7 +145,7 @@ jobs:
     - name: Test
       run: ./artifacts/bin/fpcalc -raw tests/data/test.mp3 | diff -u - tests/data/test.mp3.fpcalc.out
     - name: Archive artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: chromaprint-macos-universal
         path: artifacts/
