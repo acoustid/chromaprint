@@ -8,6 +8,17 @@
 
 using namespace chromaprint;
 
+TEST(FingerprintDecompressor, Header)
+{
+	std::string data = Base64Decode("AQAAEwkjrUmSJQpUHflR9mjSJMdZpcO_Imdw9dCO9Clu4_wQPvhCB01w6xAtXNcAp5RASgDBhDSCGGIAcwA");
+
+	size_t size = 0;
+	int algorithm = 0;
+	ASSERT_EQ(true, DecompressFingerprintHeader(data, size, algorithm));
+	ASSERT_EQ(19, size);
+	ASSERT_EQ(1, algorithm);
+}
+
 TEST(FingerprintDecompressor, OneItemOneBit)
 {
 	uint32_t expected[] = { 1 };

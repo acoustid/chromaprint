@@ -118,7 +118,7 @@ TEST(API, TestEncodeFingerprintBase64)
 	ASSERT_STREQ(expected, encoded);
 }
 
-TEST(API, TestDecodeFingerprint)
+TEST(API, TestDecodeFingerprintBinary)
 {
 	char data[] = { 55, 0, 0, 2, 65, 0 };
 
@@ -133,6 +133,47 @@ TEST(API, TestDecodeFingerprint)
 	ASSERT_EQ(1, fingerprint[0]);
 	ASSERT_EQ(0, fingerprint[1]);
 }
+
+TEST(API, TestDecodeFingerprintText)
+{
+	std::string data = "AQAAEwkjrUmSJQpUHflR9mjSJMdZpcO_Imdw9dCO9Clu4_wQPvhCB01w6xAtXNcAp5RASgDBhDSCGGIAcwA";
+
+	uint32_t *fingerprint;
+	int size;
+	int algorithm;
+	ASSERT_EQ(1, chromaprint_decode_fingerprint(data.c_str(), data.size(), &fingerprint, &size, &algorithm, 1));
+	SCOPE_EXIT(chromaprint_dealloc(fingerprint));
+
+	ASSERT_EQ(19, size);
+	ASSERT_EQ(1, algorithm);
+	ASSERT_EQ(-587455133, fingerprint[0]);
+	ASSERT_EQ(-591649759, fingerprint[1]);
+}
+
+TEST(API, TestDecodeFingerprintHeaderBinary)
+{
+	char data[] = { 55, 0, 0, 2, 65, 0 };
+
+	int size;
+	int algorithm;
+	ASSERT_EQ(1, chromaprint_decode_fingerprint_header(data, 6, &size, &algorithm, 0));
+
+	ASSERT_EQ(2, size);
+	ASSERT_EQ(55, algorithm);
+}
+
+TEST(API, TestDecodeFingerprintHeaderText)
+{
+	std::string data = "AQAAEwkjrUmSJQpUHflR9mjSJMdZpcO_Imdw9dCO9Clu4_wQPvhCB01w6xAtXNcAp5RASgDBhDSCGGIAcwA";
+
+	int size;
+	int algorithm;
+	ASSERT_EQ(1, chromaprint_decode_fingerprint_header(data.c_str(), data.size(), &size, &algorithm, 1));
+
+	ASSERT_EQ(19, size);
+	ASSERT_EQ(1, algorithm);
+}
+
 
 TEST(API, TestHashFingerprint)
 {
