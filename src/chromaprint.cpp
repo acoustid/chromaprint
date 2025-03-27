@@ -209,6 +209,33 @@ int chromaprint_decode_fingerprint(const char *encoded_fp, int encoded_size, uin
 	return 1;
 }
 
+int chromaprint_decode_fingerprint_header(const char *encoded_fp, int encoded_size, int *size, int *algorithm, int base64)
+{
+	std::string encoded(encoded_fp, std::min(6, encoded_size));
+	if (base64) {
+		encoded = Base64Decode(encoded);
+	}
+	size_t size_out;
+	int algorithm_out;
+	auto ok = DecompressFingerprintHeader(encoded, size_out, algorithm_out);
+	if (!ok) {
+		if (size) {
+			*size = 0;
+		}
+		if (algorithm) {
+			*algorithm = 0;
+		}
+		return 0;
+	}
+	if (size) {
+		*size = int(size_out);
+	}
+	if (algorithm) {
+		*algorithm = algorithm_out;
+	}
+	return 1;
+}
+
 int chromaprint_hash_fingerprint(const uint32_t *fp, int size, uint32_t *hash)
 {
 	if (fp == NULL || size < 0 || hash == NULL) {
