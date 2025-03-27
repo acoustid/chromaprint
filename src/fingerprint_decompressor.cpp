@@ -21,19 +21,18 @@ FingerprintDecompressor::FingerprintDecompressor()
 
 void FingerprintDecompressor::UnpackBits()
 {
-	int i = 0, last_bit = 0, value = 0;
+	int i = 0, last_bit = 0;
+    uint32_t value = 0;
 	for (size_t j = 0; j < m_bits.size(); j++) {
-		int bit = m_bits[j];
+		const int bit = m_bits[j];
 		if (bit == 0) {
-			m_output[i] = (i > 0) ? value ^ m_output[i - 1] : value;
-			value = 0;
+			m_output[i] = value;
 			last_bit = 0;
 			i++;
-			continue;
+		} else {
+			last_bit += bit;
+			value ^= 1 << (last_bit - 1);
 		}
-		bit += last_bit;
-		last_bit = bit;
-		value |= 1 << (bit - 1);
 	}
 }
 
