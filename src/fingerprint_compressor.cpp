@@ -44,8 +44,8 @@ void FingerprintCompressor::Compress(const std::vector<uint32_t> &data, int algo
 	m_exceptional_bits.clear();
 
 	if (size > 0) {
-		m_normal_bits.reserve(size);
-		m_exceptional_bits.reserve(size / 10);
+		m_normal_bits.reserve(size * 8);
+		m_exceptional_bits.reserve(size * 2);
 		ProcessSubfingerprint(data[0]);
 		for (size_t i = 1; i < size; i++) {
 			ProcessSubfingerprint(data[i] ^ data[i - 1]);
