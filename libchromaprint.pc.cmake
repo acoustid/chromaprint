@@ -7,6 +7,6 @@ Name: ${PROJECT_NAME}
 Description: Audio fingerprint library
 URL: http://acoustid.org/chromaprint
 Version: ${PROJECT_VERSION}
-Libs: -L${LIB_INSTALL_DIR} -lchromaprint
+Libs: -L${LIB_INSTALL_DIR} -lchromaprint @CHROMAPRINT_ADDITIONAL_LIBS@
 Cflags: -I${INCLUDE_INSTALL_DIR}
 
