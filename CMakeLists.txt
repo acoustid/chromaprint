@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.5...3.10)
 
 set(chromaprint_VERSION_MAJOR 1)
 set(chromaprint_VERSION_MINOR 5)
