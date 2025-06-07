@@ -21,7 +21,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install cmake libavcodec-dev libavformat-dev libavutil-dev libswresample-dev libfftw3-dev
+        sudo apt-get install -y cmake libavcodec-dev libavformat-dev libavutil-dev libswresample-dev libfftw3-dev
     - name: Test with ${{ env.FFT_LIB }}
       run: |
         mkdir build.test.$FFT_LIB
