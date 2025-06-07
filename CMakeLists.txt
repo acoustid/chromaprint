@@ -29,13 +29,13 @@ option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 set(CMAKE_CXX_STANDARD 11)
 
 if(BUILD_SHARED_LIBS)
-	set(CMAKE_C_VISIBILITY_PRESET hidden)
-	set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-	set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
+  set(CMAKE_C_VISIBILITY_PRESET hidden)
+  set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+  set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX AND CMAKE_BUILD_TYPE STREQUAL "Debug")
-	add_definitions(-D_GLIBCXX_DEBUG)
+  add_definitions(-D_GLIBCXX_DEBUG)
 endif()
 
 cmake_push_check_state(RESET)
@@ -45,11 +45,11 @@ check_symbol_exists(round math.h HAVE_ROUND)
 cmake_pop_check_state()
 
 add_definitions(
-	-DHAVE_CONFIG_H
-	-D_SCL_SECURE_NO_WARNINGS
-	-D_USE_MATH_DEFINES
-	-D__STDC_LIMIT_MACROS
-	-D__STDC_CONSTANT_MACROS
+  -DHAVE_CONFIG_H
+  -D_SCL_SECURE_NO_WARNINGS
+  -D_USE_MATH_DEFINES
+  -D__STDC_LIMIT_MACROS
+  -D__STDC_CONSTANT_MACROS
 )
 
 set(LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)")
@@ -59,20 +59,20 @@ set(LIB_INSTALL_DIR ${EXEC_INSTALL_PREFIX}/lib${LIB_SUFFIX} CACHE PATH  "Install
 set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/include CACHE PATH "Installation prefix for C header files" FORCE)
 
 if(APPLE)
-	option(BUILD_FRAMEWORK "Build an OS X framework" OFF)
-	set(FRAMEWORK_INSTALL_DIR "/Library/Frameworks" CACHE STRING "Directory to install frameworks to")
+  option(BUILD_FRAMEWORK "Build an OS X framework" OFF)
+  set(FRAMEWORK_INSTALL_DIR "/Library/Frameworks" CACHE STRING "Directory to install frameworks to")
 endif()
 
 option(BUILD_TOOLS "Build command line tools" OFF)
 option(BUILD_TESTS "Build test suite" ON)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 endif()
 
 if(NOT BUILD_SHARED_LIBS)
-	add_definitions(-DCHROMAPRINT_NODLL)
+  add_definitions(-DCHROMAPRINT_NODLL)
 endif()
 
 set(TESTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests/)
@@ -82,23 +82,23 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 find_package(FFmpeg)
 
 if(FFMPEG_LIBRARIES)
-	cmake_push_check_state(RESET)
-	set(CMAKE_REQUIRED_LIBRARIES ${FFMPEG_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} -lm)
-	cmake_pop_check_state()
+  cmake_push_check_state(RESET)
+  set(CMAKE_REQUIRED_LIBRARIES ${FFMPEG_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} -lm)
+  cmake_pop_check_state()
 endif()
 
 if(NOT FFT_LIB OR FFT_LIB STREQUAL "fftw3" OR FFT_LIB STREQUAL "fftw3f")
-	find_package(FFTW3)
+  find_package(FFTW3)
 endif()
 
 if(APPLE)
-	if(NOT FFT_LIB OR FFT_LIB STREQUAL "vdsp")
-		find_library(ACCELERATE_LIBRARIES Accelerate)
-	endif()
+  if(NOT FFT_LIB OR FFT_LIB STREQUAL "vdsp")
+    find_library(ACCELERATE_LIBRARIES Accelerate)
+  endif()
 endif()
 
 if(NOT FFT_LIB OR FFT_LIB STREQUAL "kissfft")
-	find_package(KissFFT)
+  find_package(KissFFT)
 endif()
 
 set(USE_VDSP OFF)
@@ -108,110 +108,110 @@ set(USE_FFTW3F OFF)
 set(USE_KISSFFT OFF)
 
 if(NOT FFT_LIB)
-	if(APPLE AND ACCELERATE_LIBRARIES)
-		set(FFT_LIB "vdsp")
-	elseif(FFMPEG_LIBAVCODEC_FFT_FOUND)
-		set(FFT_LIB "avfft")
-	elseif(FFTW3_LIBRARIES)
-		set(FFT_LIB "fftw3")
-	elseif(FFTW3_FFTWF_LIBRARY)
-		set(FFT_LIB "fftw3f")
-	elseif(KISSFFT_FOUND)
-		set(FFT_LIB "kissfft")
-	endif()
+  if(APPLE AND ACCELERATE_LIBRARIES)
+    set(FFT_LIB "vdsp")
+  elseif(FFMPEG_LIBAVCODEC_FFT_FOUND)
+    set(FFT_LIB "avfft")
+  elseif(FFTW3_LIBRARIES)
+    set(FFT_LIB "fftw3")
+  elseif(FFTW3_FFTWF_LIBRARY)
+    set(FFT_LIB "fftw3f")
+  elseif(KISSFFT_FOUND)
+    set(FFT_LIB "kissfft")
+  endif()
 endif()
 
 if(FFT_LIB STREQUAL "vdsp")
-	if(ACCELERATE_LIBRARIES)
-		set(USE_VDSP ON)
-	else()
-		message(FATAL_ERROR "Selected ${FFT_LIB} for FFT calculations, but the library is not found")
-	endif()
+  if(ACCELERATE_LIBRARIES)
+    set(USE_VDSP ON)
+  else()
+    message(FATAL_ERROR "Selected ${FFT_LIB} for FFT calculations, but the library is not found")
+  endif()
 elseif(FFT_LIB STREQUAL "avfft")
-	if(FFMPEG_LIBAVCODEC_FFT_FOUND)
-		set(USE_AVFFT ON)
-	else()
-		message(FATAL_ERROR "Selected ${FFT_LIB} for FFT calculations, but the library is not found")
-	endif()
+  if(FFMPEG_LIBAVCODEC_FFT_FOUND)
+    set(USE_AVFFT ON)
+  else()
+    message(FATAL_ERROR "Selected ${FFT_LIB} for FFT calculations, but the library is not found")
+  endif()
 elseif(FFT_LIB STREQUAL "fftw3")
-	if(FFTW3_LIBRARIES)
-		set(USE_FFTW3 ON)
-	else()
-		message(FATAL_ERROR "Selected ${FFT_LIB} for FFT calculations, but the library is not found")
-	endif()
+  if(FFTW3_LIBRARIES)
+    set(USE_FFTW3 ON)
+  else()
+    message(FATAL_ERROR "Selected ${FFT_LIB} for FFT calculations, but the library is not found")
+  endif()
 elseif(FFT_LIB STREQUAL "fftw3f")
-	if(FFTW3_FFTWF_LIBRARY)
-		set(USE_FFTW3F ON)
-	else()
-		message(FATAL_ERROR "Selected ${FFT_LIB} for FFT calculations, but the library is not found")
-	endif()
+  if(FFTW3_FFTWF_LIBRARY)
+    set(USE_FFTW3F ON)
+  else()
+    message(FATAL_ERROR "Selected ${FFT_LIB} for FFT calculations, but the library is not found")
+  endif()
 elseif(FFT_LIB STREQUAL "kissfft")
-	if(KISSFFT_FOUND)
-		set(USE_KISSFFT ON)
-	else()
-		message(FATAL_ERROR "Selected ${FFT_LIB} for FFT calculations, but the library is not found")
-	endif()
+  if(KISSFFT_FOUND)
+    set(USE_KISSFFT ON)
+  else()
+    message(FATAL_ERROR "Selected ${FFT_LIB} for FFT calculations, but the library is not found")
+  endif()
 else()
-	message(FATAL_ERROR "No FFT library found")
+  message(FATAL_ERROR "No FFT library found")
 endif()
 
 message(STATUS "Using ${FFT_LIB} for FFT calculations")
 
 if(NOT AUDIO_PROCESSOR_LIB)
-	if(FFMPEG_LIBSWRESAMPLE_FOUND)
-		set(AUDIO_PROCESSOR_LIB "swresample")
-	endif()
+  if(FFMPEG_LIBSWRESAMPLE_FOUND)
+    set(AUDIO_PROCESSOR_LIB "swresample")
+  endif()
 endif()
 
 if(AUDIO_PROCESSOR_LIB STREQUAL "swresample")
-	if(FFMPEG_LIBSWRESAMPLE_FOUND)
-		set(USE_SWRESAMPLE ON)
-		set(AUDIO_PROCESSOR_LIBRARIES ${FFMPEG_LIBSWRESAMPLE_LIBRARIES})
-		set(AUDIO_PROCESSOR_INCLUDE_DIRS ${FFMPEG_LIBSWRESAMPLE_INCLUDE_DIRS})
-	else()
-		message(FATAL_ERROR "Selected ${AUDIO_PROCESSOR_LIB} for audio processing, but the library is not found")
-	endif()
-	message(STATUS "Using ${AUDIO_PROCESSOR_LIB} for audio conversion")
+  if(FFMPEG_LIBSWRESAMPLE_FOUND)
+    set(USE_SWRESAMPLE ON)
+    set(AUDIO_PROCESSOR_LIBRARIES ${FFMPEG_LIBSWRESAMPLE_LIBRARIES})
+    set(AUDIO_PROCESSOR_INCLUDE_DIRS ${FFMPEG_LIBSWRESAMPLE_INCLUDE_DIRS})
+  else()
+    message(FATAL_ERROR "Selected ${AUDIO_PROCESSOR_LIB} for audio processing, but the library is not found")
+  endif()
+  message(STATUS "Using ${AUDIO_PROCESSOR_LIB} for audio conversion")
 else()
-	message(STATUS "Building without audio conversion support, please install FFmpeg with libswresample")
+  message(STATUS "Building without audio conversion support, please install FFmpeg with libswresample")
 endif()
 
 if(NOT BUILD_FRAMEWORK)
-	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libchromaprint.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/libchromaprint.pc)
-	install(
-        FILES ${CMAKE_CURRENT_BINARY_DIR}/libchromaprint.pc
-        DESTINATION ${LIB_INSTALL_DIR}/pkgconfig
-        COMPONENT chromaprint)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libchromaprint.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/libchromaprint.pc)
+  install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/libchromaprint.pc
+    DESTINATION ${LIB_INSTALL_DIR}/pkgconfig
+    COMPONENT chromaprint)
 endif()
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/src)
 add_definitions(
-	-DHAVE_CONFIG_H
-	-D_SCL_SECURE_NO_WARNINGS
-	-D_USE_MATH_DEFINES
-	-D__STDC_LIMIT_MACROS
-	-D__STDC_CONSTANT_MACROS
+  -DHAVE_CONFIG_H
+  -D_SCL_SECURE_NO_WARNINGS
+  -D_USE_MATH_DEFINES
+  -D__STDC_LIMIT_MACROS
+  -D__STDC_CONSTANT_MACROS
 )
 
 if(UNIX)
-	link_libraries(m)
+  link_libraries(m)
 endif()
 
 add_subdirectory(src)
 
 if(BUILD_TESTS)
-	add_subdirectory(tests)
+  add_subdirectory(tests)
 endif(BUILD_TESTS)
 
 configure_file(
-	"${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
-	"${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-	IMMEDIATE @ONLY)
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+  IMMEDIATE @ONLY)
 
 add_custom_target(uninstall
-	COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+  COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.cmake" "${CMAKE_CURRENT_BINARY_DIR}/Doxyfile")
 add_custom_target(docs doxygen)
