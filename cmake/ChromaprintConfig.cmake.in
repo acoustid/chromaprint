@@ -1,0 +1,7 @@
+@PACKAGE_INIT@
+
+include(${CMAKE_CURRENT_LIST_DIR}/ChromaprintTargets.cmake)
+
+set_and_check(Chromaprint_INCLUDE_DIR "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")
+set(Chromaprint_LIBRARIES Chromaprint::chromaprint)
+check_required_components(Chromaprint)

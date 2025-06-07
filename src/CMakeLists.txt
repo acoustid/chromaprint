@@ -86,6 +86,7 @@ endif()
 target_link_libraries(chromaprint ${chromaprint_LINK_LIBS})
 
 install(TARGETS chromaprint
+  EXPORT ChromaprintTargets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}

@@ -210,3 +210,33 @@ add_custom_target(uninstall
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.cmake" "${CMAKE_CURRENT_BINARY_DIR}/Doxyfile")
 add_custom_target(docs doxygen)
+
+if(NOT BUILD_FRAMEWORK)
+  include(CMakePackageConfigHelpers)
+
+  add_library(Chromaprint::chromaprint ALIAS chromaprint)
+
+  configure_package_config_file(
+    cmake/ChromaprintConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/ChromaprintConfig.cmake
+    PATH_VARS CMAKE_INSTALL_INCLUDEDIR
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Chromaprint
+  )
+
+  write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/ChromaprintConfigVersion.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+  )
+
+  install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/ChromaprintConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/ChromaprintConfigVersion.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Chromaprint
+  )
+
+  install(EXPORT ChromaprintTargets
+    FILE ChromaprintTargets.cmake
+    NAMESPACE Chromaprint::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Chromaprint)
+endif()
