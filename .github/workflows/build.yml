@@ -6,7 +6,7 @@ on:
 
 jobs:
   test-linux:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         fft:
@@ -21,7 +21,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install cmake libavcodec-dev libavformat-dev libavutil-dev libavresample-dev libfftw3-dev
+        sudo apt-get install -y cmake libavcodec-dev libavformat-dev libavutil-dev libswresample-dev libfftw3-dev
     - name: Test with ${{ env.FFT_LIB }}
       run: |
         mkdir build.test.$FFT_LIB
@@ -50,7 +50,7 @@ jobs:
         make check VERBOSE=1
 
   package-linux:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         arch:
@@ -78,7 +78,7 @@ jobs:
         path: artifacts/
 
   package-windows:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         arch:
