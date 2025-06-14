@@ -45,8 +45,8 @@
 
 find_path(KISSFFT_SOURCE_DIR
     NAMES
-        tools/kiss_fftr.h
-        tools/kiss_fftr.c
+        kiss_fftr.h
+        kiss_fftr.c
     PATHS
         $ENV{KISSFFT_ROOT}
         ${KISSFFT_ROOT}
@@ -66,6 +66,6 @@ if(KISSFFT_FOUND)
     )
     SET(KISSFFT_SOURCES
         ${KISSFFT_SOURCE_DIR}/kiss_fft.c
-        ${KISSFFT_SOURCE_DIR}/tools/kiss_fftr.c
+        ${KISSFFT_SOURCE_DIR}/kiss_fftr.c
     )
 endif()
