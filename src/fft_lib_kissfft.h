@@ -4,7 +4,7 @@
 #ifndef CHROMAPRINT_FFT_LIB_KISSFFT_H_
 #define CHROMAPRINT_FFT_LIB_KISSFFT_H_
 
-#include <tools/kiss_fftr.h>
+#include <kiss_fftr.h>
 
 #include "fft_frame.h"
 #include "utils.h"

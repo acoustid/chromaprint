@@ -203,6 +203,10 @@ static void kf_bfly_generic(
     int Norig = st->nfft;
 
     kiss_fft_cpx * scratch = (kiss_fft_cpx*)KISS_FFT_TMP_ALLOC(sizeof(kiss_fft_cpx)*p);
+    if (scratch == NULL){
+        KISS_FFT_ERROR("Memory allocation failed.");
+        return;
+    }
 
     for ( u=0; u<m; ++u ) {
         k=u;
@@ -244,23 +248,23 @@ void kf_work(
     const kiss_fft_cpx * Fout_end = Fout + p*m;
 
 #ifdef _OPENMP
-    // use openmp extensions at the 
+    // use openmp extensions at the
     // top-level (not recursive)
-    if (fstride==1 && p<=5)
+    if (fstride==1 && p<=5 && m!=1)
     {
         int k;
 
         // execute the p different work units in different threads
 #       pragma omp parallel for
-        for (k=0;k<p;++k) 
+        for (k=0;k<p;++k)
             kf_work( Fout +k*m, f+ fstride*in_stride*k,fstride*p,in_stride,factors,st);
         // all threads have joined by this point
 
         switch (p) {
             case 2: kf_bfly2(Fout,fstride,st,m); break;
-            case 3: kf_bfly3(Fout,fstride,st,m); break; 
+            case 3: kf_bfly3(Fout,fstride,st,m); break;
             case 4: kf_bfly4(Fout,fstride,st,m); break;
-            case 5: kf_bfly5(Fout,fstride,st,m); break; 
+            case 5: kf_bfly5(Fout,fstride,st,m); break;
             default: kf_bfly_generic(Fout,fstride,st,m,p); break;
         }
         return;
@@ -276,7 +280,7 @@ void kf_work(
         do{
             // recursive call:
             // DFT of size m*p performed by doing
-            // p instances of smaller DFTs of size m, 
+            // p instances of smaller DFTs of size m,
             // each one takes a decimated version of the input
             kf_work( Fout , f, fstride*p, in_stride, factors,st);
             f += fstride*in_stride;
@@ -285,21 +289,21 @@ void kf_work(
 
     Fout=Fout_beg;
 
-    // recombine the p smaller DFTs 
+    // recombine the p smaller DFTs
     switch (p) {
         case 2: kf_bfly2(Fout,fstride,st,m); break;
-        case 3: kf_bfly3(Fout,fstride,st,m); break; 
+        case 3: kf_bfly3(Fout,fstride,st,m); break;
         case 4: kf_bfly4(Fout,fstride,st,m); break;
-        case 5: kf_bfly5(Fout,fstride,st,m); break; 
+        case 5: kf_bfly5(Fout,fstride,st,m); break;
         default: kf_bfly_generic(Fout,fstride,st,m,p); break;
     }
 }
 
 /*  facbuf is populated by p1,m1,p2,m2, ...
-    where 
+    where
     p[i] * m[i] = m[i-1]
     m0 = n                  */
-static 
+static
 void kf_factor(int n,int * facbuf)
 {
     int p=4;
@@ -332,9 +336,11 @@ void kf_factor(int n,int * facbuf)
  * */
 kiss_fft_cfg kiss_fft_alloc(int nfft,int inverse_fft,void * mem,size_t * lenmem )
 {
+    KISS_FFT_ALIGN_CHECK(mem)
+
     kiss_fft_cfg st=NULL;
-    size_t memneeded = sizeof(struct kiss_fft_state)
-        + sizeof(kiss_fft_cpx)*(nfft-1); /* twiddle factors*/
+    size_t memneeded = KISS_FFT_ALIGN_SIZE_UP(sizeof(struct kiss_fft_state)
+        + sizeof(kiss_fft_cpx)*(nfft-1)); /* twiddle factors*/
 
     if ( lenmem==NULL ) {
         st = ( kiss_fft_cfg)KISS_FFT_MALLOC( memneeded );
@@ -367,7 +373,19 @@ void kiss_fft_stride(kiss_fft_cfg st,const kiss_fft_cpx *fin,kiss_fft_cpx *fout,
     if (fin == fout) {
         //NOTE: this is not really an in-place FFT algorithm.
         //It just performs an out-of-place FFT into a temp buffer
+        if (fout == NULL){
+            KISS_FFT_ERROR("fout buffer NULL.");
+        return;
+        }
+
         kiss_fft_cpx * tmpbuf = (kiss_fft_cpx*)KISS_FFT_TMP_ALLOC( sizeof(kiss_fft_cpx)*st->nfft);
+        if (tmpbuf == NULL){
+            KISS_FFT_ERROR("Memory allocation error.");
+        return;
+        }
+
+
+
         kf_work(tmpbuf,fin,1,in_stride, st->factors,st);
         memcpy(fout,tmpbuf,sizeof(kiss_fft_cpx)*st->nfft);
         KISS_FFT_TMP_FREE(tmpbuf);
