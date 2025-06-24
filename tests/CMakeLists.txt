@@ -1,16 +1,15 @@
-find_package(GTest REQUIRED)
-find_package(Threads REQUIRED)
+include(GoogleTest)
 
-add_library(gtest STATIC ${GTEST_SOURCES})
-target_include_directories(gtest INTERFACE ${GTEST_INCLUDE_DIRS})
-target_include_directories(gtest PRIVATE ${GTEST_INCLUDE_DIRS} ${GTEST_SOURCE_DIR})
-target_link_libraries(gtest Threads::Threads)
+set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
+set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
+mark_as_advanced(BUILD_GMOCK INSTALL_GTEST GTEST_HAS_ABSL)
 
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}
-)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
-set(SRCS
+add_subdirectory("${PROJECT_SOURCE_DIR}/src/3rdparty/googletest" "test/3rdparty/googletest")
+
+add_executable(all_tests 
+  $<TARGET_OBJECTS:chromaprint_objs>
   main.cpp
   test_api.cpp
   test_utils.cpp
@@ -36,20 +35,32 @@ set(SRCS
   ../src/utils/rolling_integral_image_test.cpp
 )
 
+target_include_directories(all_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(all_tests PRIVATE chromaprint gtest gtest_main)
+
 if(BUILD_TOOLS)
-  set(SRCS ${SRCS} ../src/audio/ffmpeg_audio_reader_test.cpp)
-    include_directories(
+  target_sources(all_tests PRIVATE ../src/audio/ffmpeg_audio_reader_test.cpp)
+  target_include_directories(all_tests
+    PRIVATE
       ${FFMPEG_LIBAVFORMAT_INCLUDE_DIRS}
       ${FFMPEG_LIBAVCODEC_INCLUDE_DIRS}
       ${FFMPEG_LIBAVUTIL_INCLUDE_DIRS}
       ${AUDIO_PROCESSOR_INCLUDE_DIRS}
     )
-  link_libraries(fpcalc_libs)
+  target_link_libraries(all_tests PRIVATE fpcalc_libs)
 endif()
 
-add_executable(all_tests ${SRCS} $<TARGET_OBJECTS:chromaprint_objs>)
-target_link_libraries(all_tests PRIVATE chromaprint gtest)
+if(WIN32 AND BUILD_SHARED_LIBS AND CMAKE_VERSION VERSION_GREATER_EQUAL "3.21.0")
+  add_custom_command(TARGET all_tests POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:all_tests> $<TARGET_FILE_DIR:all_tests>
+    COMMAND_EXPAND_LISTS
+  )
+endif()
 
-add_custom_target(check ${CMAKE_CURRENT_BINARY_DIR}/all_tests $ENV{GTEST_FLAGS} DEPENDS all_tests)
+gtest_discover_tests(all_tests
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+  DISCOVERY_TIMEOUT 100
+  PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+)
 
-add_test(ChromaprintTests all_tests)
+set_target_properties(all_tests PROPERTIES FOLDER tests)
