@@ -27,7 +27,7 @@ find_package(Threads)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 if(BUILD_SHARED_LIBS)
   set(CMAKE_C_VISIBILITY_PRESET hidden)
