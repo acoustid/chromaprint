@@ -197,8 +197,9 @@ endif()
 add_subdirectory(src)
 
 if(BUILD_TESTS)
+  enable_testing()
   add_subdirectory(tests)
-endif(BUILD_TESTS)
+endif()
 
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"

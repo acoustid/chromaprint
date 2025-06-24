@@ -52,5 +52,4 @@ target_link_libraries(all_tests PRIVATE chromaprint gtest)
 
 add_custom_target(check ${CMAKE_CURRENT_BINARY_DIR}/all_tests $ENV{GTEST_FLAGS} DEPENDS all_tests)
 
-enable_testing(true)
 add_test(ChromaprintTests all_tests)
