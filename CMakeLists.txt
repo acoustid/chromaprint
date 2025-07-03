@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5...3.10)
+cmake_minimum_required(VERSION 3.10)
 
 set(chromaprint_VERSION_MAJOR 1)
 set(chromaprint_VERSION_MINOR 5)
@@ -27,7 +27,7 @@ find_package(Threads)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 if(BUILD_SHARED_LIBS)
   set(CMAKE_C_VISIBILITY_PRESET hidden)
@@ -197,8 +197,9 @@ endif()
 add_subdirectory(src)
 
 if(BUILD_TESTS)
+  enable_testing()
   add_subdirectory(tests)
-endif(BUILD_TESTS)
+endif()
 
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"

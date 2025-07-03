@@ -28,7 +28,7 @@ jobs:
         cd build.test.$FFT_LIB
         cmake -DCMAKE_BUILD_TYPE=Release -DFFT_LIB=$FFT_LIB -DBUILD_TESTS=ON -DBUILD_TOOLS=OFF ..
         make VERBOSE=1
-        make check VERBOSE=1
+        make test VERBOSE=1
 
   test-macos:
     runs-on: macos-latest
@@ -47,7 +47,7 @@ jobs:
         cd build.test.$FFT_LIB
         cmake -DCMAKE_BUILD_TYPE=Release -DFFT_LIB=$FFT_LIB -DBUILD_TESTS=ON -DBUILD_TOOLS=OFF -DCMAKE_CXX_FLAGS='-stdlib=libc++' ..
         make VERBOSE=1
-        make check VERBOSE=1
+        make test VERBOSE=1
 
   package-linux:
     runs-on: ubuntu-22.04

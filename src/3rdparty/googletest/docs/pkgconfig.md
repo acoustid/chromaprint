@@ -19,19 +19,15 @@ examples here we assume you want to compile the sample
 Using `pkg-config` in CMake is fairly easy:
 
 ```cmake
-cmake_minimum_required(VERSION 3.0)
-
-cmake_policy(SET CMP0048 NEW)
-project(my_gtest_pkgconfig VERSION 0.0.1 LANGUAGES CXX)
-
 find_package(PkgConfig)
 pkg_search_module(GTEST REQUIRED gtest_main)
 
-add_executable(testapp samples/sample3_unittest.cc)
-target_link_libraries(testapp ${GTEST_LDFLAGS})
-target_compile_options(testapp PUBLIC ${GTEST_CFLAGS})
+add_executable(testapp)
+target_sources(testapp PRIVATE samples/sample3_unittest.cc)
+target_link_libraries(testapp PRIVATE ${GTEST_LDFLAGS})
+target_compile_options(testapp PRIVATE ${GTEST_CFLAGS})
 
-include(CTest)
+enable_testing()
 add_test(first_and_only_test testapp)
 ```
 
@@ -105,7 +101,7 @@ includedir=/usr/include
 
 Name: gtest
 Description: GoogleTest (without main() function)
-Version: 1.10.0
+Version: 1.11.0
 URL: https://github.com/google/googletest
 Libs: -L${libdir} -lgtest -lpthread
 Cflags: -I${includedir} -DGTEST_HAS_PTHREAD=1 -lpthread
