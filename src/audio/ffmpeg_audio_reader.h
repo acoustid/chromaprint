@@ -224,10 +224,7 @@ inline void FFmpegAudioReader::Close() {
 
 	m_stream_index = -1;
 
-	if (m_codec_ctx) {
-		avcodec_close(m_codec_ctx);
-		m_codec_ctx = nullptr;
-	}
+	avcodec_free_context(&m_codec_ctx);
 
 	if (m_format_ctx) {
 		avformat_close_input(&m_format_ctx);
