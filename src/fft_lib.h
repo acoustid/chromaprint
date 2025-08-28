@@ -8,6 +8,10 @@
 #include <config.h>
 #endif
 
+#ifdef USE_AVTX
+#include "fft_lib_avtx.h"
+#endif
+
 #ifdef USE_AVFFT
 #include "fft_lib_avfft.h"
 #endif
