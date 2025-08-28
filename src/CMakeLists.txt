@@ -30,6 +30,16 @@ set(chromaprint_SOURCES
 set(chromaprint_PUBLIC_SOURCES chromaprint.cpp)
 set(chromaprint_PUBLIC_HEADERS chromaprint.h)
 
+if(USE_AVTX)
+  set(chromaprint_SOURCES fft_lib_avtx.cpp ${chromaprint_SOURCES})
+  set(chromaprint_LINK_LIBS
+    ${FFMPEG_LIBAVUTIL_LIBRARIES}
+  )
+  include_directories(
+    ${FFMPEG_LIBAVUTIL_INCLUDE_DIRS}
+  )
+endif(USE_AVTX)
+
 if(USE_AVFFT)
   set(chromaprint_SOURCES fft_lib_avfft.cpp ${chromaprint_SOURCES})
   set(chromaprint_LINK_LIBS

@@ -102,6 +102,7 @@ FFMPEG_FIND(LIBAVDEVICE avdevice avdevice.h)
 FFMPEG_FIND(LIBAVCODEC  avcodec  avcodec.h)
 FFMPEG_FIND(LIBAVCODEC_FFT  avcodec  avfft.h)
 FFMPEG_FIND(LIBAVUTIL   avutil   avutil.h)
+FFMPEG_FIND(LIBAVUTIL_TX  avutil  tx.h)
 FFMPEG_FIND(LIBSWSCALE  swscale  swscale.h)  # not sure about the header to look for here.
 FFMPEG_FIND(LIBSWRESAMPLE  swresample  swresample.h)  # not sure about the header to look for here.
 FFMPEG_FIND(LIBAVRESAMPLE  avresample  avresample.h)
