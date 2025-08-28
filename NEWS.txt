@@ -1,3 +1,15 @@
+Version 1.6.0 -- August 28, 2025
+=================================
+
+ - Added support for FFmpeg 8.0
+ - Added chromaprint_decode_fingerprint_header function
+ - Added missing chromaprint_get_algorithm function implementation
+ - Optimized simhash calculation and fingerprint decoding
+ - Improved fingerprint compression performance by pre-allocating vector storage
+ - CMake improvements: updated minimum version to 3.10, use GNUInstallDirs, install config targets
+ - Build Linux ARM64 binaries
+ - Allow build to exclude internal avresample
+
 Version 1.5.1 -- December 23, 2021
 ==================================
 
