@@ -20,7 +20,7 @@ uint32_t SimHash(const uint32_t *data, size_t size)
 		}
 	}
 
-	const int threshold = size / 2;
+	const size_t threshold = size / 2;
 	uint32_t hash = 0;
 	for (size_t i = 0; i < 32; i++) {
 		const int b = v[i] > threshold ? 1 : 0;
