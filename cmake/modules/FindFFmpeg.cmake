@@ -123,6 +123,17 @@ IF   (FFMPEG_LIBAVFORMAT_FOUND AND FFMPEG_LIBAVCODEC_FOUND AND FFMPEG_LIBAVUTIL_
         ${FFMPEG_LIBAVCODEC_LIBRARIES}
         ${FFMPEG_LIBAVUTIL_LIBRARIES})
 
+    IF(FFMPEG_LIBAVUTIL_TX_FOUND)
+        include(CheckCSourceCompiles)
+
+        cmake_push_check_state()
+        list(APPEND CMAKE_REQUIRED_INCLUDES ${FFMPEG_LIBAVUTIL_TX_INCLUDE_DIRS})
+        check_c_source_compiles("#include <libavutil/tx.h>
+            static int test = AV_TX_FLOAT_RDFT;
+            int main(void) { return 0; }" HAVE_FFMPEG_TX_RDFT)
+        cmake_pop_check_state()
+    ENDIF()
+
 ELSE ()
 
    MESSAGE(STATUS "Could not find FFMPEG")
