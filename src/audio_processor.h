@@ -45,14 +45,13 @@ namespace chromaprint
 		//! Process a chunk of data from the audio stream
 		void Consume(const int16_t *input, int length);
 
-        void ConsumeAligned(const int16_t *input, int length);
-
 		//! Process any buffered input that was not processed before and clear buffers
 		void Flush();
 
 	private:
 		CHROMAPRINT_DISABLE_COPY(AudioProcessor);
 
+        void ConsumeAligned(const int16_t *input, int length);
 		int Load(const int16_t *input, int length);
 		void LoadMono(const int16_t *input, int length);
 		void LoadStereo(const int16_t *input, int length);
