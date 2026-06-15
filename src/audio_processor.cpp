@@ -140,6 +140,7 @@ bool AudioProcessor::Reset(int sample_rate, int num_channels)
 		return false;
 	}
 	m_buffer_offset = 0;
+    m_leftover.clear();
 
 #if USE_INTERNAL_AVRESAMPLE
 	if (m_resample_ctx) {
@@ -168,16 +169,37 @@ bool AudioProcessor::Reset(int sample_rate, int num_channels)
 void AudioProcessor::Consume(const int16_t *input, int length)
 {
 	assert(length >= 0);
+	if (!m_leftover.empty()) {
+		while (length > 0 && static_cast<int>(m_leftover.size()) < m_num_channels) {
+			m_leftover.push_back(*input++);
+			length--;
+		}
+		if (static_cast<int>(m_leftover.size()) < m_num_channels) {
+			return;
+		}
+		ConsumeAligned(&m_leftover[0], m_num_channels);
+		m_leftover.clear();
+	}
+	const int remainder = length % m_num_channels;
+	ConsumeAligned(input, length - remainder);
+	if (remainder > 0) {
+		m_leftover.assign(input + length - remainder, input + length);
+	}
+}
+
+void AudioProcessor::ConsumeAligned(const int16_t *input, int length)
+{
+	assert(length >= 0);
 	assert(length % m_num_channels == 0);
 	length /= m_num_channels;
 	while (length > 0) {
-		int consumed = Load(input, length); 
+		int consumed = Load(input, length);
 		input += consumed * m_num_channels;
 		length -= consumed;
 		if (m_buffer.size() == m_buffer_offset) {
 			Resample();
 			if (m_buffer.size() == m_buffer_offset) {
-				DEBUG("chromaprint::AudioProcessor::Consume() -- Resampling failed?");
+				DEBUG("chromaprint::AudioProcessor::ConsumeAligned() -- Resampling failed?");
 				return;
 			}
 		}
