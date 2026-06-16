@@ -51,6 +51,7 @@ namespace chromaprint
 	private:
 		CHROMAPRINT_DISABLE_COPY(AudioProcessor);
 
+        void ConsumeAligned(const int16_t *input, int length);
 		int Load(const int16_t *input, int length);
 		void LoadMono(const int16_t *input, int length);
 		void LoadStereo(const int16_t *input, int length);
@@ -62,6 +63,9 @@ namespace chromaprint
 		std::vector<int16_t> m_resample_buffer;
 		int m_target_sample_rate;
 		int m_num_channels;
+        // Trailing partial frame carried over between Consume() calls when a
+        // caller splits its audio on non-frame boundaries.
+        std::vector<int16_t> m_leftover;
 		AudioConsumer *m_consumer;
 		struct AVResampleContext *m_resample_ctx;
 	};
