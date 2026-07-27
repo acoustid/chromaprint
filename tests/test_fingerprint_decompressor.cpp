@@ -68,6 +68,18 @@ TEST(FingerprintDecompressor, OneItemOneBitExcept2)
 	ASSERT_EQ(0, algorithm);
 }
 
+TEST(FingerprintDecompressor, OneItemOneBitExceptWithTrailingData)
+{
+	uint32_t expected[] = { 1<<6 };
+	char data[] = { 0, 0, 0, 1, 7, 0, char(255), char(255), char(255), char(255) };
+
+	int algorithm = 1;
+	std::vector<uint32_t> value;
+	ASSERT_EQ(true, DecompressFingerprint(std::string(data, NELEMS(data)), value, algorithm));
+	CheckFingerprints(value, expected, NELEMS(expected));
+	ASSERT_EQ(0, algorithm);
+}
+
 TEST(FingerprintDecompressor, TwoItems)
 {
 	uint32_t expected[] = { 1, 0 };
