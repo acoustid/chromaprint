@@ -62,7 +62,7 @@ While we try to make sure things work also with libav, FFmpeg is preferred.
 You can use Doxygen to generate a HTML version of the API documentation:
 
     $ make docs
-    $ $BROWSER docs/html/index.html
+    $ $BROWSER doc/html/index.html
 
 ## Unit Tests
 
