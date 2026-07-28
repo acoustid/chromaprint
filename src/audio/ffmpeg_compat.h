@@ -5,6 +5,7 @@
 #define CHROMAPRINT_AUDIO_FFMPEG_COMPAT_H_
 
 extern "C" {
+#include <libavformat/version.h>
 #include <libavutil/channel_layout.h>
 #include <libavutil/version.h>
 }
@@ -22,6 +23,14 @@ extern "C" {
 #define CHROMAPRINT_CODEC_CHANNELS(ctx) ((ctx)->ch_layout.nb_channels)
 #else
 #define CHROMAPRINT_CODEC_CHANNELS(ctx) ((ctx)->channels)
+#endif
+
+// avformat_open_input() and av_find_best_stream() took non-const AVInputFormat
+// and AVCodec pointers before libavformat 59 (FFmpeg 5.0).
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(59, 0, 100)
+#define CHROMAPRINT_CONST_AVFORMAT const
+#else
+#define CHROMAPRINT_CONST_AVFORMAT
 #endif
 
 #endif

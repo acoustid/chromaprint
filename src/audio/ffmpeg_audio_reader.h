@@ -75,7 +75,7 @@ private:
 	uint8_t *m_convert_buffer[1] = { nullptr };
 	int m_convert_buffer_nb_samples = 0;
 
-	const AVInputFormat *m_input_fmt = nullptr;
+	CHROMAPRINT_CONST_AVFORMAT AVInputFormat *m_input_fmt = nullptr;
 	AVDictionary *m_input_opts = nullptr;
 
 	AVFormatContext *m_format_ctx = nullptr;
@@ -156,7 +156,7 @@ inline bool FFmpegAudioReader::Open(const std::string &file_name) {
 		return false;
 	}
 
-	const AVCodec *codec;
+	CHROMAPRINT_CONST_AVFORMAT AVCodec *codec;
 	ret = av_find_best_stream(m_format_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, &codec, 0);
 	if (ret < 0) {
 		SetError("Could not find any audio stream in the file", ret);
