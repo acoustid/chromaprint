@@ -122,9 +122,10 @@ TEST(AudioProcessor, ChunkedConsumeMatchesSingleConsume)
 	reference.Consume(data.data(), data.size());
 	reference.Flush();
 
-	// Sizes that are not multiples of the channel count, so that every call
-	// but the last leaves a partial frame behind. What the caller passes per
-	// call must not change the result.
+	// Some of these are multiples of the channel count and some are not. The
+	// ones that are not leave a partial frame to be carried into the next
+	// call; the rest are there as a control. However the caller splits its
+	// input, the result must be the same.
 	const size_t chunk_sizes[] = { 1, 2, 3, 5, 7, 17, 511, 997, 4096 };
 
 	for (size_t c = 0; c < NELEMS(chunk_sizes); c++) {
