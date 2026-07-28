@@ -6,7 +6,10 @@
 
 extern "C" {
 #include <libswresample/swresample.h>
+#include <libavutil/opt.h>
 }
+
+#include "audio/ffmpeg_compat.h"
 
 namespace chromaprint {
 
@@ -28,9 +31,15 @@ public:
 		av_opt_set_double(m_swr_ctx, "cutoff", 0.8, 0);
 	}
 
+#if CHROMAPRINT_HAVE_AV_CHANNEL_LAYOUT
 	void SetInputChannelLayout(AVChannelLayout *channel_layout) {
 		av_opt_set_chlayout(m_swr_ctx, "in_chlayout", channel_layout, 0);
 	}
+#else
+	void SetInputChannelLayout(uint64_t channel_layout) {
+		av_opt_set_int(m_swr_ctx, "in_channel_layout", channel_layout, 0);
+	}
+#endif
 
 	void SetInputSampleFormat(AVSampleFormat sample_format) {
 		av_opt_set_sample_fmt(m_swr_ctx, "in_sample_fmt", sample_format, 0);
@@ -40,9 +49,15 @@ public:
 		av_opt_set_int(m_swr_ctx, "in_sample_rate", sample_rate, 0);
 	}
 
+#if CHROMAPRINT_HAVE_AV_CHANNEL_LAYOUT
 	void SetOutputChannelLayout(AVChannelLayout *channel_layout) {
 		av_opt_set_chlayout(m_swr_ctx, "out_chlayout", channel_layout, 0);
 	}
+#else
+	void SetOutputChannelLayout(uint64_t channel_layout) {
+		av_opt_set_int(m_swr_ctx, "out_channel_layout", channel_layout, 0);
+	}
+#endif
 
 	void SetOutputSampleFormat(AVSampleFormat sample_format) {
 		av_opt_set_sample_fmt(m_swr_ctx, "out_sample_fmt", sample_format, 0);

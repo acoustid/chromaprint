@@ -21,6 +21,7 @@ extern "C" {
 #include <libavutil/channel_layout.h>
 }
 
+#include "audio/ffmpeg_compat.h"
 #include "audio/ffmpeg_audio_processor.h"
 
 namespace chromaprint {
@@ -118,6 +119,7 @@ inline bool FFmpegAudioReader::SetInputSampleRate(int sample_rate) {
 
 inline bool FFmpegAudioReader::SetInputChannels(int channels) {
 	char buf[64];
+#if CHROMAPRINT_HAVE_AV_CHANNEL_LAYOUT
     if (channels == 1)
         sprintf(buf, "%s", "mono");
     else if (channels == 2)
@@ -125,6 +127,11 @@ inline bool FFmpegAudioReader::SetInputChannels(int channels) {
     else
         sprintf(buf, "%d channels", channels);
     return av_dict_set(&m_input_opts, "ch_layout", buf, 0) >= 0;
+#else
+    // Before 5.1 the demuxers take a channel count, not a layout description.
+    sprintf(buf, "%d", channels);
+    return av_dict_set(&m_input_opts, "channels", buf, 0) >= 0;
+#endif
 }
 
 inline bool FFmpegAudioReader::Open(const std::string &file_name) {
@@ -184,23 +191,38 @@ inline bool FFmpegAudioReader::Open(const std::string &file_name) {
 		m_output_sample_rate = m_codec_ctx->sample_rate;
 	}
 
+#if CHROMAPRINT_HAVE_AV_CHANNEL_LAYOUT
 	AVChannelLayout output_channel_layout;
-	if (m_output_channels) {
-		av_channel_layout_default(&output_channel_layout, m_output_channels);
-	} else {
-		m_output_channels = m_codec_ctx->ch_layout.nb_channels;
-		av_channel_layout_default(&output_channel_layout, m_output_channels);
+	if (!m_output_channels) {
+		m_output_channels = CHROMAPRINT_CODEC_CHANNELS(m_codec_ctx);
 	}
+	av_channel_layout_default(&output_channel_layout, m_output_channels);
+#else
+	if (!m_output_channels) {
+		m_output_channels = CHROMAPRINT_CODEC_CHANNELS(m_codec_ctx);
+	}
+	uint64_t output_channel_layout = av_get_default_channel_layout(m_output_channels);
+#endif
 
-	if (m_codec_ctx->sample_fmt != AV_SAMPLE_FMT_S16 || m_codec_ctx->ch_layout.nb_channels != m_output_channels || m_codec_ctx->sample_rate != m_output_sample_rate) {
+	if (m_codec_ctx->sample_fmt != AV_SAMPLE_FMT_S16 || CHROMAPRINT_CODEC_CHANNELS(m_codec_ctx) != m_output_channels || m_codec_ctx->sample_rate != m_output_sample_rate) {
 		m_converter.reset(new FFmpegAudioProcessor());
 		m_converter->SetCompatibleMode();
 		m_converter->SetInputSampleFormat(m_codec_ctx->sample_fmt);
 		m_converter->SetInputSampleRate(m_codec_ctx->sample_rate);
+#if CHROMAPRINT_HAVE_AV_CHANNEL_LAYOUT
 		m_converter->SetInputChannelLayout(&(m_codec_ctx->ch_layout));
+#else
+		m_converter->SetInputChannelLayout(m_codec_ctx->channel_layout
+			? m_codec_ctx->channel_layout
+			: av_get_default_channel_layout(m_codec_ctx->channels));
+#endif
 		m_converter->SetOutputSampleFormat(AV_SAMPLE_FMT_S16);
 		m_converter->SetOutputSampleRate(m_output_sample_rate);
+#if CHROMAPRINT_HAVE_AV_CHANNEL_LAYOUT
 		m_converter->SetOutputChannelLayout(&output_channel_layout);
+#else
+		m_converter->SetOutputChannelLayout(output_channel_layout);
+#endif
 		auto ret = m_converter->Init();
 		if (ret != 0) {
 			SetError("Could not create an audio converter instance", ret);
@@ -208,7 +230,9 @@ inline bool FFmpegAudioReader::Open(const std::string &file_name) {
 		}
 	}
 
+#if CHROMAPRINT_HAVE_AV_CHANNEL_LAYOUT
 	av_channel_layout_uninit(&output_channel_layout);
+#endif
 
 	m_opened = true;
 	m_has_more_packets = true;
@@ -315,7 +339,7 @@ inline bool FFmpegAudioReader::Read(const int16_t **data, size_t *size) {
 					int linsize;
 					av_freep(&m_convert_buffer[0]);
 					m_convert_buffer_nb_samples = std::max(1024 * 8, m_frame->nb_samples);
-					ret = av_samples_alloc(m_convert_buffer, &linsize, m_codec_ctx->ch_layout.nb_channels, m_convert_buffer_nb_samples, AV_SAMPLE_FMT_S16, 1);
+					ret = av_samples_alloc(m_convert_buffer, &linsize, CHROMAPRINT_CODEC_CHANNELS(m_codec_ctx), m_convert_buffer_nb_samples, AV_SAMPLE_FMT_S16, 1);
 					if (ret < 0) {
 						SetError("Couldn't allocate audio converter buffer", ret);
 						return false;
