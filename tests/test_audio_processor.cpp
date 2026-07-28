@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <vector>
+#include <string>
 #include <fstream>
 #include "test_utils.h"
 #include "audio_processor.h"
@@ -108,5 +109,41 @@ TEST(AudioProcessor, StereoToMonoAndResample)
 	ASSERT_EQ(data2.size(), buffer.data().size());
 	for (size_t i = 0; i < data2.size(); i++) {
 		ASSERT_EQ(data2[i], buffer.data()[i]) << "Signals differ at index " << i;
+	}
+}
+
+TEST(AudioProcessor, ChunkedConsumeMatchesSingleConsume)
+{
+	std::vector<short> data = LoadAudioFile("data/test_stereo_44100.raw");
+
+	AudioBuffer expected;
+	AudioProcessor reference(11025, &expected);
+	reference.Reset(44100, 2);
+	reference.Consume(data.data(), data.size());
+	reference.Flush();
+
+	// Some of these are multiples of the channel count and some are not. The
+	// ones that are not leave a partial frame to be carried into the next
+	// call; the rest are there as a control. However the caller splits its
+	// input, the result must be the same.
+	const size_t chunk_sizes[] = { 1, 2, 3, 5, 7, 17, 511, 997, 4096 };
+
+	for (size_t c = 0; c < NELEMS(chunk_sizes); c++) {
+		const size_t chunk_size = chunk_sizes[c];
+		SCOPED_TRACE("chunk size " + std::to_string(chunk_size));
+
+		AudioBuffer buffer;
+		AudioProcessor processor(11025, &buffer);
+		processor.Reset(44100, 2);
+		for (size_t offset = 0; offset < data.size(); offset += chunk_size) {
+			processor.Consume(data.data() + offset,
+			                  std::min(chunk_size, data.size() - offset));
+		}
+		processor.Flush();
+
+		ASSERT_EQ(expected.data().size(), buffer.data().size());
+		for (size_t i = 0; i < expected.data().size(); i++) {
+			ASSERT_EQ(expected.data()[i], buffer.data()[i]) << "Signals differ at index " << i;
+		}
 	}
 }
