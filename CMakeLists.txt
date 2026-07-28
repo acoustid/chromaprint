@@ -181,6 +181,28 @@ else()
 endif()
 
 if(NOT BUILD_FRAMEWORK)
+  foreach(LIB ${CMAKE_CXX_IMPLICIT_LINK_LIBRARIES})
+    if(IS_ABSOLUTE ${LIB} AND EXISTS ${LIB})
+      list(APPEND PKG_LIBS "${LIB}")
+    elseif(LIB MATCHES "-l:lib.*.a")
+      string(LENGTH ${LIB} LIBLEN)
+      math(EXPR LIBLEN "${LIBLEN}-8")
+      string(SUBSTRING ${LIB} 6 ${LIBLEN} DIRECT_LIB)
+      list(APPEND PKG_LIBS "-l${DIRECT_LIB}")
+    elseif(LIB MATCHES "-l.*")
+      list(APPEND PKG_LIBS "${LIB}")
+    else()
+      list(APPEND PKG_LIBS "-l${LIB}")
+    endif()
+  endforeach()
+  if(PKG_LIBS)
+    # Blacklist for MinGW-w64
+    list(REMOVE_DUPLICATES PKG_LIBS)
+    list(REMOVE_ITEM PKG_LIBS
+      "-lmingw32" "-lgcc_s" "-lgcc" "-lmoldname" "-lmingwex" "-lmingwthrd"
+      "-lmsvcrt" "-lpthread" "-ladvapi32" "-lshell32" "-luser32" "-lkernel32")
+  endif()
+  string(REPLACE ";" " " CHROMAPRINT_ADDITIONAL_LIBS "${PKG_LIBS}")
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libchromaprint.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/libchromaprint.pc @ONLY)
   install(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/libchromaprint.pc
