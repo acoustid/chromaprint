@@ -386,6 +386,11 @@ void ProcessFile(ChromaprintContext *ctx, FFmpegAudioReader &reader, const char 
 		}
 	}
 
+	if (reader.GetDroppedFrames() > 0) {
+		fprintf(stderr, "WARNING: dropped %llu audio frame(s) with an unexpected channel layout in %s\n",
+			(unsigned long long) reader.GetDroppedFrames(), file_name);
+	}
+
 	if (!chromaprint_finish(ctx)) {
 		fprintf(stderr, "ERROR: Could not finish the fingerprinting process\n");
 		exit(2);

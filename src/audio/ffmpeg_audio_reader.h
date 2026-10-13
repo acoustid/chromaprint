@@ -68,8 +68,13 @@ public:
 	std::string GetError() const { return m_error; }
 	int GetErrorCode() const { return m_error_code; }
 
+	// Number of decoded frames dropped because their channel count (or data
+	// planes) did not match what the converter was configured with at open.
+	uint64_t GetDroppedFrames() const { return m_dropped_frames; }
+
 private:
 	inline void SetError(const char *format, int errnum = 0);
+	inline bool FrameMatchesConverter() const;
 
 	std::unique_ptr<FFmpegAudioProcessor> m_converter;
 	uint8_t *m_convert_buffer[1] = { nullptr };
@@ -94,6 +99,9 @@ private:
 
 	uint64_t m_nb_packets = 0;
 	int m_decode_error = 0;
+
+	int m_converter_in_channels = 0;
+	uint64_t m_dropped_frames = 0;
 };
 
 inline FFmpegAudioReader::FFmpegAudioReader() {
@@ -206,6 +214,7 @@ inline bool FFmpegAudioReader::Open(const std::string &file_name) {
 
 	if (m_codec_ctx->sample_fmt != AV_SAMPLE_FMT_S16 || CHROMAPRINT_CODEC_CHANNELS(m_codec_ctx) != m_output_channels || m_codec_ctx->sample_rate != m_output_sample_rate) {
 		m_converter.reset(new FFmpegAudioProcessor());
+		m_converter_in_channels = CHROMAPRINT_CODEC_CHANNELS(m_codec_ctx);
 		m_converter->SetCompatibleMode();
 		m_converter->SetInputSampleFormat(m_codec_ctx->sample_fmt);
 		m_converter->SetInputSampleRate(m_codec_ctx->sample_rate);
@@ -238,6 +247,7 @@ inline bool FFmpegAudioReader::Open(const std::string &file_name) {
 	m_has_more_packets = true;
 	m_has_more_frames = true;
 	m_decode_error = 0;
+	m_dropped_frames = 0;
 
 	return true;
 }
@@ -335,6 +345,16 @@ inline bool FFmpegAudioReader::Read(const int16_t **data, size_t *size) {
 
 		if (m_frame->nb_samples > 0) {
 			if (m_converter) {
+				// The converter was configured from the stream parameters at
+				// open. Some files carry isolated frames with a different channel
+				// count (e.g. a stereo AC-3 frame inside a 5.1 stream), which
+				// leaves the extra data planes NULL and crashes swr_convert().
+				if (!FrameMatchesConverter()) {
+					m_dropped_frames++;
+					*data = nullptr;
+					*size = 0;
+					return true;
+				}
 				if (m_frame->nb_samples > m_convert_buffer_nb_samples) {
 					int linsize;
 					av_freep(&m_convert_buffer[0]);
@@ -373,6 +393,25 @@ inline bool FFmpegAudioReader::Read(const int16_t **data, size_t *size) {
 
 		return true;
 	}
+}
+
+inline bool FFmpegAudioReader::FrameMatchesConverter() const {
+#if CHROMAPRINT_HAVE_AV_CHANNEL_LAYOUT
+	const int channels = m_frame->ch_layout.nb_channels;
+#else
+	const int channels = m_frame->channels;
+#endif
+	if (channels != m_converter_in_channels) {
+		return false;
+	}
+	const uint8_t *const *planes = m_frame->extended_data ? m_frame->extended_data : m_frame->data;
+	const int nb_planes = av_sample_fmt_is_planar((AVSampleFormat) m_frame->format) ? channels : 1;
+	for (int i = 0; i < nb_planes; i++) {
+		if (!planes[i]) {
+			return false;
+		}
+	}
+	return true;
 }
 
 inline void FFmpegAudioReader::SetError(const char *message, int errnum) {
