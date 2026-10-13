@@ -337,7 +337,7 @@ inline bool FFmpegAudioReader::Read(const int16_t **data, size_t *size) {
 					return false;
 				}
 				uint8_t *out[1] = { m_convert_buffer[0] + nb_flushed * m_output_channels * sizeof(int16_t) };
-				auto nb_samples = m_converter->Convert(out, m_convert_buffer_nb_samples - nb_flushed, (const uint8_t **) m_frame->data, m_frame->nb_samples);
+				auto nb_samples = m_converter->Convert(out, m_convert_buffer_nb_samples - nb_flushed, (const uint8_t **) m_frame->extended_data, m_frame->nb_samples);
 				if (nb_samples < 0) {
 					SetError("Couldn't convert audio", nb_samples);
 					return false;
