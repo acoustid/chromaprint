@@ -21,8 +21,10 @@ extern "C" {
 
 #if CHROMAPRINT_HAVE_AV_CHANNEL_LAYOUT
 #define CHROMAPRINT_CODEC_CHANNELS(ctx) ((ctx)->ch_layout.nb_channels)
+#define CHROMAPRINT_FRAME_CHANNELS(frame) ((frame)->ch_layout.nb_channels)
 #else
 #define CHROMAPRINT_CODEC_CHANNELS(ctx) ((ctx)->channels)
+#define CHROMAPRINT_FRAME_CHANNELS(frame) ((frame)->channels)
 #endif
 
 // avformat_open_input() and av_find_best_stream() took non-const AVInputFormat
