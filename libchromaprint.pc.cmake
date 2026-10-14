@@ -8,5 +8,6 @@ Description: Audio fingerprint library
 URL: http://acoustid.org/chromaprint
 Version: @PROJECT_VERSION@
 Libs: -L${libdir} -lchromaprint
+Libs.private: @CHROMAPRINT_ADDITIONAL_LIBS@
 Cflags: -I${includedir}
 
