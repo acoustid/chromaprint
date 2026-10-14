@@ -70,8 +70,18 @@ public:
 
 private:
 	inline void SetError(const char *format, int errnum = 0);
+	inline bool ConverterMatchesFrame(const AVFrame *frame) const;
+	inline int ResetConverter(const AVFrame *frame);
+	inline bool EnsureConvertBuffer(int nb_samples);
 
 	std::unique_ptr<FFmpegAudioProcessor> m_converter;
+#if CHROMAPRINT_HAVE_AV_CHANNEL_LAYOUT
+	AVChannelLayout m_converter_channel_layout = {};
+#else
+	uint64_t m_converter_channel_layout = 0;
+#endif
+	int m_converter_sample_format = AV_SAMPLE_FMT_NONE;
+	int m_converter_sample_rate = 0;
 	uint8_t *m_convert_buffer[1] = { nullptr };
 	int m_convert_buffer_nb_samples = 0;
 
@@ -104,6 +114,9 @@ inline FFmpegAudioReader::~FFmpegAudioReader() {
 	Close();
 	av_dict_free(&m_input_opts);
 	av_freep(&m_convert_buffer[0]);
+#if CHROMAPRINT_HAVE_AV_CHANNEL_LAYOUT
+	av_channel_layout_uninit(&m_converter_channel_layout);
+#endif
 }
 
 inline bool FFmpegAudioReader::SetInputFormat(const char *name) {
@@ -191,48 +204,13 @@ inline bool FFmpegAudioReader::Open(const std::string &file_name) {
 		m_output_sample_rate = m_codec_ctx->sample_rate;
 	}
 
-#if CHROMAPRINT_HAVE_AV_CHANNEL_LAYOUT
-	AVChannelLayout output_channel_layout;
 	if (!m_output_channels) {
 		m_output_channels = CHROMAPRINT_CODEC_CHANNELS(m_codec_ctx);
 	}
-	av_channel_layout_default(&output_channel_layout, m_output_channels);
-#else
-	if (!m_output_channels) {
-		m_output_channels = CHROMAPRINT_CODEC_CHANNELS(m_codec_ctx);
-	}
-	uint64_t output_channel_layout = av_get_default_channel_layout(m_output_channels);
-#endif
 
-	if (m_codec_ctx->sample_fmt != AV_SAMPLE_FMT_S16 || CHROMAPRINT_CODEC_CHANNELS(m_codec_ctx) != m_output_channels || m_codec_ctx->sample_rate != m_output_sample_rate) {
-		m_converter.reset(new FFmpegAudioProcessor());
-		m_converter->SetCompatibleMode();
-		m_converter->SetInputSampleFormat(m_codec_ctx->sample_fmt);
-		m_converter->SetInputSampleRate(m_codec_ctx->sample_rate);
-#if CHROMAPRINT_HAVE_AV_CHANNEL_LAYOUT
-		m_converter->SetInputChannelLayout(&(m_codec_ctx->ch_layout));
-#else
-		m_converter->SetInputChannelLayout(m_codec_ctx->channel_layout
-			? m_codec_ctx->channel_layout
-			: av_get_default_channel_layout(m_codec_ctx->channels));
-#endif
-		m_converter->SetOutputSampleFormat(AV_SAMPLE_FMT_S16);
-		m_converter->SetOutputSampleRate(m_output_sample_rate);
-#if CHROMAPRINT_HAVE_AV_CHANNEL_LAYOUT
-		m_converter->SetOutputChannelLayout(&output_channel_layout);
-#else
-		m_converter->SetOutputChannelLayout(output_channel_layout);
-#endif
-		auto ret = m_converter->Init();
-		if (ret != 0) {
-			SetError("Could not create an audio converter instance", ret);
-			return false;
-		}
-	}
-
-#if CHROMAPRINT_HAVE_AV_CHANNEL_LAYOUT
-	av_channel_layout_uninit(&output_channel_layout);
-#endif
+	// The converter is set up in Read() from the decoded frames, because
+	// some decoders (e.g. AC-3) change the channel layout mid-stream.
+	m_converter.reset();
 
 	m_opened = true;
 	m_has_more_packets = true;
@@ -334,24 +312,38 @@ inline bool FFmpegAudioReader::Read(const int16_t **data, size_t *size) {
 		}
 
 		if (m_frame->nb_samples > 0) {
-			if (m_converter) {
-				if (m_frame->nb_samples > m_convert_buffer_nb_samples) {
-					int linsize;
-					av_freep(&m_convert_buffer[0]);
-					m_convert_buffer_nb_samples = std::max(1024 * 8, m_frame->nb_samples);
-					ret = av_samples_alloc(m_convert_buffer, &linsize, CHROMAPRINT_CODEC_CHANNELS(m_codec_ctx), m_convert_buffer_nb_samples, AV_SAMPLE_FMT_S16, 1);
-					if (ret < 0) {
-						SetError("Couldn't allocate audio converter buffer", ret);
+			int nb_flushed = 0;
+			if (!ConverterMatchesFrame(m_frame)) {
+				if (!EnsureConvertBuffer(m_frame->nb_samples)) {
+					return false;
+				}
+				// The input format changed, drain what the old converter still
+				// holds before replacing it.
+				if (m_converter) {
+					nb_flushed = m_converter->Flush(m_convert_buffer, m_convert_buffer_nb_samples);
+					if (nb_flushed < 0) {
+						SetError("Couldn't convert audio", nb_flushed);
 						return false;
 					}
 				}
-				auto nb_samples = m_converter->Convert(m_convert_buffer, m_convert_buffer_nb_samples, (const uint8_t **) m_frame->data, m_frame->nb_samples);
+				ret = ResetConverter(m_frame);
+				if (ret < 0) {
+					SetError("Could not create an audio converter instance", ret);
+					return false;
+				}
+			}
+			if (m_converter) {
+				if (!EnsureConvertBuffer(m_frame->nb_samples)) {
+					return false;
+				}
+				uint8_t *out[1] = { m_convert_buffer[0] + nb_flushed * m_output_channels * sizeof(int16_t) };
+				auto nb_samples = m_converter->Convert(out, m_convert_buffer_nb_samples - nb_flushed, (const uint8_t **) m_frame->extended_data, m_frame->nb_samples);
 				if (nb_samples < 0) {
-					SetError("Couldn't convert audio", ret);
+					SetError("Couldn't convert audio", nb_samples);
 					return false;
 				}
 				*data = (const int16_t *) m_convert_buffer[0];
-				*size = nb_samples;
+				*size = nb_flushed + nb_samples;
 			} else {
 				*data = (const int16_t *) m_frame->data[0];
 				*size = m_frame->nb_samples;
@@ -373,6 +365,84 @@ inline bool FFmpegAudioReader::Read(const int16_t **data, size_t *size) {
 
 		return true;
 	}
+}
+
+inline bool FFmpegAudioReader::EnsureConvertBuffer(int nb_samples) {
+	// Leave room for samples flushed from a previous converter and for upsampling.
+	nb_samples = std::max(1024 * 8, nb_samples * 4);
+	if (nb_samples > m_convert_buffer_nb_samples) {
+		int linesize;
+		av_freep(&m_convert_buffer[0]);
+		m_convert_buffer_nb_samples = 0;
+		int ret = av_samples_alloc(m_convert_buffer, &linesize, m_output_channels, nb_samples, AV_SAMPLE_FMT_S16, 1);
+		if (ret < 0) {
+			SetError("Couldn't allocate audio converter buffer", ret);
+			return false;
+		}
+		m_convert_buffer_nb_samples = nb_samples;
+	}
+	return true;
+}
+
+inline bool FFmpegAudioReader::ConverterMatchesFrame(const AVFrame *frame) const {
+	if (!m_converter) {
+		return frame->format == AV_SAMPLE_FMT_S16 &&
+			frame->sample_rate == m_output_sample_rate &&
+			CHROMAPRINT_FRAME_CHANNELS(frame) == m_output_channels;
+	}
+	if (frame->format != m_converter_sample_format || frame->sample_rate != m_converter_sample_rate) {
+		return false;
+	}
+#if CHROMAPRINT_HAVE_AV_CHANNEL_LAYOUT
+	return av_channel_layout_compare(&frame->ch_layout, &m_converter_channel_layout) == 0;
+#else
+	return (frame->channel_layout ? frame->channel_layout : av_get_default_channel_layout(frame->channels)) == m_converter_channel_layout;
+#endif
+}
+
+inline int FFmpegAudioReader::ResetConverter(const AVFrame *frame) {
+	int ret;
+
+	m_converter.reset();
+	m_converter_sample_format = frame->format;
+	m_converter_sample_rate = frame->sample_rate;
+#if CHROMAPRINT_HAVE_AV_CHANNEL_LAYOUT
+	ret = av_channel_layout_copy(&m_converter_channel_layout, &frame->ch_layout);
+	if (ret < 0) {
+		return ret;
+	}
+	AVChannelLayout output_channel_layout;
+	av_channel_layout_default(&output_channel_layout, m_output_channels);
+#else
+	m_converter_channel_layout = frame->channel_layout
+		? frame->channel_layout
+		: av_get_default_channel_layout(frame->channels);
+	uint64_t output_channel_layout = av_get_default_channel_layout(m_output_channels);
+#endif
+
+	m_converter.reset(new FFmpegAudioProcessor());
+	m_converter->SetCompatibleMode();
+	m_converter->SetInputSampleFormat((AVSampleFormat) frame->format);
+	m_converter->SetInputSampleRate(frame->sample_rate);
+#if CHROMAPRINT_HAVE_AV_CHANNEL_LAYOUT
+	m_converter->SetInputChannelLayout(&m_converter_channel_layout);
+	m_converter->SetOutputChannelLayout(&output_channel_layout);
+#else
+	m_converter->SetInputChannelLayout(m_converter_channel_layout);
+	m_converter->SetOutputChannelLayout(output_channel_layout);
+#endif
+	m_converter->SetOutputSampleFormat(AV_SAMPLE_FMT_S16);
+	m_converter->SetOutputSampleRate(m_output_sample_rate);
+
+#if CHROMAPRINT_HAVE_AV_CHANNEL_LAYOUT
+	av_channel_layout_uninit(&output_channel_layout);
+#endif
+
+	ret = m_converter->Init();
+	if (ret < 0) {
+		m_converter.reset();
+	}
+	return ret;
 }
 
 inline void FFmpegAudioReader::SetError(const char *message, int errnum) {
