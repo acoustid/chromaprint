@@ -22,7 +22,7 @@ public:
 	int GetAlgorithm() const { return m_algorithm; }
 
 private:
-	void UnpackBits();
+	bool UnpackBits();
 	std::vector<uint32_t> m_output;
 	size_t m_size { 0 };
 	int m_algorithm { -1 };

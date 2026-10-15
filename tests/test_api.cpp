@@ -237,4 +237,45 @@ TEST(API, TestDecodeFingerprintCoustidFingerprint)
 	ASSERT_EQ(0, algorithm);
 }
 
+TEST(API, TestEncodeFingerprintInvalidSize)
+{
+	uint32_t fingerprint[] = { 1, 0 };
+	char *encoded;
+	int encoded_size;
+
+	ASSERT_EQ(0, chromaprint_encode_fingerprint(fingerprint, -1, 1, &encoded, &encoded_size, 0));
+	// The header has room for a 24-bit size only.
+	ASSERT_EQ(0, chromaprint_encode_fingerprint(fingerprint, 0x1000000, 1, &encoded, &encoded_size, 0));
+	ASSERT_EQ(0, chromaprint_encode_fingerprint(NULL, 2, 1, &encoded, &encoded_size, 0));
+}
+
+TEST(API, TestDecodeFingerprintInvalidSize)
+{
+	uint32_t *fp;
+	int length, algorithm;
+	char data[] = { 0, 0, 0, 2, 65, 0 };
+
+	ASSERT_EQ(0, chromaprint_decode_fingerprint(data, -1, &fp, &length, &algorithm, 0));
+	ASSERT_EQ(0, length);
+	ASSERT_EQ(0, chromaprint_decode_fingerprint(NULL, 6, &fp, &length, &algorithm, 0));
+	ASSERT_EQ(0, length);
+
+	ASSERT_EQ(0, chromaprint_decode_fingerprint_header(data, -1, &length, &algorithm, 0));
+	ASSERT_EQ(0, length);
+	ASSERT_EQ(0, chromaprint_decode_fingerprint_header(NULL, 6, &length, &algorithm, 0));
+	ASSERT_EQ(0, length);
+}
+
+TEST(API, TestDecodeFingerprintBitPastPosition32)
+{
+	uint32_t *fp;
+	int length, algorithm;
+	// Six distances of 6 reach bit 36.
+	char data[] = { 0, 0, 0, 1, char(182), 109, 3 };
+
+	ASSERT_EQ(0, chromaprint_decode_fingerprint(data, NELEMS(data), &fp, &length, &algorithm, 0));
+	ASSERT_EQ(nullptr, fp);
+	ASSERT_EQ(0, length);
+}
+
 }; // namespace chromaprint

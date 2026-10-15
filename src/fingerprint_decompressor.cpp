@@ -19,7 +19,7 @@ FingerprintDecompressor::FingerprintDecompressor()
 {
 }
 
-void FingerprintDecompressor::UnpackBits()
+bool FingerprintDecompressor::UnpackBits()
 {
 	int i = 0, last_bit = 0;
     uint32_t value = 0;
@@ -31,9 +31,14 @@ void FingerprintDecompressor::UnpackBits()
 			i++;
 		} else {
 			last_bit += bit;
-			value ^= 1 << (last_bit - 1);
+			if (last_bit > 32) {
+				DEBUG("FingerprintDecompressor::Decompress() -- Invalid fingerprint (bit position past 32)");
+				return false;
+			}
+			value ^= uint32_t(1) << (last_bit - 1);
 		}
 	}
+	return true;
 }
 
 bool FingerprintDecompressor::DecompressHeader(const std::string &input)
@@ -58,6 +63,13 @@ bool FingerprintDecompressor::Decompress(const std::string &input)
 {
 	if (!DecompressHeader(input)) {
 		return false;
+	}
+
+	if (m_size == 0) {
+		// An empty fingerprint has no body, so anything after the header is
+		// trailing data, ignored like trailing data after any fingerprint.
+		m_output.clear();
+		return true;
 	}
 
 	size_t offset = 4;
@@ -102,8 +114,7 @@ bool FingerprintDecompressor::Decompress(const std::string &input)
 
 	m_output.assign(m_size, -1);
 
-	UnpackBits();
-	return true;
+	return UnpackBits();
 }
 
 }; // namespace chromaprint
