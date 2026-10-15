@@ -1,3 +1,15 @@
+Version 1.6.2 -- October 15, 2026
+=================================
+
+ - Fixed a crash in fpcalc when the channel layout changes mid-stream
+   (e.g. AC-3 files switching between 5.1 and stereo)
+ - Fixed decoding of audio with more than 8 planar channels in fpcalc
+ - Fingerprint decoding now rejects invalid input that previously caused
+   undefined behaviour (shifting past 32 bits)
+ - The C API encoding/decoding functions now return an error for a negative
+   size, a NULL buffer with a nonzero size, and, when encoding, more items
+   than the fingerprint header can hold (previously silently truncated)
+
 Version 1.6.1 -- July 28, 2026
 ==============================
 
