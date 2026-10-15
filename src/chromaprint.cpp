@@ -172,6 +172,10 @@ int chromaprint_clear_fingerprint(ChromaprintContext *ctx)
 
 int chromaprint_encode_fingerprint(const uint32_t *fp, int size, int algorithm, char **encoded_fp, int *encoded_size, int base64)
 {
+	// The encoded header stores the size in 24 bits.
+	if ((fp == NULL && size != 0) || size < 0 || size > 0xFFFFFF || encoded_fp == NULL || encoded_size == NULL) {
+		return 0;
+	}
 	std::vector<uint32_t> uncompressed(fp, fp + size);
 	std::string encoded = CompressFingerprint(uncompressed, algorithm);
 	if (base64) {
@@ -185,13 +189,19 @@ int chromaprint_encode_fingerprint(const uint32_t *fp, int size, int algorithm, 
 
 int chromaprint_decode_fingerprint(const char *encoded_fp, int encoded_size, uint32_t **fp, int *size, int *algorithm, int base64)
 {
-	std::string encoded(encoded_fp, encoded_size);
-	if (base64) {
-		encoded = Base64Decode(encoded);
+	if (fp == NULL || size == NULL) {
+		return 0;
 	}
 	std::vector<uint32_t> uncompressed;
 	int algo;
-	auto ok = DecompressFingerprint(encoded, uncompressed, algo);
+	bool ok = false;
+	if (encoded_size >= 0 && (encoded_fp != NULL || encoded_size == 0)) {
+		std::string encoded(encoded_fp, encoded_size);
+		if (base64) {
+			encoded = Base64Decode(encoded);
+		}
+		ok = DecompressFingerprint(encoded, uncompressed, algo);
+	}
 	if (!ok) {
 		*fp = nullptr;
 		*size = 0;
@@ -211,13 +221,16 @@ int chromaprint_decode_fingerprint(const char *encoded_fp, int encoded_size, uin
 
 int chromaprint_decode_fingerprint_header(const char *encoded_fp, int encoded_size, int *size, int *algorithm, int base64)
 {
-	std::string encoded(encoded_fp, std::min(6, encoded_size));
-	if (base64) {
-		encoded = Base64Decode(encoded);
-	}
 	size_t size_out;
 	int algorithm_out;
-	auto ok = DecompressFingerprintHeader(encoded, size_out, algorithm_out);
+	bool ok = false;
+	if (encoded_size >= 0 && (encoded_fp != NULL || encoded_size == 0)) {
+		std::string encoded(encoded_fp, std::min(6, encoded_size));
+		if (base64) {
+			encoded = Base64Decode(encoded);
+		}
+		ok = DecompressFingerprintHeader(encoded, size_out, algorithm_out);
+	}
 	if (!ok) {
 		if (size) {
 			*size = 0;
